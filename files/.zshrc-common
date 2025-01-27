@@ -48,7 +48,6 @@ export NC='\033[0m' # No Color
 ##### System ####
 alias ..="cd .."
 alias please="sudo"
-alias vim="nvim"
 alias ls="ls -G"
 alias t="tree"
 alias l="tree -L 1"
