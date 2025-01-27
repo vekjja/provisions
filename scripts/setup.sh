@@ -78,8 +78,8 @@ if [ ! -d "$GIT_DIR" ]; then
 fi
 
 # Clone the repository if it doesn’t exist
-REPO_URL="https://${GITHUB_PAT}@github.com/seemywingz/provisions.git"
 REPO_NAME="provisions"
+REPO_URL="git@github.com:seemywingz/$REPO_NAME.git"
 if [ ! -d "$GIT_DIR/$REPO_NAME" ]; then
   echo "Cloning repository: $REPO_URL into $GIT_DIR"
   git clone "$REPO_URL" "$GIT_DIR/$REPO_NAME"
