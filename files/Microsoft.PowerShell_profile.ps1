@@ -6,8 +6,12 @@
 # Theme
 oh-my-posh init pwsh --config "X:\OneDrive\Documents\WindowsPowerShell\kev.omp.json" | Invoke-Expression
 
+
 # System
 Set-Alias -Name la -Value ls
+Set-Alias -Name link-git -Value New-Item -Path 'Y:\git' -ItemType SymbolicLink -Value '\\wsl$\kali-linux\home\kali\git'
+
+
 function .. { Set-Location .. }
 
 # make symbolic link
