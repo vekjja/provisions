@@ -156,12 +156,10 @@ if (!(Get-NetFirewallRule -DisplayName "Allow WinRM Secure" -ErrorAction Silentl
 
 Write-Host "Current WinRM Listeners:"
 winrm enumerate winrm/config/listener
-Write-Host "Testing WinRM connection to WSL Debian..."
-Test-WsMan $wslIp -Authentication Basic
 if ($?) {
     Write-Host "Python, Pip, and WinRM setup completed successfully!" -ForegroundColor Green
 } else {
-    Write-Host "WinRM connection to WSL Debian failed." -ForegroundColor Red
+    Write-Host "WinRM failed to list listeners." -ForegroundColor Red
 }
 
 
