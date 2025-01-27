@@ -1,0 +1,18 @@
+- name: Link OS-Specific Files
+  ansible.builtin.file:
+    src: "{{ lookup('pipe', 'realpath ' + inventory_dir + '/../files/' + item.src) }}"
+    dest: "{{ item.dest }}"
+    mode: "0644"
+    state: link
+    force: true
+    follow: false
+  loop: "{{ lookup('vars', ansible_os_family | lower).files | default([]) }}"
+  when: ansible_os_family != "Windows"
+
+- name: Copy OS-Specific Files (Windows)
+  ansible.builtin.copy:
+    src: "{{ lookup('pipe', 'realpath ' + inventory_dir + '/../files/' + item.src) }}"
+    dest: "{{ item.dest }}"
+    mode: "0644"
+  loop: "{{ lookup('vars', ansible_os_family | lower).files | default([]) }}"
+  when: ansible_os_family == "Windows"

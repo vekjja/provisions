@@ -1,0 +1,64 @@
+- name: Set privilege escalation variable
+  ansible.builtin.set_fact:
+    use_sudo: "{{ ansible_os_family != 'Darwin' and ansible_os_family != 'Windows' }}"
+
+- name: Create Unix Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop: "{{ unix_directories }}"
+  when: ansible_os_family != 'Windows'
+
+- name: Change the default shell to zsh
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_user_id }}"
+    shell: /bin/zsh
+  when: ansible_os_family != 'Windows'
+
+- name: Unset ZSH environment variable
+  ansible.builtin.command:
+    cmd: /bin/sh -c 'if [ -n "$ZSH" ]; then unset ZSH; fi'
+    creates: /home/{{ ansible_user_id }}/.zshrc
+  when: ansible_os_family != 'Windows'
+
+- name: Prepare Oh My Zsh Installation Location
+  become: "{{ use_sudo }}"
+  ansible.builtin.file:
+    path: /home/{{ ansible_user_id }}/.zshrc
+    state: absent
+  when: ansible_os_family != 'Windows'
+
+- name: Install Oh My Zsh
+  # become: "{{ use_sudo }}"
+  ansible.builtin.shell:
+    cmd: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    creates: /home/{{ ansible_user_id }}/.oh-my-zsh
+  when: ansible_os_family != 'Windows'
+
+- name: Install Oh My Posh on Windows
+  ansible.builtin.win_chocolatey:
+    name: oh-my-posh
+    state: present
+  when: ansible_os_family == 'Windows'
+
+- name: Ensure unzip is installed (Required for Oh My Posh)
+  become: "{{ use_sudo }}"
+  ansible.builtin.package:
+    name: unzip
+    state: present
+  when: ansible_os_family != 'Windows'
+
+- name: Install Oh My Posh Linux
+  ansible.builtin.shell:
+    cmd: curl -s https://ohmyposh.dev/install.sh | bash -s
+    creates: /home/{{ ansible_user_id }}/.oh-my-posh
+  when: ansible_os_family != 'Windows'
+
+- name: PIP Install pywinrm[kerberos]
+  become: "{{ use_sudo }}"
+  ansible.builtin.pip:
+    name: "pywinrm[kerberos]"
+    extra_args: "--break-system-packages"
+  when: ansible_os_family != 'Windows' and ansible_distribution == 'Debian'

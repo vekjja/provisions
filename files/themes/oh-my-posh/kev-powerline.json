@@ -1,0 +1,133 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "background": "#424242",
+          "foreground": "#f2f3f8",
+          "style": "diamond",
+          "leading_diamond": "\ue0b2",
+          "trailing_diamond": "\ue0b0",
+          "newline": true,
+          "template": "\ue81d {{ .Context }} ",
+          "type": "kubectl"
+        },
+        {
+          "background": "#ffeb87",
+          "foreground": "#000000",
+          "properties": {
+            "min_width": 10,
+            "max_width": 3,
+            "context_aliases": {
+              "CLUSTER NAME": "\ued97"
+            }
+          },
+          "style": "diamond",
+          "leading_diamond": "<transparent,background>\ue0b0</>",
+          "trailing_diamond": "\ue0b0",
+          "newline": true,
+          "template": "{{ if .Namespace }} {{ .Namespace }}{{ end }} ",
+          "type": "kubectl"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "background": "#16b9ff",
+          "foreground": "#1d1d1d",
+          "properties": {
+            "style": "agnoster_short",
+            "max_depth": 3,
+            "folder_icon": "\u2026",
+            "folder_separator_icon": " <transparent>\ue0b1</> "
+          },
+          "style": "diamond",
+          "leading_diamond": "\u256d\u2500\ue0b2",
+          "trailing_diamond": "\ue0b0",
+          "powerline_symbol": "\ue0b0",
+          "template": " {{ .Path }} ",
+          "type": "path"
+        },
+        {
+          "background": "#00ffbb",
+          "foreground": "#1d1d1d",
+          "background_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#f0286a{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#54433a{{ end }}",
+            "{{ if gt .Ahead 0 }}#ffaf00{{ end }}",
+            "{{ if gt .Behind 0 }}#424242{{ end }}"
+          ],
+          "properties": {
+            "branch_max_length": 25,
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "branch_icon": "\ue725 ",
+            "branch_identical_icon": "\uf444",
+            "branch_gone_icon": "\ueab8"
+          },
+          "style": "diamond",
+          "leading_diamond": "<transparent,background>\ue0b0</>",
+          "template": " {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} <transparent>\ue0b1</> <#121318>\uf044 {{ .Working.String }}</>{{ end }}{{ if .Staging.Changed }} <transparent>\ue0b1</> <#121318>\uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} <transparent>\ue0b1</> <#121318>\ueb4b {{ .StashCount }}</>{{ end }} ",
+          "trailing_diamond": "\ue0b0",
+          "type": "git"
+        },
+        {
+          "background": "#424242",
+          "foreground": "#f2f3f8",
+          "properties": {
+            "style": "austin",
+            "max_depth": 3,
+            "folder_icon": "\u2026",
+            "folder_separator_icon": " <transparent>\ue0b1</> ",
+            "always_enabled": true
+          },
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "template": " {{ .FormattedMs }} ",
+          "type": "executiontime"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#00b3ff",
+          "style": "plain",
+          "properties": {
+            "alpine": "\uf300",
+            "arch": "\uf303",
+            "centos": "\uf304",
+            "debian": "\uf306",
+            "elementary": "\uf309",
+            "fedora": "\uf30a",
+            "gentoo": "\uf30d",
+            "kali": "\uf327",
+            "linux": "\ue712",
+            "macos": "\ue711",
+            "manjaro": "\uf312",
+            "mint": "\uf30f",
+            "opensuse": "\uf314",
+            "raspbian": "\uf315",
+            "ubuntu": "\uf31c",
+            "windows": "\ue70f"
+          },
+          "template": "\u2570\u2500 {{ .Icon }} ",
+          "type": "os"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "final_space": true,
+  "version": 3
+}

@@ -1,0 +1,10 @@
+# EMN DevOps initializer
+
+- name: Provision Local Machine
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  roles:
+    - { role: packages, tags: ['packages'] }
+    - { role: system, tags: ['system'] }
+    - { role: files, tags: ['files'] }

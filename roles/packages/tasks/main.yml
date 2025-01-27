@@ -1,0 +1,31 @@
+# vim:ft=ansible
+- name: Set Privilege Escalation Requirements
+  ansible.builtin.set_fact:
+    use_sudo: "{{ ansible_os_family != 'Darwin' and ansible_os_family != 'Windows' }}"
+
+- name: Install Unix Packages
+  ansible.builtin.package:
+    name: "{{ unix_packages }}"
+    state: present
+  become: "{{ use_sudo }}"
+  become_flags: "-n"
+  when: unix_packages is defined and ansible_os_family != 'Windows'
+
+- name: Install OS-Specific Packages (Linux)
+  ansible.builtin.package:
+    name: "{{ lookup('vars', ansible_os_family | lower).packages | default([]) }}"
+    state: present
+  become: "{{ use_sudo }}"
+  when: lookup('vars', ansible_os_family | lower).packages is defined and ansible_os_family != 'Windows'
+
+- name: Install OS-Specific Packages (Windows)
+  ansible.builtin.win_chocolatey:
+    name: "{{ lookup('vars', 'windows').packages | default([]) }}"
+    state: present
+  when: ansible_os_family == "Windows"
+
+- name: Install Mac Casks
+  ansible.builtin.homebrew_cask:
+    name: "{{ lookup('vars', ansible_os_family | lower).casks | default([]) }}"
+    state: present
+  when: ansible_os_family == 'Darwin'

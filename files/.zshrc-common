@@ -1,0 +1,388 @@
+# Path to your Oh My Zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
+
+# Set name of the theme to load
+#ZSH_THEME="kevit"
+
+# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(git)
+
+# History Settings
+export HISTSIZE=10000
+export SAVEHIST=10000
+export HISTFILE=$HOME/.zsh_history
+
+# ZSH Globals
+export UPDATE_ZSH_DAYS=7 # Update every week
+
+# Zsh Configuration
+export COMPLETION_WAITING_DOTS="true" # Waiting dots
+zstyle ':completion:*' completer _complete _ignored
+zstyle :compinstall filename '~/.zshrc'
+
+# Initialize Zsh completion system
+autoload -Uz compinit
+compinit
+
+# Other Settings
+setopt autocd
+bindkey -e
+
+# Terminal Colors
+export PURP='\033[0;35m'
+export BLU='\033[0;34m'
+export YEL='\033[0;33m'
+export RED='\033[0;31m'
+export GRN='\033[0;92m'
+export WHT='\033[0;37m'
+export NC='\033[0m' # No Color
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+#
+##### System ####
+alias ..="cd .."
+alias please="sudo"
+alias vim="nvim"
+alias ls="ls -G"
+alias t="tree"
+alias l="tree -L 1"
+alias cls="clear"
+alias la="ls -lha"
+alias wakeGameBox="wakeonlan -i 10.0.255.255 A8:5E:45:E3:E2:35"
+alias wakeMacMini="wakeonlan -i 10.0.255.255 14:C2:13:ED:EF:FE"
+alias pubip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias listening="lsof -nP +c 15 | grep LISTEN"
+alias mount-nfs="sudo mount -t nfs -o nolocks,resvport,rw"
+alias hack_hosts="sudo vim /etc/hosts"
+alias chrome-socks='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --proxy-server="socks5://127.0.0.1:8080" --host-resolver-rules="MAP * 0.0.0.0 , EXCLUDE localhost"'
+
+#### Bettercap ####
+alias bc="sudo bettercap -iface en0"
+alias bce="sudo bettercap -iface en0 -eval\"$1\""
+alias bcui="sudo bettercap -iface en0 -eval \"ui on\""
+alias arp-mon="sudo bettercap -iface en0 -caplet ~/git/mon/caplets/arp-mon"
+
+#### K8S ####
+K8S_COMPLETER=$(which kubectl)
+if [ -n "$K8S_COMPLETER" ]; then
+  source <(kubectl completion zsh)
+fi
+
+alias k="kubectl"
+alias kctx="kubectx"
+alias kd="k describe"
+alias kdel="k delete"
+alias kex="k exec -it"
+alias kg="k get"
+alias kga="k get all"
+alias kgp="k get po"
+alias kl="k logs"
+alias kns="kubens"
+
+function kexec() {
+
+  pod=$(kgp | grep ${1} | awk '{print $1}')
+
+  kubectl exec -it ${pod} -c ${2} -- bash
+
+}
+
+function kdeleteNS() {
+  (
+    NAMESPACE=plrl-runtime
+    kubectl proxy &
+    kubectl get namespace $NAMESPACE -o json | jq '.spec = {"finalizers":[]}' >temp.json
+    curl -k -H "Content-Type: application/json" -X PUT --data-binary @temp.json 127.0.0.1:8001/api/v1/namespaces/$NAMESPACE/finalize
+  )
+}
+
+function kgrep() {
+
+  delete=""
+  resource=""
+  pattern=""
+  namespace=""
+
+  optspec="p:r:n:d"
+  while getopts "$optspec" optchar; do
+    case "${optchar}" in
+    p)
+      pattern=${OPTARG}
+      ;;
+    r)
+      resource=${OPTARG}
+      ;;
+    n)
+      namespace="-n${OPTARG}"
+      ;;
+    d)
+      delete="true"
+      ;;
+    *)
+      echo "Must Provide Proper Values!"
+      ;;
+    esac
+  done
+
+  # echo ":${resource} ${pattern} "
+  resources=$(kg ${resource} ${namespace} --no-headers=true | awk '/'${pattern}'/{print $1}')
+  echo ${resources}
+  echo
+
+  if [[ -n ${delete} ]]; then
+    echo ☠️ Deleteing Resources
+    echo ${resources} | xargs kubectl delete ${namespace} ${resource}
+  fi
+
+}
+
+# Helm
+alias h="helm"
+
+#### AWS ####
+# AWS CDK
+export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=true
+
+# AWS CLI Completer
+AWS_COMPLETER=$(which aws_completer)
+if [ -n "$AWS_COMPLETER" ]; then
+  complete -C "$AWS_COMPLETER" aws
+fi
+
+# OpenTofu
+alias tf="tofu"
+alias tfi="tofu init"
+alias tfp="tofu plan"
+alias tfa="tofu apply"
+alias tfaa="tofu apply -auto-approve"
+alias tfd="tofu destroy"
+alias tfs="tofu show"
+alias tfr="tofu refresh"
+alias tfo="tofu output"
+alias tfoj="tofu output --json | jq"
+
+#### Git ####
+alias g="git"
+alias gl="git log"
+alias gp="git push"
+alias gs="git status"
+alias gb="git branch"
+alias gc="git commit"
+alias gpll="git pull"
+alias gco="git checkout"
+alias gpm="git add .;git commit;git push"
+alias gpn="git add .;git commit;git push --no-verify"
+function gsquash() {
+  git reset $(git merge-base ${1} HEAD)
+  git add -A
+  git commit -m ${2}
+}
+function gprune() {
+  git fetch origin
+  git fetch --prune origin
+  git branch --merged | egrep -v "(^\*|master|main)" | xargs git branch -d
+}
+function gpa() {
+  git add --all
+  git commit -am ${1}
+  git push
+}
+
+### Arduino ###
+report_status() {
+  local msg_type=$1 # "error" or "success"
+  local msg=$2      # Message to display
+
+  case $msg_type in
+  error)
+    echo -e "${RED}🚫 Error:${WHT} $msg${NC}"
+    ;;
+  success)
+    echo -e "${GRN}$msg${WHT}${NC}\n"
+    ;;
+  *)
+    echo -e "${WHT}$msg${NC}"
+    ;;
+  esac
+}
+
+#### Vagrant ####
+# alias vup="vagrant up"
+# alias vhalt="vagrant halt"
+# alias vdestroy="vagrant destroy"
+# alias vssh="vagrant ssh"
+
+#### Docker ###
+export DOCKER_BUILDKIT=1
+alias d="docker"
+alias dc="docker-compose"
+alias dcd="docker-compose down"
+alias dcu="docker-compose up"
+alias dcs="docker-compose stop"
+alias dps="docker ps"
+alias di="docker images"
+alias dip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
+
+# alias drmfa="docker rm -f $(docker ps -aq)"
+
+#function drmi() {
+#while getopts 'f' flag; do
+#case "${flag}" in
+#f) force="-f"
+#shift "$((OPTIND-1))"
+#;;
+#esac
+#done
+#docker rmi ${force} $(docker images | grep "${1:-none}" | awk '{print $3}')
+#}
+
+#function dexec() {
+#docker exec -it $(docker ps -aqf "name=${1}") "${@:2}"
+#}
+
+#function dls() {
+#docker ps -af "name=$1"
+#}
+
+function enc() {
+  openssl des -in ${1} -out ${1}.enc
+}
+
+function dec() {
+  openssl des -d -in ${1} -out ${2:-decrypted.txt}
+}
+
+function decode() {
+  echo
+  echo ${1-TXVzdCBQcm92aWRlIEJhc2U2NCBFbmNvZGVkIFN0cmluZwo} | base64 --decode
+}
+
+### HTTP ###
+http-server() {
+  local port=9999 # default port
+  local dir="./"  # default directory
+
+  while [[ "$#" -gt 0 ]]; do
+    case $1 in
+    -p | --port)
+      port="$2"
+      shift
+      ;;
+    -d | --dir)
+      dir="$2"
+      shift
+      ;;
+    *)
+      echo "Unknown parameter passed: $1"
+      return 1
+      ;;
+    esac
+    shift
+  done
+
+  python3 -m http.server ${port} --directory ${dir}
+}
+
+#### SSH ####
+function ssh-wait() {
+  # Vars
+  HOST=$1
+  index=1
+  sleepSeconds=10
+  maxConnectionAttempts=30
+
+  # Wait for the box to become available via ssh
+  echo "\nAttemting to SSH to $HOST"
+
+  while (($index <= $maxConnectionAttempts)); do
+    printf "\nAttempt ${index} of ${maxConnectionAttempts}\n "
+    ssh -T -o ConnectTimeout=2 -o StrictHostKeyChecking=no $HOST date
+    case $? in
+    0)
+      echo " 👌 SSH Success"
+      ssh $HOST
+      break
+      ;;
+    *) echo "waiting ${sleepSeconds} seconds...💤" ;;
+    esac
+    sleep $sleepSeconds
+    ((index += 1))
+  done
+
+  if [ $index -ge $maxConnectionAttempts ]; then
+    echo "⛔️  Error: Max Connection Attemps, $HOST is unreachable "
+  fi
+}
+
+function ssh-init() {
+
+  HOST=${1}
+
+  echo "${PURP}Initializing Host: ${NC}${HOST}"
+  echo "${PURP}Creating ~/.bash_profile"
+  echo "${PURP}Installing CLI Tools${BLU}"
+  ssh -T ${HOST} <<ENDSSH >/dev/null
+cat << EOF > ~/.bash_profile
+
+sudo yum -y install\
+htop \
+> /dev/null
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
+
+# User specific aliases and functions
+alias la="ls -lah"
+alias cls="clear"
+alias ..="cd .."
+alias please="sudo"
+alias pubip="echo;curl -s http://whatismyip.akamai.com/;echo;echo"
+
+EOF
+ENDSSH
+
+  echo "${PURP}Copy Files:${BLU}"
+  scp ~/.vimrc ${HOST}:~/. >/dev/null
+
+  echo "${PURP}Entering Host: ${NC}${HOST}"
+  ssh ${HOST}
+}
+
+#### Autojump ####
+if [ $commands[autojump] ]; then                             # check if autojump is installed
+  if [ -f $HOME/.autojump/etc/profile.d/autojump.zsh ]; then # manual user-local installation
+    . $HOME/.autojump/etc/profile.d/autojump.zsh
+  elif [ -f $HOME/.autojump/share/autojump/autojump.zsh ]; then # another manual user-local installation
+    . $HOME/.autojump/share/autojump/autojump.zsh
+  elif [ -f $HOME/.nix-profile/etc/profile.d/autojump.zsh ]; then # nix installation
+    . $HOME/.nix-profile/etc/profile.d/autojump.zsh
+  elif [ -f /usr/share/autojump/autojump.zsh ]; then # debian and ubuntu package
+    . /usr/share/autojump/autojump.zsh
+  elif [ -f /etc/profile.d/autojump.zsh ]; then # manual installation
+    . /etc/profile.d/autojump.zsh
+  elif [ -f /etc/profile.d/autojump.sh ]; then # gentoo installation
+    . /etc/profile.d/autojump.sh
+  elif [ -f /usr/local/share/autojump/autojump.zsh ]; then # freebsd installation
+    . /usr/local/share/autojump/autojump.zsh
+  elif [ -f /opt/local/etc/profile.d/autojump.zsh ]; then # mac os x with ports
+    . /opt/local/etc/profile.d/autojump.zsh
+  elif [ $commands[brew] -a -f $(brew --prefix)/etc/autojump.zsh ]; then # mac os x with brew
+    . $(brew --prefix)/etc/autojump.zsh
+  elif [ -f /opt/brew/etc/profile.d/autojump.sh ]; then # mac os x with apple internal brew
+    . /opt/brew/etc/profile.d/autojump.sh
+  fi
+fi
+
+# Oh My Zsh
+source $ZSH/oh-my-zsh.sh
+
+#### Oh My Posh ####
+eval "$(oh-my-posh init zsh --config ~/git/provision/files/themes/oh-my-posh/kev.omp.json)"

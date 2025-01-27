@@ -1,0 +1,73 @@
+# # vim:ft=ansible
+
+unix_directories:
+  - ~/.history
+
+unix_packages:
+  - autojump
+  - btop
+  - coreutils
+  - curl
+  - git
+  - golang
+  - htop
+  - jq
+  - nmap
+  - python3-pip
+  - python3
+  - shellcheck
+  - tree
+  - vim
+  - watch
+  - wget
+  - zsh
+
+alpine:
+  files:
+    - { src: '.vimrc', dest: '~/.vimrc' }
+    - { src: '.zshrc-linux', dest: '~/.zshrc' }
+    - { src: '.zshrc-common', dest: '~/.zshrc-common' }
+
+darwin:
+  files:
+    - { src: '.vimrc', dest: '~/.vimrc' }
+    - { src: '.bashrc', dest: '~/.bashrc' }
+    - { src: '.zshrc-mac', dest: '~/.zshrc' }
+    - { src: 'ssh.config', dest: '~/.ssh/ssh.config' }
+    - { src: '.zshrc-common', dest: '~/.zshrc-common' }
+  casks:
+    - arduino-ide
+    - beekeeper-studio
+    - blender
+    - discord
+    - docker
+    - google-chrome
+    - lens
+    - logitech-g-hub
+    - slack
+    - spotify
+    - steam
+    - visual-studio-code
+    - vlc
+  packages:
+    - awscli
+    - balenaetcher
+    - helm
+    - iterm2
+    - kubectl
+    - kubectx
+
+debian:
+  files:
+    - { src: '.zshrc-common', dest: '~/.zshrc-common' }
+    - { src: '.zshrc-linux', dest: '~/.zshrc' }
+    - { src: '.Xmodmap', dest: '~/.Xmodmap' }
+    - { src: '.vimrc', dest: '~/.vimrc' }
+  packages:
+    - python3-winrm
+
+windows:
+  files:
+    - { src: 'MacToWinKeys.ahk', dest: '{{ lookup("env", "USERPROFILE") }}\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\MacToWinKeys.ahk' }
+    - { src: 'Microsoft.PowerShell_profile.ps1', dest: '{{ lookup("env", "USERPROFILE") }}\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1' }
+    - { src: 'themes/oh-my-posh/kev.omp.json', dest: '{{ lookup("env", "USERPROFILE") }}\Documents\WindowsPowerShell\kev.omp.json' }

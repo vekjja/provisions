@@ -1,0 +1,15 @@
+
+! Remap Caps_Lock to Control_L
+clear Lock
+add Control = Caps_Lock
+
+! Remap Super_L to Control_L
+remove mod4 = Super_L
+add control = Super_L
+
+! To Apply Changes Run:
+! xmodmap ~/.Xmodmap
+
+! To Get Key Codes Run:
+! xev
+

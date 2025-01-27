@@ -1,0 +1,16 @@
+# ZSH
+source ~/.zshrc-common
+
+#### PATH ####
+export PATH="$PATH:/bin:/sbin"
+export PATH="$PATH:/usr/bin:/usr/sbin"
+export PATH="$PATH:/usr/local/bin:/usr/local/sbin"
+export PATH="$PATH:$HOME/.local/bin"
+export PATH="$PATH:/mnt/c/Windows/System32"
+
+## Go
+export GOPATH="${HOME}/.go"
+export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
+export GOBIN=$GOPATH/bin
+export GOPROXY=https://proxy.golang.org,direct
+export PATH="${GOPATH}/bin:${GOROOT}/bin:$PATH"
