@@ -1,6 +1,6 @@
 # EMN DevOps initializer
 
-- name: Provision Local Machine
+- name: Provisions Local Machine
   hosts: localhost
   connection: local
   gather_facts: true

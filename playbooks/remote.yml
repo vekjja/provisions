@@ -1,6 +1,6 @@
 # EMN DevOps initializer
 
-- name: Provision Remote Environment
+- name: Provisions Remote Environment
   hosts: remote windows
   gather_facts: true
   roles:
