@@ -6,4 +6,4 @@ localhost
 [remote]
 
 [windows]
-winhost ansible_host=10.0.0.27 ansible_user=USER ansible_password=PASSWORD ansible_port=5985 ansible_connection=winrm ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore ansible_python_interpreter=C:\Python313\python.exe
+winhost ansible_host=10.0.0.27 ansible_port=5985 ansible_connection=winrm ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore ansible_python_interpreter=C:\Python313\python.exe
