@@ -1,7 +1,7 @@
-- name: Include Unix Tasks
+- name: Unix Tasks
   ansible.builtin.include_tasks: unix.yml
   when: ansible_distribution != 'Windows'
 
-- name: Include Windows Tasks
+- name: Windows Tasks
   ansible.builtin.include_tasks: windows.yml
   when: ansible_distribution == 'Windows'

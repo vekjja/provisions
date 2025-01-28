@@ -8,7 +8,6 @@
     state: directory
     mode: '0755'
   loop: "{{ unix_directories }}"
-  when: ansible_os_family != 'Windows'
 
 - name: Change the default shell to zsh
   become: true
@@ -39,11 +38,11 @@
     dest: /tmp/install-oh-my-posh.sh
     mode: '0755'
 
-- name: Install Oh My Posh (Mac/Linux)
+- name: Install Oh My Posh
   ansible.builtin.command:
     cmd: bash /tmp/install-oh-my-posh.sh
     creates: "{{ ansible_env.HOME }}/.poshthemes"
 
-- name: Include Debian WSL Tasks
+- name: Debian WSL
   ansible.builtin.include_tasks: debian.yml
   when: ansible_os_family == 'Debian'
