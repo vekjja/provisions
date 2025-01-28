@@ -26,12 +26,10 @@
   with_items: "{{ nerd_fonts }}"
   when: ansible_os_family == 'Darwin' 
 
-- name: Install Nerd Fonts (Windows)
-  ansible.builtin.win_unzip:
-    src: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/{{ item }}.zip"
-    dest: "C:\\Windows\\Fonts\\"
-    creates: "C:\\Windows\\Fonts\\{{ item }}"
-    remote_src: true
-    keep_newer: true
+- name: Download Nerd Fonts (Windows)
+  gather_facts: no
+  ansible.builtin.win_get_url:
+    url: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/{{ item }}.zip"
+    dest: "{{ ansible_env.HOME }}\\Downloads\\{{ item }}.zip"
   with_items: "{{ nerd_fonts }}"
   when: ansible_os_family == 'Windows'
