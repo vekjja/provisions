@@ -6,7 +6,7 @@
     creates: "/usr/local/share/fonts/{{ item }}"
     remote_src: true
     keep_newer: true
-    exclude: 
+    exclude:
       - "*.md"
       - "LICENSE*"
   with_items: "{{ nerd_fonts }}"
@@ -20,11 +20,11 @@
     creates: "/Library/Fonts/{{ item }}"
     remote_src: true
     keep_newer: true
-    exclude: 
+    exclude:
       - "*.md"
       - "LICENSE*"
   with_items: "{{ nerd_fonts }}"
-  when: ansible_os_family == 'Darwin' 
+  when: ansible_os_family == 'Darwin'
 
 - name: Get Windows Downloads folder
   ansible.builtin.win_shell: |
@@ -54,4 +54,3 @@
     state: absent
   with_items: "{{ nerd_fonts }}"
   when: ansible_os_family == 'Windows'
-
