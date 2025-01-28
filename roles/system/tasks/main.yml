@@ -61,4 +61,5 @@
     src: assets/configs/xfce-configs.tar.gz
     dest: "{{ ansible_env.HOME }}/.configs/xfce4"
     creates: "{{ ansible_env.HOME }}/.configs/xfce4"
+    remote_src: true
   tags: xfce
