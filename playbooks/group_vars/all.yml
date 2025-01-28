@@ -17,8 +17,6 @@ unix_packages:
 
 nerd_fonts:
   - "FiraMono"
-  - "FiraCode"
-  - "Go-Mono"
 
 alpine:
   files:
