@@ -84,15 +84,16 @@
 
 - name: Determine if Kali is Running in WSL
   ansible.builtin.command:
-    cmd: grep -qEi "(Microsoft|WSL)" /proc/version && echo true || echo false
+    cmd: grep -qEi "(Microsoft|WSL)" /proc/version
   register: kali_wsl_check
   changed_when: false
+  failed_when: false
   when: ansible_distribution == 'Kali'
   tags: wsl
 
 - name: Set fact for Kali Win Kex
   ansible.builtin.set_fact:
-    kali_wsl: "{{ kali_wsl_check.stdout | bool }}"
+    kali_wsl: "{{ kali_wsl_check.rc == 0 }}"
   when: ansible_distribution == 'Kali'
   tags: wsl
 
