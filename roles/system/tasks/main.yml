@@ -62,3 +62,4 @@
     dest: "{{ ansible_env.HOME }}/.configs/xfce4"
     creates: "{{ ansible_env.HOME }}/.configs/xfce4"
   when: lookup('vars', ansible_os_family | lower).xfce_configs | default([])
+  tags: xfce
