@@ -57,6 +57,7 @@ darwin:
 
 debian:
   xfce-configs: true
+  win-kex: false
   files:
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
     - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }

@@ -71,5 +71,5 @@
     update_cache: true
   environment:
     DEBIAN_FRONTEND: noninteractive
-  when: ansible_distribution == 'Kali'
+  when: ansible_distribution == 'Kali' and win_kex
   tags: kex
