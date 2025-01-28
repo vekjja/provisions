@@ -43,20 +43,20 @@
     state: present
   when: ansible_os_family != 'Windows'
 
-- name: Download Oh My Posh install script
+- name: Download Oh My Posh Install Script
   ansible.builtin.get_url:
     url: https://ohmyposh.dev/install.sh
     dest: /tmp/install-oh-my-posh.sh
     mode: '0755'
   when: ansible_os_family != 'Windows'
 
-- name: Install Oh My Posh Linux
+- name: Install Oh My Posh (Mac/Linux)
   ansible.builtin.command:
     cmd: bash /tmp/install-oh-my-posh.sh
     creates: "{{ ansible_env.HOME }}/.poshthemes"
   when: ansible_os_family != 'Windows'
 
-- name: Extract XFCE configs
+- name: Extract XFCE Configs
   become: true
   ansible.builtin.unarchive:
     src: "{{ playbook_dir }}/../assets/configs/xfce-configs.tar.gz"
@@ -68,7 +68,7 @@
     - debian.xfce_configs
   tags: xfce
 
-- name: Change ownership of XFCE config directory
+- name: Change Ownership of XFCE Config Directory
   become: true
   ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/.config/xfce4"
@@ -82,7 +82,19 @@
     - debian.xfce_configs
   tags: xfce
 
-- name: Install Kali Win Kex
+- name: Determine if Kali is Running in WSL
+  ansible.builtin.command:
+    cmd: grep -qEi "(Microsoft|WSL)" /proc/version && echo true || echo false
+  register: kali_wsl_check
+  changed_when: false
+  when: ansible_distribution == 'Kali'
+
+- name: Set fact for Kali Win Kex
+  ansible.builtin.set_fact:
+    kali_wsl: "{{ kali_wsl_check.stdout == 'true' }}"
+  when: ansible_distribution == 'Kali'
+
+- name: Install Kali WSL Packages
   become: true
   ansible.builtin.apt:
     name: kali-win-kex
@@ -90,5 +102,17 @@
     update_cache: true
   environment:
     DEBIAN_FRONTEND: noninteractive
-  when: ansible_distribution == 'Kali' and debian.win_kex
+  with_items:
+    - kali-win-kex
+    - python3-winrm
+  when: ansible_distribution == 'Kali' and kali_wsl
+  tags: kex
+
+- name: Change Default Shell - win-kex xstartup
+  become: true
+  ansible.builtin.replace:
+    path: /usr/lib/win-kex/xstartup
+    regexp: 'export SHELL=/bin/bash'
+    replace: 'export SHELL=/bin/zsh'
+  when: ansible_distribution == 'Kali' and kali_wsl
   tags: kex

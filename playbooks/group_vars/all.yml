@@ -55,7 +55,6 @@ darwin:
 
 debian:
   xfce_configs: true
-  win_kex: false
   files:
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
     - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
@@ -63,7 +62,6 @@ debian:
     - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
   packages:
     - bettercap
-    - python3-winrm
 
 windows:
   files:
