@@ -61,5 +61,5 @@
     src: assets/configs/xfce-configs.tar.gz
     dest: "{{ ansible_env.HOME }}/.configs/xfce4"
     creates: "{{ ansible_env.HOME }}/.configs/xfce4"
-  when: ansible_os_family == 'Debian' and debian.xfce_configs == true
+  when: ansible_os_family == 'Debian' and debian.xfce_configs is defined
   tags: xfce
