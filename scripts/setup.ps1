@@ -93,12 +93,12 @@ if ($winrmStatus -eq $null -or $winrmStatus.Status -ne "Running") {
 
 # Allow unencrypted connections (Required for Basic Auth)
 Write-Host ""
-Write-Host "Allowed unencrypted WinRM connections."
+Write-Host "Unencrypted WinRM Connections Allowed."
 Set-Item -Path WSMan:\localhost\Service\AllowUnencrypted -Value $true -ErrorAction Stop
 
 # Enable Basic Authentication (Required for Ansible)
 Set-Item -Path WSMan:\localhost\Service\Auth\Basic -Value $true -ErrorAction Stop
-Write-Host "Enabled Basic Authentication."
+Write-Host "Basic Authentication Enabled."
 
 # Retrieve the Debian WSL IP Address
 $wslIp = wsl -d $wslDistro --cd $knownDir -- hostname -I | ForEach-Object { $_.Trim() }
@@ -133,7 +133,7 @@ if ($existingHttpsListener) {
 
 # Restart WinRM service
 Restart-Service WinRM -Force
-Write-Host "Restarted WinRM service."
+Write-Host "Restarted WinRM Service."
 
 # Configure Windows Firewall for WinRM
 Write-Host ""

@@ -1,4 +1,3 @@
-" Kevin Jayne (kevin.jayne@icloud.com) vim configuration file
 
 " For all text files set 'textwidth' to 78 characters.
 autocmd FileType text setlocal textwidth=78
