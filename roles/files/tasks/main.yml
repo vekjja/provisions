@@ -1,6 +1,6 @@
-- name: Link OS-Specific Files
+- name: Link OS-Specific Files (Mac/Linux)
   ansible.builtin.file:
-    src: "{{ lookup('pipe', 'realpath ' + inventory_dir + '/../files/' + item.src) }}"
+    src: "{{ lookup('pipe', 'realpath ' + inventory_dir + '/../assets/' + item.src) }}"
     dest: "{{ item.dest }}"
     mode: "0644"
     state: link
@@ -11,7 +11,7 @@
 
 - name: Copy OS-Specific Files (Windows)
   ansible.builtin.copy:
-    src: "{{ lookup('pipe', 'realpath ' + inventory_dir + '/../files/' + item.src) }}"
+    src: "{{ lookup('pipe', 'realpath ' + inventory_dir + '/../assets/' + item.src) }}"
     dest: "{{ item.dest }}"
     mode: "0644"
   loop: "{{ lookup('vars', ansible_os_family | lower).files | default([]) }}"
