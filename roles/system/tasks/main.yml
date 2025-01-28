@@ -61,6 +61,5 @@
     src: assets/configs/xfce-configs.tar.gz
     dest: "{{ ansible_env.HOME }}/.config/xfce4"
     remote_src: true
-    force: true
   when: ansible_os_family != 'Windows'
   tags: xfce
