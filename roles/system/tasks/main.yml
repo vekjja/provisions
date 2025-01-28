@@ -94,6 +94,11 @@
     kali_wsl: "{{ kali_wsl_check.stdout | bool }}"
   when: ansible_distribution == 'Kali'
 
+- name: Debug kali_wsl value
+  ansible.builtin.debug:
+    msg: "kali_wsl is {{ kali_wsl }}"
+  when: ansible_distribution == 'Kali'
+
 - name: Install Kali WSL Packages
   become: true
   ansible.builtin.apt:
