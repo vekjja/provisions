@@ -74,7 +74,6 @@
     path: "{{ ansible_env.HOME }}/.config/xfce4"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
-    # mode: '0755'
     recurse: true
     state: directory
   when:
