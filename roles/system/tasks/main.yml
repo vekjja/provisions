@@ -65,8 +65,11 @@
 
 - name: Install Kali Win Kex
   become: true
-  ansible.builtin.package:
+  ansible.builtin.apt:
     name: kali-win-kex
     state: present
+    update_cache: true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
   when: ansible_distribution == 'Kali'
   tags: kex
