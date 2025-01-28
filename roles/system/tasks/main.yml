@@ -88,16 +88,19 @@
   register: kali_wsl_check
   changed_when: false
   when: ansible_distribution == 'Kali'
+  tags: wsl
 
 - name: Set fact for Kali Win Kex
   ansible.builtin.set_fact:
     kali_wsl: "{{ kali_wsl_check.stdout | bool }}"
   when: ansible_distribution == 'Kali'
+  tags: wsl
 
 - name: Debug kali_wsl value
   ansible.builtin.debug:
     msg: "kali_wsl is {{ kali_wsl }}"
   when: ansible_distribution == 'Kali'
+  tags: wsl
 
 - name: Install Kali WSL Packages
   become: true
@@ -111,7 +114,7 @@
     - kali-win-kex
     - python3-winrm
   when: ansible_distribution == 'Kali' and kali_wsl
-  tags: kex
+  tags: wsl
 
 - name: Change Default Shell - win-kex xstartup
   become: true
@@ -120,4 +123,4 @@
     regexp: 'export SHELL=/bin/bash'
     replace: 'export SHELL=/bin/zsh'
   when: ansible_distribution == 'Kali' and kali_wsl
-  tags: kex
+  tags: wsl
