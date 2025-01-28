@@ -19,7 +19,7 @@ set tabstop=2             " Number of spaces that a <Tab> in the file counts for
 set shiftwidth=2          " Number of spaces to use for each step of (auto)indent
 set laststatus=2          " Always display the status line
 set hidden                " Allow hiding buffers with unsaved changes
-set paste                 " (Consider removing or toggling as needed)
+" set paste               " Consider removing or toggling as needed
 set number                " Show line numbers
 set background=dark       " Set background to dark
 set backspace=indent,eol,start " Set backspace behavior
@@ -27,6 +27,19 @@ set backspace=indent,eol,start " Set backspace behavior
 " Force Defaults to UTF-8
 set encoding=utf-8
 " set fileencoding=utf-8  " Removed or moved to autocmd
+
+" Function to automatically open NERDTree
+function! OpenNERDTreeIfNeeded()
+  if argc() == 0 || (argc() == 1 && isdirectory(argv()[0]))
+    NERDTree
+  endif
+endfunction
+
+" Automatically open NERDTree when Vim starts without arguments or with a directory
+autocmd VimEnter * call OpenNERDTreeIfNeeded()
+
+" Exit Vim when NERDTree is the only window open
+" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " Set fileencoding via autocmd
 augroup set_fileencoding
@@ -97,12 +110,11 @@ let g:NERDTreeWinSize=25
 let NERDTreeShowHidden=1           " Show hidden files
 map <C-n> :NERDTreeToggle<CR>      " Open NERDTree with Ctrl+n 
 
-" Open NERDTree in new tabs and windows if no command line args set
-" NERDTree is e.g., not helpful if you do a git commit or something similar.
-autocmd VimEnter * if !argc() | NERDTree | endif
+" Automatically open NERDTree when Vim starts without arguments or with a directory
+autocmd VimEnter * call OpenNERDTreeIfNeeded()
 
-" Exit Vim when editor closed and NERDTree is the only window open
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" Exit Vim when NERDTree is the only window open
+" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " Indent Guides Settings
 let g:indent_guides_enable_on_vim_startup = 1
