@@ -6,6 +6,11 @@ Provisions Local/Remote Mac OS X, Linux and Windows
 curl -sL https://raw.githubusercontent.com/seemywingz/provisions/refs/heads/main/scripts/setup.sh | bash
 ```
 
+Add Custom Arguments
+```shell
+curl -sL https://raw.githubusercontent.com/seemywingz/provisions/refs/heads/main/scripts/setup.sh | bash -s -- [ARGUMENTS]
+```
+
 The script will install `git` and `ansible`, clone the repo locally to `~/git/provisions` and run  
 `ansible-playbook playbooks/local.yaml`
 
