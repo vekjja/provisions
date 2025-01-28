@@ -63,6 +63,14 @@
   when: ansible_distribution == 'Kali' and debian.xfce_configs
   tags: xfce
 
+- name: Change ownership of XFCE config directory
+  become: true
+  ansible.builtin.command:
+    cmd: chown -R "{{ ansible_user_id }}:{{ ansible_user_gid }}" "{{ ansible_env.HOME }}/.config/xfce4"
+    creates: "{{ ansible_env.HOME }}/.config/xfce4"
+  when: ansible_distribution == 'Kali' and debian.xfce_configs
+  tags: xfce
+
 - name: Install Kali Win Kex
   become: true
   ansible.builtin.apt:
