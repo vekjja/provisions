@@ -61,6 +61,7 @@
     src: "{{ playbook_dir }}/../assets/configs/xfce-configs.tar.gz"
     dest: "/"
   when: ansible_os_family != 'Windows'
+  tags: xfce
 
 - name: Install Kali Win Kex
   become: true
@@ -68,3 +69,4 @@
     name: kali-win-kex
     state: present
   when: ansible_distribution == 'Kali'
+  tags: kex
