@@ -1,64 +1,11 @@
-- name: Create Fonts Directories (Linux)
-  become: true
-  ansible.builtin.file:
-    path: "/usr/local/share/fonts/"
-    state: directory
-    mode: '0755'
+- name: Unix Tasks
+  ansible.builtin.include_tasks: unix.yml
   when: ansible_os_family not in ['Darwin', 'Windows']
 
-- name: Install Nerd Fonts (Linux)
-  become: true
-  ansible.builtin.unarchive:
-    src: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/{{ item }}.zip"
-    dest: "/usr/local/share/fonts/"
-    creates: "/usr/local/share/fonts/{{ item }}"
-    remote_src: true
-    keep_newer: true
-    exclude:
-      - "*.md"
-      - "LICENSE*"
-  with_items: "{{ nerd_fonts }}"
-  when: ansible_os_family not in ['Darwin', 'Windows']
+- name: Darwin Tasks
+  ansible.builtin.include_tasks: darwin.yml
+  when: ansible_distribution == 'Darwin'
 
-- name: Install Nerd Fonts (Darwin)
-  become: true
-  ansible.builtin.unarchive:
-    src: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/{{ item }}.zip"
-    dest: "/Library/Fonts/"
-    creates: "/Library/Fonts/{{ item }}"
-    remote_src: true
-    keep_newer: true
-    exclude:
-      - "*.md"
-      - "LICENSE*"
-  with_items: "{{ nerd_fonts }}"
-  when: ansible_os_family == 'Darwin'
-
-- name: Get Windows Downloads folder
-  ansible.builtin.win_shell: |
-    (New-Object -ComObject Shell.Application).NameSpace('shell:Downloads').Self.Path
-  register: downloads_folder
-  when: ansible_os_family == 'Windows'
-
-- name: Download Nerd Fonts (Windows)
-  ansible.builtin.win_get_url:
-    url: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/{{ item }}.zip"
-    dest: "{{ downloads_folder.stdout | trim }}\\{{ item }}.zip"
-  with_items: "{{ nerd_fonts }}"
-  when: ansible_os_family == 'Windows'
-
-- name: Install Nerd Fonts (Windows)
-  ansible.builtin.win_unzip:
-    src: "{{ downloads_folder.stdout | trim }}\\{{ item }}.zip"
-    dest: "C:\\Windows\\Fonts"
-    creates: "C:\\Windows\\Fonts\\{{ item }}"
-    keep_newer: true
-  with_items: "{{ nerd_fonts }}"
-  when: ansible_os_family == 'Windows'
-
-- name: Clean up downloaded files
-  ansible.builtin.win_file:
-    path: "{{ downloads_folder.stdout | trim }}\\{{ item }}.zip"
-    state: absent
-  with_items: "{{ nerd_fonts }}"
-  when: ansible_os_family == 'Windows'
+- name: Windows Tasks
+  ansible.builtin.include_tasks: windows.yml
+  when: ansible_distribution == 'Windows'

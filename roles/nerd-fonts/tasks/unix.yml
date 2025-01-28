@@ -1,0 +1,19 @@
+- name: Create Fonts Directories (Linux)
+  become: true
+  ansible.builtin.file:
+    path: "/usr/local/share/fonts/"
+    state: directory
+    mode: '0755'
+
+- name: Install Nerd Fonts (Linux)
+  become: true
+  ansible.builtin.unarchive:
+    src: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/{{ item }}.zip"
+    dest: "/usr/local/share/fonts/"
+    creates: "/usr/local/share/fonts/{{ item }}"
+    remote_src: true
+    keep_newer: true
+    exclude:
+      - "*.md"
+      - "LICENSE*"
+  with_items: "{{ nerd_fonts }}"

@@ -1,0 +1,24 @@
+- name: Get Windows Downloads folder
+  ansible.builtin.win_shell: |
+    (New-Object -ComObject Shell.Application).NameSpace('shell:Downloads').Self.Path
+  register: downloads_folder
+
+- name: Download Nerd Fonts (Windows)
+  ansible.builtin.win_get_url:
+    url: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/{{ item }}.zip"
+    dest: "{{ downloads_folder.stdout | trim }}\\{{ item }}.zip"
+  with_items: "{{ nerd_fonts }}"
+
+- name: Install Nerd Fonts (Windows)
+  ansible.builtin.win_unzip:
+    src: "{{ downloads_folder.stdout | trim }}\\{{ item }}.zip"
+    dest: "C:\\Windows\\Fonts"
+    creates: "C:\\Windows\\Fonts\\{{ item }}"
+    keep_newer: true
+  with_items: "{{ nerd_fonts }}"
+
+- name: Clean up downloaded files
+  ansible.builtin.win_file:
+    path: "{{ downloads_folder.stdout | trim }}\\{{ item }}.zip"
+    state: absent
+  with_items: "{{ nerd_fonts }}"

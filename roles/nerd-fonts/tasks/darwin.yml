@@ -1,0 +1,12 @@
+- name: Install Nerd Fonts (Darwin)
+  become: true
+  ansible.builtin.unarchive:
+    src: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/{{ item }}.zip"
+    dest: "/Library/Fonts/"
+    creates: "/Library/Fonts/{{ item }}"
+    remote_src: true
+    keep_newer: true
+    exclude:
+      - "*.md"
+      - "LICENSE*"
+  with_items: "{{ nerd_fonts }}"
