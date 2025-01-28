@@ -56,8 +56,8 @@ darwin:
     - kubectx
 
 debian:
-  xfce-configs: true
-  win-kex: false
+  xfce_configs: true
+  win_kex: false
   files:
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
     - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }

@@ -60,7 +60,7 @@
   ansible.builtin.unarchive:
     src: "{{ playbook_dir }}/../assets/configs/xfce-configs.tar.gz"
     dest: "/"
-  when: ansible_os_family != 'Windows'
+  when: ansible_distribution == 'Kali' and debian.xfce_configs
   tags: xfce
 
 - name: Install Kali Win Kex
@@ -71,5 +71,5 @@
     update_cache: true
   environment:
     DEBIAN_FRONTEND: noninteractive
-  when: ansible_distribution == 'Kali' and debian.win-kex
+  when: ansible_distribution == 'Kali' and debian.win_kex
   tags: kex
