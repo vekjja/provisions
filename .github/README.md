@@ -19,6 +19,8 @@ This script will install `wsl --distro Debian`, `Chocolatey` and `Python` on the
 It will also configure _Windows Remote Management_ to allow connection from WSL.
 
 Once setup succeeds on the Windows host, enter `wsl -d Debian` and run the Linux install script above.  
+You may need to run `sudo apt update && sudo apt install curl -y` first.
+
 Navigate to `~/git/provisions` and add the file `playbooks/group_vars/windows.yaml` with contents:
 ```
 ansible_user: YOUR_WINDOWS_USER
