@@ -56,9 +56,9 @@
     creates: "{{ ansible_env.HOME }}/.poshthemes"
   when: ansible_os_family != 'Windows'
 
-- name: PIP Install pywinrm[kerberos]
-  become: "{{ use_sudo }}"
-  ansible.builtin.pip:
-    name: "pywinrm[kerberos]"
-    extra_args: "--break-system-packages"
-  when: ansible_os_family != 'Windows' and ansible_distribution == 'Debian'
+- name: Extract XFCE configs
+  ansible.builtin.unarchive:
+    src: assets/configs/xfce-configs.tar.gz
+    dest: "{{ ansible_env.HOME }}/.configs/xfce"
+    creates: "{{ ansible_env.HOME }}/.configs/xfce"
+  when: lookup('vars', ansible_os_family | lower).xfce_configs | default([])
