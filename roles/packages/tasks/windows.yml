@@ -1,0 +1,4 @@
+- name: Install Windows Packages (Chocolatey)
+  ansible.builtin.win_chocolatey:
+    name: "{{ lookup('vars', 'windows').packages | default([]) }}"
+    state: present

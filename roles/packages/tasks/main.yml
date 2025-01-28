@@ -1,37 +1,8 @@
 # vim:ft=ansible
-- name: Set Privilege Escalation Requirements
-  ansible.builtin.set_fact:
-    use_sudo: "{{ ansible_os_family != 'Darwin' and ansible_os_family != 'Windows' }}"
+- name: Unix Tasks
+  ansible.builtin.include_tasks: unix.yml
+  when: ansible_distribution != 'Windows'
 
-- name: Install Unix Packages
-  ansible.builtin.package:
-    name: "{{ unix_packages }}"
-    state: present
-  become: "{{ use_sudo }}"
-  become_flags: "-n"
-  when: unix_packages is defined and ansible_os_family != 'Windows'
-
-- name: Install OS-Specific Packages (Mac/Linux)
-  ansible.builtin.package:
-    name: "{{ lookup('vars', ansible_os_family | lower).packages | default([]) }}"
-    state: present
-  become: "{{ use_sudo }}"
-  when: lookup('vars', ansible_os_family | lower).packages is defined and ansible_os_family != 'Windows'
-
-- name: Install OS-Specific Packages (Windows)
-  ansible.builtin.win_chocolatey:
-    name: "{{ lookup('vars', 'windows').packages | default([]) }}"
-    state: present
-  when: ansible_os_family == "Windows"
-
-- name: Install Mac Casks
-  ansible.builtin.homebrew_cask:
-    name: "{{ lookup('vars', ansible_os_family | lower).casks | default([]) }}"
-    state: present
-  when: ansible_os_family == 'Darwin'
-
-- name: Install Windows Packages (Chocolatey)
-  ansible.builtin.win_chocolatey:
-    name: "{{ lookup('vars', 'windows').packages | default([]) }}"
-    state: present
-  when: ansible_os_family == "Windows"
+- name: Windows Tasks
+  ansible.builtin.include_tasks: windows.yml
+  when: ansible_distribution == 'Windows'
