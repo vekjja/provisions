@@ -1,7 +1,7 @@
 # Inventory File for Ansible
 
 [local]
-localhost
+localhost ansible_connection=local
 
 [remote]
 

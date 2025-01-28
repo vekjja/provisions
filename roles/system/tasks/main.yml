@@ -17,24 +17,17 @@
     shell: /bin/zsh
   when: ansible_os_family != 'Windows'
 
-- name: Unset ZSH environment variable
-  ansible.builtin.command:
-    cmd: /bin/sh -c 'if [ -n "$ZSH" ]; then unset ZSH; fi'
-    creates: /home/{{ ansible_user_id }}/.zshrc
-  when: ansible_os_family != 'Windows'
-
-- name: Prepare Oh My Zsh Installation Location
-  become: "{{ use_sudo }}"
+- name: Remove existing Oh My Zsh directory
+  become: true
   ansible.builtin.file:
-    path: /home/{{ ansible_user_id }}/.zshrc
+    path: "{{ ansible_env.HOME }}/.oh-my-zsh"
     state: absent
   when: ansible_os_family != 'Windows'
 
 - name: Install Oh My Zsh
-  # become: "{{ use_sudo }}"
   ansible.builtin.shell:
-    cmd: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    creates: /home/{{ ansible_user_id }}/.oh-my-zsh
+    cmd: unset ZSH && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    creates: "{{ ansible_env.HOME }}/.oh-my-zsh"
   when: ansible_os_family != 'Windows'
 
 - name: Install Oh My Posh on Windows
@@ -50,10 +43,17 @@
     state: present
   when: ansible_os_family != 'Windows'
 
+- name: Download Oh My Posh install script
+  ansible.builtin.get_url:
+    url: https://ohmyposh.dev/install.sh
+    dest: /tmp/install-oh-my-posh.sh
+    mode: '0755'
+  when: ansible_os_family != 'Windows'
+
 - name: Install Oh My Posh Linux
-  ansible.builtin.shell:
-    cmd: curl -s https://ohmyposh.dev/install.sh | bash -s
-    creates: /home/{{ ansible_user_id }}/.oh-my-posh
+  ansible.builtin.command:
+    cmd: bash /tmp/install-oh-my-posh.sh
+    creates: "{{ ansible_env.HOME }}/.poshthemes"
   when: ansible_os_family != 'Windows'
 
 - name: PIP Install pywinrm[kerberos]
