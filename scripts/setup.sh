@@ -92,7 +92,7 @@ fi
 
 # Run Ansible Playbook
 cd "$GIT_DIR/$REPO_NAME"
-ansiblePlaybook="playbooks/local.yml"
+ansiblePlaybook="playbooks/provision.yml"
 echo "Running Setup: ansible-playbook ${ansibleOptions} ${ansiblePlaybook}"
 ansible-playbook ${ansibleOptions} ${ansiblePlaybook}
 exitOnError $? "Running Ansible Playbook"
