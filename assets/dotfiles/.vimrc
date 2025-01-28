@@ -19,14 +19,12 @@ set tabstop=2             " Number of spaces that a <Tab> in the file counts for
 set shiftwidth=2          " Number of spaces to use for each step of (auto)indent
 set laststatus=2          " Always display the status line
 set hidden                " Allow hiding buffers with unsaved changes
-" set paste               " Consider removing or toggling as needed
 set number                " Show line numbers
 set background=dark       " Set background to dark
 set backspace=indent,eol,start " Set backspace behavior
 
 " Force Defaults to UTF-8
 set encoding=utf-8
-" set fileencoding=utf-8  " Removed or moved to autocmd
 
 " Function to automatically open NERDTree
 function! OpenNERDTreeIfNeeded()
@@ -38,9 +36,6 @@ endfunction
 " Automatically open NERDTree when Vim starts without arguments or with a directory
 autocmd VimEnter * call OpenNERDTreeIfNeeded()
 
-" Exit Vim when NERDTree is the only window open
-" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
 " Set fileencoding via autocmd
 augroup set_fileencoding
   autocmd!
@@ -48,10 +43,14 @@ augroup set_fileencoding
 augroup END
 
 " Enable Mouse Support with SGR (xterm 1006 mouse support for more lines)
-set mouse+=a
+set mouse=a
 if !has('nvim')
   set ttymouse=xterm2
 endif
+
+" Ensure NERDTree Mouse Selection Works
+autocmd FileType nerdtree setlocal mouse=a
+let g:NERDTreeMouseMode=3
 
 " VIM-Markdown Configuration
 let g:vim_markdown_folding_disabled=1
@@ -59,20 +58,6 @@ let g:vim_markdown_folding_disabled=1
 " Syntax Highlighting and Filetype Settings
 syntax on
 au BufNewFile,BufRead Jenkinsfile setf groovy
-
-" Clipboard Settings (Commented Out)
-" set clipboard=unnamedplus
-" yank to clipboard
-" requires: 
-"    brew install reattach-to-user-namespace 
-"    brew install vim --with-client-server
-" if has("clipboard")
-  " set clipboard=unnamed " copy to the system clipboard
-
-  " if has("unnamedplus") " X11 support
-    " set clipboard+=unnamedplus
-  " endif
-" endif
 
 " Set autoreading to on
 set autoread
@@ -105,16 +90,9 @@ call plug#end()
 " colorscheme dracula
 
 " NERDTree Settings
-let g:NERDTreeMouseMode=3
 let g:NERDTreeWinSize=25
-let NERDTreeShowHidden=1           " Show hidden files
+let g:NERDTreeShowHidden=1           " Show hidden files
 map <C-n> :NERDTreeToggle<CR>      " Open NERDTree with Ctrl+n 
-
-" Automatically open NERDTree when Vim starts without arguments or with a directory
-autocmd VimEnter * call OpenNERDTreeIfNeeded()
-
-" Exit Vim when NERDTree is the only window open
-" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " Indent Guides Settings
 let g:indent_guides_enable_on_vim_startup = 1
@@ -129,7 +107,6 @@ function! NumberToggle()
     set norelativenumber
   else
     set number
-    " set relativenumber
   endif
 endfunction
 map <C-m> :call NumberToggle()<CR>
@@ -137,14 +114,9 @@ map <C-m> :call NumberToggle()<CR>
 " Autocommand Group for Additional Settings
 augroup vimrcEx
   autocmd!
-  
   " When editing a file, always jump to the last known cursor position.
-  " Don't do it when the position is invalid or when inside an event handler
-  " (happens when dropping a file on gvim).
-  " Also don't do it when the mark is in the first line, that is the default
-  " position when opening a file.
-  " autocmd BufReadPost *
-  "   \ if line("'\"") > 1 && line("'\"") <= line("$") |
-  "   \   exe "normal! g`\"" |
-  "   \ endif
+  autocmd BufReadPost *
+    \ if line("'\"") > 1 && line("'\"") <= line("$") |
+    \   exe "normal! g`\"" |
+    \ endif
 augroup END
