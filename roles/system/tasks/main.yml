@@ -91,7 +91,7 @@
 
 - name: Set fact for Kali Win Kex
   ansible.builtin.set_fact:
-    kali_wsl: "{{ kali_wsl_check.stdout == 'true' }}"
+    kali_wsl: "{{ kali_wsl_check.stdout | bool }}"
   when: ansible_distribution == 'Kali'
 
 - name: Install Kali WSL Packages
