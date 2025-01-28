@@ -11,10 +11,10 @@
     kali_wsl: "{{ kali_wsl_check.rc == 0 }}"
   tags: kali-wsl
 
-- name: Debug kali_wsl value
-  ansible.builtin.debug:
-    msg: "kali_wsl is {{ kali_wsl }}"
-  tags: kali-wsl
+# - name: Debug kali_wsl value
+#   ansible.builtin.debug:
+#     msg: "kali_wsl is {{ kali_wsl }}"
+#   tags: kali-wsl
 
 - name: Install Kali WSL Packages
   become: true

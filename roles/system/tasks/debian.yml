@@ -20,7 +20,7 @@
     - debian.xfce_configs
   tags: xfce
 
-- name: Include Kali WSL Tasks
-  ansible.builtin.include_tasks: kali-wsl.yml
+- name: Kali Tasks
+  ansible.builtin.include_tasks: kali.yml
   when: ansible_distribution == 'Kali'
-  tags: kali-wsl
+  tags: kali

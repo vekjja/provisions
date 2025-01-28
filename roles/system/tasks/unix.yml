@@ -43,6 +43,7 @@
     cmd: bash /tmp/install-oh-my-posh.sh
     creates: "{{ ansible_env.HOME }}/.poshthemes"
 
-- name: Debian
+- name: Debian Tasks
   ansible.builtin.include_tasks: debian.yml
   when: ansible_os_family == 'Debian'
+  tags: debian
