@@ -1,4 +1,5 @@
 - name: Create Fonts Directories (Linux)
+  become: true
   ansible.builtin.file:
     path: "/usr/local/share/fonts/"
     state: directory
