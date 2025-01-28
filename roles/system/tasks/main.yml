@@ -82,7 +82,6 @@
     - debian.xfce_configs
   tags: xfce
 
-
 - name: Install Kali Win Kex
   become: true
   ansible.builtin.apt:
