@@ -6,62 +6,58 @@ if (-not $currentUser.IsInRole([Security.Principal.WindowsBuiltInRole]::Administ
 }
 
 # Ensure WSL is installed
+$wslDistro = "Debian"
 if (!(Get-Command "wsl" -ErrorAction SilentlyContinue)) {
-    Write-Host "WSL is not installed. Installing WSL with Debian..."
-    wsl --install --distribution Debian
-    Write-Host "WSL Debian installation initiated. Restart and run the script again." -ForegroundColor Yellow
+    Write-Host "WSL is not installed. Installing WSL with $wslDistro..."
+    wsl --install --distribution $wslDistro
+    Write-Host "WSL $wslDistro installation initiated. Restart and run the script again." -ForegroundColor Yellow
     exit 1
 } else {
-    Write-Host "WSL is installed."
+    Write-Host "WSL $wslDistro is installed."
 }
 
 # Check if Debian is installed correctly
 $wslDistros = wsl.exe --list --quiet | ForEach-Object { $_.Trim() }
-if ($wslDistros -contains "Debian") {
-    Write-Host "Debian is already installed in WSL."
+if ($wslDistros -contains $wslDistro) {
+    Write-Host ""
 } else {
-    Write-Host "Debian is not installed. Installing now..."
-    wsl --install --distribution Debian
-    Write-Host "Debian installation started. Restart and rerun this script."
+    Write-Host "$wslDistro is not installed. Installing now..."
+    wsl --install --distribution $wslDistro
+    Write-Host "$wslDistro installation started. Restart and rerun this script."
     exit 1
 }
+
+# Set WSL working directory to a known location
+$knownDir = "/mnt/c"
+wsl -d $wslDistro --cd $knownDir -- bash -c "cd $knownDir"
 
 # Ensure Debian is fully initialized
 Write-Host "Checking if Debian is fully initialized..."
-$debianCheck = wsl -d Debian -- bash -c "echo 'WSL Debian Ready'"
-if ($debianCheck -notmatch "WSL Debian Ready") {
-    Write-Host "Debian is installed but not fully initialized. Launching Debian..."
-    wsl -d Debian
-    Write-Host "Restart and rerun this script once Debian has fully initialized."
+$debianCheck = wsl -d $wslDistro --cd $knownDir -- bash -c "echo 'WSL $wslDistro Ready'"
+if ($debianCheck -notmatch "WSL $wslDistro Ready") {
+    Write-Host "$wslDistro is installed but not fully initialized. Launching Debian..."
+    wsl -d $wslDistro --cd ~
+    Write-Host "Restart and rerun this script once $wslDistro has fully initialized."
     exit 1
 }
-
-# Retrieve the Debian WSL IP Address
-$wslIp = wsl -d Debian -- hostname -I | ForEach-Object { $_.Trim() }
-if (-not $wslIp) {
-    Write-Host "Failed to retrieve WSL Debian IP address!" -ForegroundColor Red
-    exit 1
-}
-Write-Host "WSL Debian IP Address: $wslIp"
 
 # Install Chocolatey (if not already installed)
 if (!(Get-Command "choco" -ErrorAction SilentlyContinue)) {
     Write-Host "Installing Chocolatey..."
     Set-ExecutionPolicy Bypass -Scope Process -Force
     [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-    iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
     refreshenv
-} else {
-    Write-Host "Chocolatey is already installed."
 }
 
+Write-Host ""
 # Install Python and Pip
-Write-Host "Installing Python and Pip via Chocolatey..."
 choco install python -y
 
 # Verify Python Installation
 $pythonInstalled = Get-Command "python" -ErrorAction SilentlyContinue
 if ($pythonInstalled) {
+    Write-Host ""
     Write-Host "Python installed successfully."
     python --version
 } else {
@@ -72,6 +68,7 @@ if ($pythonInstalled) {
 # Verify Pip Installation
 $pipInstalled = Get-Command "pip" -ErrorAction SilentlyContinue
 if ($pipInstalled) {
+    Write-Host ""
     Write-Host "Pip installed successfully."
     pip --version
 } else {
@@ -82,6 +79,7 @@ if ($pipInstalled) {
 # Enable and start WinRM service
 $winrmStatus = Get-Service -Name WinRM -ErrorAction SilentlyContinue
 if ($winrmStatus -eq $null -or $winrmStatus.Status -ne "Running") {
+    Write-Host ""
     Write-Host "Enabling WinRM..."
     winrm quickconfig -quiet
     if ($LASTEXITCODE -ne 0) {
@@ -89,16 +87,25 @@ if ($winrmStatus -eq $null -or $winrmStatus.Status -ne "Running") {
         exit 1
     }
 } else {
-    Write-Host "WinRM is already running."
+    Write-Host ""
+    Write-Host "WinRM is running."
 }
 
 # Allow unencrypted connections (Required for Basic Auth)
-Set-Item -Path WSMan:\localhost\Service\AllowUnencrypted -Value $true -ErrorAction Stop
+Write-Host ""
 Write-Host "Allowed unencrypted WinRM connections."
+Set-Item -Path WSMan:\localhost\Service\AllowUnencrypted -Value $true -ErrorAction Stop
 
 # Enable Basic Authentication (Required for Ansible)
 Set-Item -Path WSMan:\localhost\Service\Auth\Basic -Value $true -ErrorAction Stop
 Write-Host "Enabled Basic Authentication."
+
+# Retrieve the Debian WSL IP Address
+$wslIp = wsl -d $wslDistro --cd $knownDir -- hostname -I | ForEach-Object { $_.Trim() }
+if (-not $wslIp) {
+    Write-Host "Failed to retrieve WSL $wslDistro IP address!" -ForegroundColor Red
+    exit 1
+}
 
 # Configure TrustedHosts to include the Debian WSL IP
 $currentTrusted = (Get-Item WSMan:\localhost\Client\TrustedHosts).Value
@@ -112,9 +119,11 @@ Write-Host "Added WSL Debian ($wslIp) to TrustedHosts."
 # Check if HTTPS Listener Exists
 $existingHttpsListener = winrm enumerate winrm/config/listener | Select-String "Transport = HTTPS"
 if ($existingHttpsListener) {
-    Write-Host "HTTPS Listener is already configured."
+    Write-Host ""
+    Write-Host "HTTPS Listener configured."
 } else {
     # Configure HTTPS Listener
+    Write-Host ""
     Write-Host "Configuring HTTPS Listener for WinRM..."
     $cert = New-SelfSignedCertificate -CertStoreLocation Cert:\LocalMachine\My -DnsName "$wslIp"
     $thumbprint = $cert.Thumbprint
@@ -126,16 +135,8 @@ if ($existingHttpsListener) {
 Restart-Service WinRM -Force
 Write-Host "Restarted WinRM service."
 
-# Verify WinRM listener
-$listener = winrm enumerate winrm/config/listener
-if ($listener -match "Transport = HTTP" -and $listener -match "Transport = HTTPS" -and $listener -match "Enabled = true") {
-    Write-Host "WinRM is properly configured with both HTTP and HTTPS listeners."
-} else {
-    Write-Host "WinRM configuration failed. Check settings manually." -ForegroundColor Red
-    exit 1
-}
-
 # Configure Windows Firewall for WinRM
+Write-Host ""
 Write-Host "Configuring Windows Firewall for WinRM..."
 
 # Open WinRM HTTP (port 5985)
@@ -143,7 +144,7 @@ if (!(Get-NetFirewallRule -DisplayName "Allow WinRM" -ErrorAction SilentlyContin
     New-NetFirewallRule -DisplayName "Allow WinRM" -Direction Inbound -Protocol TCP -LocalPort 5985 -Action Allow
     Write-Host "Opened port 5985 for WinRM HTTP"
 } else {
-    Write-Host "WinRM HTTP port is already allowed in the firewall."
+    Write-Host "WinRM HTTP port allowed in the firewall."
 }
 
 # Open WinRM HTTPS (port 5986)
@@ -151,13 +152,22 @@ if (!(Get-NetFirewallRule -DisplayName "Allow WinRM Secure" -ErrorAction Silentl
     New-NetFirewallRule -DisplayName "Allow WinRM Secure" -Direction Inbound -Protocol TCP -LocalPort 5986 -Action Allow
     Write-Host "Opened port 5986 for WinRM HTTPS"
 } else {
-    Write-Host "WinRM HTTPS port is already allowed in the firewall."
+    Write-Host "WinRM HTTPS port allowed in the firewall."
 }
 
+# Verify WinRM listener
+$listener = winrm enumerate winrm/config/listener
+if ($listener -match "Transport = HTTP" -and $listener -match "Transport = HTTPS" -and $listener -match "Enabled = true") {
+    Write-Host ""
+    Write-Host "WinRM is properly configured with both HTTP and HTTPS listeners."
+} else {
+    Write-Host "WinRM configuration failed. Check settings manually." -ForegroundColor Red
+    exit 1
+}
 Write-Host "Current WinRM Listeners:"
 winrm enumerate winrm/config/listener
 if ($?) {
-    Write-Host "Python, Pip, and WinRM setup completed successfully!" -ForegroundColor Green
+    Write-Host "Setup completed successfully!" -ForegroundColor Green
 } else {
     Write-Host "WinRM failed to list listeners." -ForegroundColor Red
 }
