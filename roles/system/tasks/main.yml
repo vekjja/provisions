@@ -58,7 +58,7 @@
 
 - name: Extract XFCE configs
   ansible.builtin.unarchive:
-    src: "{{ playbook_dir }}/assets/configs/xfce-configs.tar.gz"
+    src: "{{ playbook_dir }}/../assets/configs/xfce-configs.tar.gz"
     dest: "{{ ansible_env.HOME }}/.config/xfce4"
   when: ansible_os_family != 'Windows'
   tags: xfce
