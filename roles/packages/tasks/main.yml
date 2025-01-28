@@ -29,3 +29,9 @@
     name: "{{ lookup('vars', ansible_os_family | lower).casks | default([]) }}"
     state: present
   when: ansible_os_family == 'Darwin'
+
+- name: Install Windows Packages (Chocolatey)
+  ansible.builtin.win_chocolatey:
+    name: "{{ lookup('vars', 'windows').packages | default([]) }}"
+    state: present
+  when: ansible_os_family == "Windows"
