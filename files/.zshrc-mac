@@ -1,6 +1,4 @@
 # ZSH
-source ~/.zshrc-common
-source ~/.api-keys
 
 #### PATH ####
 export PATH="$PATH:/usr/local/bin:/usr/local/sbin"
@@ -20,6 +18,9 @@ export GOBIN=$GOPATH/bin
 export GOROOT="$(brew --prefix golang)/libexec"
 export GOPROXY=https://proxy.golang.org,direct
 export PATH="${GOPATH}/bin:${GOROOT}/bin:$PATH"
+
+source ~/.zshrc-common
+source ~/.api-keys
 
 ## Mac Aliases
 alias flush_dns="sudo killall -HUP mDNSResponder"

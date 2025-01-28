@@ -1,5 +1,4 @@
 # ZSH
-source ~/.zshrc-common
 
 #### PATH ####
 export PATH="$PATH:/bin:/sbin"
@@ -14,3 +13,5 @@ export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
 export GOBIN=$GOPATH/bin
 export GOPROXY=https://proxy.golang.org,direct
 export PATH="${GOPATH}/bin:${GOROOT}/bin:$PATH"
+
+source ~/.zshrc-common
