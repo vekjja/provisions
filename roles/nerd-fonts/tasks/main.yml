@@ -42,20 +42,16 @@
 - name: Install Nerd Fonts (Windows)
   ansible.builtin.win_unzip:
     src: "{{ downloads_folder.stdout | trim }}\\{{ item }}.zip"
-    dest: "{{ ansible_env.USERPROFILE }}\\AppData\\Local\\Microsoft\\Windows\\Fonts"
-    creates: "{{ ansible_env.USERPROFILE }}\\AppData\\Local\\Microsoft\\Windows\\Fonts\\{{ item }}"
+    dest: "C:\\Windows\\Fonts"
+    creates: "C:\\Windows\\Fonts\\{{ item }}"
     keep_newer: true
   with_items: "{{ nerd_fonts }}"
   when: ansible_os_family == 'Windows'
 
-- name: Register Nerd Fonts (Windows)
-  ansible.builtin.win_shell: |
-    $fonts = Get-ChildItem -Path "{{ ansible_env.USERPROFILE }}\AppData\Local\Microsoft\Windows\Fonts" -Include "*.ttf", "*.otf"
-    foreach ($font in $fonts) {
-      $fontName = [System.IO.Path]::GetFileNameWithoutExtension($font.Name)
-      if ($font.Extension -eq ".ttf") { $fontName = "$fontName (TrueType)" }
-      if ($font.Extension -eq ".otf") { $fontName = "$fontName (OpenType)" }
-      $fontPath = $font.Name  # Store only the filename, not the full path
-      New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts" -Name $fontName -Value $fontPath -PropertyType String -Force
-    }
+- name: Clean up downloaded files
+  ansible.builtin.win_file:
+    path: "{{ downloads_folder.stdout | trim }}\\{{ item }}.zip"
+    state: absent
+  with_items: "{{ nerd_fonts }}"
   when: ansible_os_family == 'Windows'
+

@@ -23,7 +23,7 @@ unix_packages:
   - zsh
 
 nerd_fonts:
-  # - "FiraMono"
+  - "FiraMono"
   - "FiraCode"
   - "DaddyTimeMono"
   - "Go-Mono"
