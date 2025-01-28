@@ -60,9 +60,9 @@
   become: true
   ansible.builtin.unarchive:
     src: "{{ playbook_dir }}/../assets/configs/xfce-configs.tar.gz"
-    dest: "{{ ansible_env.HOME }}/"
+    dest: "{{ ansible_env.HOME }}/.config"
     remote_src: true
-    extra_opts: [--strip-components=2]
+    extra_opts: [--strip-components=1]
   when:
     - ansible_distribution == 'Kali'
     - debian.xfce_configs is defined
@@ -73,28 +73,17 @@
   become: true
   ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/.config/xfce4"
-    state: directory
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
+    mode: '0755'
     recurse: true
+    state: directory
   when:
     - ansible_distribution == 'Kali'
     - debian.xfce_configs is defined
     - debian.xfce_configs
   tags: xfce
 
-
-# - name: Extract XFCE configs
-#   ansible.builtin.unarchive:
-#     src: "{{ playbook_dir }}/../assets/configs/xfce-configs.tar.gz"
-#     dest: "{{ ansible_env.HOME }}/.config"
-#     owner: "{{ ansible_user_id }}"
-#     group: "{{ ansible_user_gid }}"
-#     mode: '0755'
-#   when:
-#     - ansible_distribution == 'Kali'
-#     - debian.xfce_configs
-#   tags: xfce
 
 - name: Install Kali Win Kex
   become: true
