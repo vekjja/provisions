@@ -9,23 +9,16 @@ unix_packages:
   - coreutils
   - curl
   - git
-  - golang
-  - htop
   - jq
-  - nmap
-  - python3-pip
   - python3
-  - shellcheck
+  - python3-pip
   - tree
   - vim
-  - watch
-  - wget
   - zsh
 
 nerd_fonts:
   - "FiraMono"
   - "FiraCode"
-  - "DaddyTimeMono"
   - "Go-Mono"
 
 alpine:
