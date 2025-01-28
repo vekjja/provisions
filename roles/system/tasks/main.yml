@@ -62,4 +62,5 @@
     dest: "{{ ansible_env.HOME }}/.config/xfce4"
     creates: "{{ ansible_env.HOME }}/.config/xfce4"
     remote_src: true
+    force: true
   tags: xfce
