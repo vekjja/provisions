@@ -1,3 +1,10 @@
+- name: Create Fonts Directories (Linux)
+  ansible.builtin.file:
+    path: "/usr/local/share/fonts/"
+    state: directory
+    mode: '0755'
+  when: ansible_os_family not in ['Darwin', 'Windows']
+
 - name: Install Nerd Fonts (Linux)
   become: true
   ansible.builtin.unarchive:
