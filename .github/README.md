@@ -6,7 +6,8 @@ Provisions Local/Remote Mac OS X, Linux and Windows
 curl -sL https://raw.githubusercontent.com/seemywingz/provisions/refs/heads/main/scripts/setup.sh | bash
 ```
 
-The script will install `git` and `ansible`, clone the repo locally to `~/git/provisions` and run   `ansible-playbook playbooks/local.yaml`
+The script will install `git` and `ansible`, clone the repo locally to `~/git/provisions` and run  
+`ansible-playbook playbooks/local.yaml`
 
 Alternatively, you can clone the repo locally, make changes, and then run the playbook.
 
