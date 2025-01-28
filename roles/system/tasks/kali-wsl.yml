@@ -1,0 +1,40 @@
+- name: Determine if Kali is Running in WSL
+  ansible.builtin.command:
+    cmd: grep -qEi "(Microsoft|WSL)" /proc/version
+  register: kali_wsl_check
+  changed_when: false
+  failed_when: false
+  tags: kali-wsl
+
+- name: Set fact for Kali Win Kex
+  ansible.builtin.set_fact:
+    kali_wsl: "{{ kali_wsl_check.rc == 0 }}"
+  tags: kali-wsl
+
+- name: Debug kali_wsl value
+  ansible.builtin.debug:
+    msg: "kali_wsl is {{ kali_wsl }}"
+  tags: kali-wsl
+
+- name: Install Kali WSL Packages
+  become: true
+  ansible.builtin.apt:
+    name: kali-win-kex
+    state: present
+    update_cache: true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  with_items:
+    - kali-win-kex
+    - python3-winrm
+  when: kali_wsl
+  tags: kali-wsl
+
+- name: Change Default Shell - win-kex xstartup
+  become: true
+  ansible.builtin.replace:
+    path: /usr/lib/win-kex/xstartup
+    regexp: 'export SHELL=/bin/bash'
+    replace: 'export SHELL=/bin/zsh'
+  when: kali_wsl
+  tags: kali-wsl

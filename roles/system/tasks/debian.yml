@@ -1,0 +1,26 @@
+- name: Extract XFCE Configs
+  become: true
+  ansible.builtin.unarchive:
+    src: "{{ playbook_dir }}/../assets/configs/xfce-configs.tar.gz"
+    dest: "{{ ansible_env.HOME }}/.config"
+    remote_src: true
+  when:
+    - debian.xfce_configs
+  tags: xfce
+
+- name: Change Ownership of XFCE Config Directory
+  become: true
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/xfce4"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    recurse: true
+    state: directory
+  when:
+    - debian.xfce_configs
+  tags: xfce
+
+- name: Include Kali WSL Tasks
+  ansible.builtin.include_tasks: kali-wsl.yml
+  when: ansible_distribution == 'Kali'
+  tags: kali-wsl

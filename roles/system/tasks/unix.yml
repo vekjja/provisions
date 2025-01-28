@@ -1,0 +1,49 @@
+- name: Set privilege escalation variable
+  ansible.builtin.set_fact:
+    use_sudo: "{{ ansible_os_family != 'Darwin' and ansible_os_family != 'Windows' }}"
+
+- name: Create Unix Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop: "{{ unix_directories }}"
+  when: ansible_os_family != 'Windows'
+
+- name: Change the default shell to zsh
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_user_id }}"
+    shell: /bin/zsh
+
+- name: Remove existing Oh My Zsh directory
+  become: true
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.oh-my-zsh"
+    state: absent
+
+- name: Install Oh My Zsh
+  ansible.builtin.shell:
+    cmd: unset ZSH && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    creates: "{{ ansible_env.HOME }}/.oh-my-zsh"
+
+- name: Ensure unzip is installed (Required for Oh My Posh)
+  become: "{{ use_sudo }}"
+  ansible.builtin.package:
+    name: unzip
+    state: present
+
+- name: Download Oh My Posh Install Script
+  ansible.builtin.get_url:
+    url: https://ohmyposh.dev/install.sh
+    dest: /tmp/install-oh-my-posh.sh
+    mode: '0755'
+
+- name: Install Oh My Posh (Mac/Linux)
+  ansible.builtin.command:
+    cmd: bash /tmp/install-oh-my-posh.sh
+    creates: "{{ ansible_env.HOME }}/.poshthemes"
+
+- name: Include Debian WSL Tasks
+  ansible.builtin.include_tasks: debian.yml
+  when: ansible_os_family == 'Debian'
