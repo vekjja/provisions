@@ -63,6 +63,7 @@
   when: ansible_os_family != 'Windows'
 
 - name: Install Kali Win Kex
+  become: true
   ansible.builtin.package:
     name: kali-win-kex
     state: present
