@@ -67,10 +67,8 @@ alias bce="sudo bettercap -iface en0 -eval\"$1\""
 alias bcui="sudo bettercap -iface en0 -eval \"ui on\""
 alias arp-mon="sudo bettercap -iface en0 -caplet ~/git/mon/caplets/arp-mon"
 
-
 # Helm
 alias h="helm"
-
 
 # OpenTofu
 alias tf="tofu"
