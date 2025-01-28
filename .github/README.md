@@ -18,7 +18,7 @@ iex ((Invoke-WebRequest -Uri "https://raw.githubusercontent.com/seemywingz/provi
 This script will install `wsl --distro Debian`, `Chocolatey` and `Python` on the Windows host.  
 It will also configure _Windows Remote Management_ to allow connection from WSL.
 
-Once setup, enter `wsl -d Debian` and run the Linux install script above.  
+Once setup succeeds on the Windows host, enter `wsl -d Debian` and run the Linux install script above.  
 Navigate to `~/git/provisions` and add the file `playbooks/group_vars/windows.yaml` with contents:
 ```
 ansible_user: YOUR_WINDOWS_USER
