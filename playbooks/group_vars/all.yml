@@ -64,6 +64,7 @@ debian:
     - { src: 'dotfiles/.Xmodmap', dest: '~/.Xmodmap' }
     - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
   packages:
+    - bettercap
     - python3-winrm
 
 windows:
