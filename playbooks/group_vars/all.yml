@@ -1,4 +1,4 @@
-# # vim:ft=ansible
+# vim:ft=ansible
 
 unix_directories:
   - ~/.history
@@ -18,19 +18,13 @@ unix_packages:
 nerd_fonts:
   - "FiraMono"
 
-alpine:
-  files:
-    - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
-    - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
-    - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
-
 darwin:
   files:
     - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
     - { src: 'dotfiles/.bashrc', dest: '~/.bashrc' }
     - { src: 'dotfiles/.zshrc-mac', dest: '~/.zshrc' }
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
-    - { src: 'configs/ssh.config', dest: '~/.ssh/ssh.config' }
+    - { src: 'configs/ssh.config', dest: '~/.ssh/config' }
   casks:
     - arduino-ide
     - beekeeper-studio
