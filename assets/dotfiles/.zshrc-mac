@@ -19,8 +19,13 @@ export GOBIN=$GOPATH/bin
 export GOPROXY=https://proxy.golang.org,direct
 export PATH="${GOPATH}/bin:${GOROOT}/bin:$PATH"
 
-source ~/.zshrc-common
-source ~/.api-keys
+if [ -f ~/.zshrc-common ]; then
+  source ~/.zshrc-common
+fi
+
+if [ -f ~/.api-keys ]; then
+  source ~/.api-keys
+fi
 
 ## Mac Aliases
 alias flush_dns="sudo killall -HUP mDNSResponder"
