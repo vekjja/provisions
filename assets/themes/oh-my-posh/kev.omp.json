@@ -128,30 +128,6 @@
           "style": "plain",
           "type": "session"
         }
-        // {
-        //   "foreground": "#00b3ff",
-        //   "style": "plain",
-        //   "properties": {
-        //     "alpine": "\uf300",
-        //     "arch": "\uf303",
-        //     "centos": "\uf304",
-        //     "debian": "\uf306",
-        //     "elementary": "\uf309",
-        //     "fedora": "\uf30a",
-        //     "gentoo": "\uf30d",
-        //     "kali": "\uf327",
-        //     "linux": "\ue712",
-        //     "macos": "\ue711",
-        //     "manjaro": "\uf312",
-        //     "mint": "\uf30f",
-        //     "opensuse": "\uf314",
-        //     "raspbian": "\uf315",
-        //     "ubuntu": "\uf31c",
-        //     "windows": "\ue70f"
-        //   },
-        //   "template": "{{ .Icon }}",
-        //   "type": "os"
-        // }
       ],
       "type": "prompt"
     }
