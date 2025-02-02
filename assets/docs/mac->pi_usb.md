@@ -13,7 +13,7 @@
   touch /Volumes/bootfs/ssh
 ```
 
-### If you didn’t configure WiFi with RPi Imager, you can enable WiFi with the file 
+### If you didn’t configure WiFi with RPi Imager, you can enable WiFi with file: `wpa_supplicant.conf`
 
 ```sh
 vim /Volumes/bootfs/wpa_supplicant.conf
@@ -89,7 +89,9 @@ sudo vim /etc/dhcpcd.conf
 ```sh
 interface usb0
 static ip_address=100.0.0.10/24
-static routers=100.0.0.1
+# Use the static route only if 
+# you want all traffic routed through usb0
+# static routers=100.0.0.1
 static domain_name_servers=8.8.8.8 1.1.1.1
 ```
 
