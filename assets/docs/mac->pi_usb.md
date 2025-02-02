@@ -8,7 +8,8 @@
 
 * Eject and remount how device
 ```sh
-  vim /Volumes/bootfs/config.txt add dtoverlay=dwc2  vim /Volumes/bootfs/cmdline.txt  after `rootwait` add `modules-load=dwc2,g_ether` 
+  vim /Volumes/bootfs/config.txt   # add dtoverlay=dwc2
+  vim /Volumes/bootfs/cmdline.txt  # after `rootwait` add `modules-load=dwc2,g_ether`
   touch /Volumes/bootfs/ssh
 ```
 
