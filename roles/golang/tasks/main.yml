@@ -1,0 +1,11 @@
+- name: Unix Tasks
+  ansible.builtin.include_tasks: unix.yml
+  when: ansible_os_family not in ['Darwin', 'Windows']
+
+- name: Darwin Tasks
+  ansible.builtin.include_tasks: darwin.yml
+  when: ansible_distribution == 'Darwin'
+
+- name: Windows Tasks
+  ansible.builtin.include_tasks: windows.yml
+  when: ansible_distribution == 'Windows'

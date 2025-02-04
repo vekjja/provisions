@@ -6,3 +6,4 @@
     - { role: system, tags: ['system'] }
     - { role: files, tags: ['files'] }
     - { role: nerd-fonts, tags: ['nerd-fonts'] }
+    - { role: golang, tags: ['go'] }

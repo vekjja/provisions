@@ -1,0 +1,55 @@
+# - name: Unix Tasks
+#   ansible.builtin.include_tasks: rpios.yml
+#   when: ansible_facts['distribution'] == 'Debian'
+
+- name: Print distribution
+  debug:
+    msg: "Distribution: {{ ansible_facts['distribution'] }}"
+
+- name: Print CPU architecture
+  debug:
+    msg: "CPU Architecture: {{ ansible_facts['architecture'] }}"
+
+- name: Determine if CPU is ARM or AMD
+  debug:
+    msg: >
+      {% if ansible_facts['architecture'] in ['aarch64', 'arm'] %}
+      CPU is ARM
+      {% elif 'x86_64' in ansible_facts['architecture'] %}
+      CPU is AMD
+      {% else %}
+      Unknown CPU architecture
+      {% endif %}
+
+- name: Get the latest Golang version
+  shell: |
+    curl -s https://go.dev/VERSION?m=text | head -n 1
+  register: golang_version
+
+- name: Set Golang download URL
+  set_fact:
+    golang_download_url: >
+      {% if ansible_facts['architecture'] in ['aarch64', 'arm'] %}
+      https://go.dev/dl/{{ golang_version.stdout }}.linux-arm64.tar.gz
+      {% elif 'x86_64' in ansible_facts['architecture'] %}
+      https://go.dev/dl/{{ golang_version.stdout }}.linux-amd64.tar.gz
+      {% else %}
+      https://go.dev/dl/{{ golang_version.stdout }}.linux-unknown.tar.gz
+      {% endif %}
+
+- name: Download Golang
+  get_url:
+    url: "{{ golang_download_url }}"
+    dest: "/tmp/{{ golang_version.stdout }}.tar.gz"
+
+- name: Extract Golang
+  become: true
+  unarchive:
+    src: "/tmp/{{ golang_version.stdout }}.tar.gz"
+    dest: /usr/local
+    remote_src: yes
+
+- name: Cleanup Golang tarball
+  file:
+    path: "/tmp/{{ golang_version.stdout }}.tar.gz"
+    state: absent
