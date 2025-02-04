@@ -49,8 +49,7 @@ darwin:
     - kubectx
 
 debian:
-  golang:
-    version: latest
+  golang: true
   xfce_configs: false
   files:
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
