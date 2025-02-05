@@ -63,6 +63,13 @@ alias hack_hosts="sudo vim /etc/hosts"
 alias chrome-socks='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --proxy-server="socks5://127.0.0.1:8080" --host-resolver-rules="MAP * 0.0.0.0 , EXCLUDE localhost"'
 alias rm-arp-cache=" sudo arp -a | awk '{print $2}' | tr -d '()' | xargs -n1 sudo arp -d"
 
+#### Python ####
+export PATH="$HOME/.pyenv/bin:$PATH"
+if command -v pyenv &>/dev/null; then
+  eval "$(pyenv init --path)"
+  eval "$(pyenv init -)"
+fi
+
 #### Bettercap ####
 alias bc="sudo bettercap -iface en0"
 alias bce="sudo bettercap -iface en0 -eval\"$1\""
