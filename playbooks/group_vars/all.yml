@@ -19,6 +19,7 @@ nerd_fonts:
   - "FiraMono"
 
 redhat:
+  golang: true
   files:
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
     - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
