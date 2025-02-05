@@ -24,6 +24,8 @@ redhat:
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
     - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
     - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
+  packages:
+    - kubernetes-kubeadm
 
 
 darwin:
