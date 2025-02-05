@@ -1,0 +1,4 @@
+
+- name: Print OS Family
+  ansible.builtin.debug:
+    msg: "OS Family: {{ ansible_os_family }}"

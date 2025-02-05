@@ -15,16 +15,16 @@
     name: "{{ ansible_user_id }}"
     shell: /bin/zsh
 
-- name: Remove existing Oh My Zsh directory
-  become: true
-  ansible.builtin.file:
+- name: Check if Oh My Zsh is already installed
+  ansible.builtin.stat:
     path: "{{ ansible_env.HOME }}/.oh-my-zsh"
-    state: absent
+  register: oh_my_zsh
 
 - name: Install Oh My Zsh
   ansible.builtin.shell:
-    cmd: unset ZSH && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    cmd: unset ZSH && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --keep-zshrc
     creates: "{{ ansible_env.HOME }}/.oh-my-zsh"
+  when: not oh_my_zsh.stat.exists
 
 - name: Ensure unzip is installed (Required for Oh My Posh)
   become: "{{ use_sudo }}"
@@ -32,18 +32,36 @@
     name: unzip
     state: present
 
+- name: Check if Oh My Posh is already installed
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/.local/bin/oh-my-posh"
+  register: oh_my_posh
+
 - name: Download Oh My Posh Install Script
   ansible.builtin.get_url:
     url: https://ohmyposh.dev/install.sh
     dest: /tmp/install-oh-my-posh.sh
     mode: '0755'
+  when: not oh_my_posh.stat.exists
 
 - name: Install Oh My Posh
   ansible.builtin.command:
     cmd: bash /tmp/install-oh-my-posh.sh
     creates: "{{ ansible_env.HOME }}/.poshthemes"
+  when: not oh_my_posh.stat.exists
+
+- name: Install Pyenv
+  ansible.builtin.git:
+    repo: https://github.com/pyenv/pyenv.git
+    dest: "{{ ansible_env.HOME }}/.pyenv"
+  when: lookup('vars', ansible_os_family | lower).pyenv | default([])
 
 - name: Debian Tasks
   ansible.builtin.include_tasks: debian.yml
   when: ansible_os_family == 'Debian'
   tags: debian
+
+- name: RedHat Tasks
+  ansible.builtin.include_tasks: redhat.yml
+  when: ansible_os_family == 'RedHat'
+  tags: redhat
