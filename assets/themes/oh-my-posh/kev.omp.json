@@ -6,12 +6,37 @@
       "newline": true,
       "segments": [
         {
+          "type": "python",
+          "style": "diamond",
+          "foreground": "#100e23",
+          "background": "#906cff",
+          "leading_diamond": "\ue0b2",
+          "trailing_diamond": "\ue0b0",
+          "template": "  {{ .Venv }} "
+        },
+        {
+          "type": "python",
+          "style": "diamond",
+          "foreground": "#000000",
+          "background": "#ffb74d",
+          "leading_diamond": "<transparent,background>\ue0b0</>",
+          "trailing_diamond": "\ue0b0",
+          "newline": true,
+          "template": "  {{ .Full }} "
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
           "background": "#424242",
           "foreground": "#f2f3f8",
           "style": "diamond",
           "leading_diamond": "\ue0b2",
           "trailing_diamond": "\ue0b0",
-          "newline": true,
           "template": "\ue81d {{ .Context }} ",
           "type": "kubectl"
         },
@@ -28,7 +53,6 @@
           "style": "diamond",
           "leading_diamond": "<transparent,background>\ue0b0</>",
           "trailing_diamond": "\ue0b0",
-          "newline": true,
           "template": "{{ if .Namespace }} {{ .Namespace }}{{ end }} ",
           "type": "kubectl"
         }
@@ -124,7 +148,7 @@
         },
         {
           "foreground": "#00b3ff",
-          "template": "{{ .HostName }}",
+          "template": "\uedc5{{.UserName}} {{ if .SSHSession }}\uf08c0{{ end }} \uf109{{ .HostName }}",
           "style": "plain",
           "type": "session"
         }
