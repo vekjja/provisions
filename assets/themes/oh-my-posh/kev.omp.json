@@ -148,7 +148,7 @@
         },
         {
           "foreground": "#00b3ff",
-          "template": "\uedc5{{.UserName}} {{ if .SSHSession }}\udb82\udcc0{{ end }} \uf109{{ .HostName }}",
+          "template": "\uedc5{{.UserName}} {{ if .SSHSession }}\uef09{{ end }} \uf109{{ .HostName }}",
           "style": "plain",
           "type": "session"
         }
