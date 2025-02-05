@@ -2,7 +2,7 @@
   hosts: local remote
   gather_facts: true
   roles:
-    - { role: packages, tags: ['packages'] }
+    - { role: packages, tags: ['packages', 'casks'] }
     - { role: system, tags: ['system'] }
     - { role: files, tags: ['files'] }
     - { role: nerd-fonts, tags: ['nerd-fonts'] }
