@@ -70,6 +70,67 @@ if command -v pyenv &>/dev/null; then
   eval "$(pyenv init -)"
 fi
 
+function py-venv() {
+  #!/bin/bash
+
+  set -e # Exit on any error
+
+  PYTHON_VERSION_FILE="python_version.txt"
+  REQUIREMENTS_FILE="requirements.txt"
+  VENV_DIR=".venv"
+
+  # Ensure pyenv is installed
+  if ! command -v pyenv &>/dev/null; then
+    echo "Warning: pyenv not found. Using system Python."
+    USE_PYENV=false
+  else
+    USE_PYENV=true
+  fi
+
+  # Determine the correct Python version
+  if [ -f "$PYTHON_VERSION_FILE" ]; then
+    PYTHON_VERSION=$(cat "$PYTHON_VERSION_FILE")
+    if $USE_PYENV; then
+      if ! pyenv versions --bare | grep -qx "$PYTHON_VERSION"; then
+        echo "Installing Python $PYTHON_VERSION via pyenv..."
+        pyenv install "$PYTHON_VERSION"
+      fi
+      pyenv local "$PYTHON_VERSION"
+    fi
+    PYTHON_EXECUTABLE="python3"
+  else
+    echo "Warning: $PYTHON_VERSION_FILE not found. Using system Python."
+    PYTHON_EXECUTABLE="python3"
+  fi
+
+  # Create virtual environment if missing
+  if [ ! -d "$VENV_DIR" ]; then
+    echo "Creating virtual environment in $VENV_DIR..."
+    $PYTHON_EXECUTABLE -m venv "$VENV_DIR"
+  fi
+
+  # Activate virtual environment
+  echo "Activating virtual environment..."
+  source "$VENV_DIR/bin/activate"
+
+  # Ensure pip is up-to-date
+  echo "Upgrading pip..."
+  python -m pip install --upgrade pip
+
+  # Install or update dependencies if requirements.txt exists
+  if [ -f "$REQUIREMENTS_FILE" ]; then
+    echo "Installing/updating dependencies from $REQUIREMENTS_FILE..."
+    python -m pip install --upgrade -r "$REQUIREMENTS_FILE"
+  else
+    echo "Warning: $REQUIREMENTS_FILE not found. Skipping package installation."
+  fi
+
+  echo "✅ Virtual environment setup complete. You are now inside the virtual environment."
+  echo "   To deactivate, type: deactivate"
+  exec "$SHELL"
+
+}
+
 #### Bettercap ####
 alias bc="sudo bettercap -iface en0"
 alias bce="sudo bettercap -iface en0 -eval\"$1\""
