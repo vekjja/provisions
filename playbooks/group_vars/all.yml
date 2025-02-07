@@ -45,6 +45,7 @@ darwin:
     - blender
     - discord
     - docker
+    - firefox
     - google-chrome
     - lens
     - logitech-g-hub
@@ -53,6 +54,7 @@ darwin:
     - steam
     - visual-studio-code
     - vlc
+    - warp
   packages:
     - awscli
     - balenaetcher
