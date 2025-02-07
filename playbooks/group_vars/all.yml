@@ -21,6 +21,7 @@ nerd_fonts:
 redhat:
   golang: true
   pyenv: true
+  toshy: true
   files:
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
     - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
