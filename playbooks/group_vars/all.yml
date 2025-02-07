@@ -25,6 +25,8 @@ redhat:
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
     - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
     - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
+    - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
+    - { src: 'configs/ssh.config', dest: '~/.ssh/config' }
   packages:
     - kubernetes-kubeadm
 
