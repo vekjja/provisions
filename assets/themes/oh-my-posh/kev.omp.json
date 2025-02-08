@@ -139,7 +139,7 @@
         },
         {
           "foreground": "#00b3ff",
-          "template": "{{ if .SSHSession }}<#b300ff>󰒍 </>{{ end }}{{ .HostName }}",
+          "template": "{{ if .SSHSession }}<#cc00ff>󰒍 </>{{ end }}{{ .HostName }}",
           "style": "plain",
           "type": "session",
           "segments": []
