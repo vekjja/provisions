@@ -124,14 +124,13 @@
       "segments": [
         {
           "foreground": "#00b3ff",
-          "template": "{{ if .SSHSession }}<#ff00b7>󰒍 </>{{ end }}",
+          "template": "╰ {{ if .SSHSession }}<#ff00b7>󰒍 </>{{ end }}",
           "style": "plain",
-          "type": "session",
-          "segments": []
+          "type": "session"
         },
         {
           "foreground": "#00b3ff",
-          "template": "\u2570 {{.UserName}} ",
+          "template": "{{.UserName}} ",
           "style": "plain",
           "type": "session"
         },
@@ -148,8 +147,7 @@
           "foreground": "#00b3ff",
           "template": "{{ .HostName }}:",
           "style": "plain",
-          "type": "session",
-          "segments": []
+          "type": "session"
         }
       ],
       "type": "prompt"
