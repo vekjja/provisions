@@ -35,13 +35,13 @@
           "background": "#a85cff",
           "foreground": "#000000",
           "style": "diamond",
-          "leading_diamond": "\ue0b2",
+          "leading_diamond": "  \ue0b2",
           "trailing_diamond": "\ue0b0",
           "template": "󰠳 {{ .Context }} ",
           "type": "kubectl"
         },
         {
-          "background": "#ffcd87",
+          "background": "#dcff30",
           "foreground": "#000000",
           "properties": {
             "min_width": 10,
