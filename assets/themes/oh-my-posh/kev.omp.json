@@ -150,10 +150,10 @@
           "foreground": "#00b3ff",
           "template": " {{.UserName}}{{ if .SSHSession }} <#ff0000>󰒍 {{ .HostName }}</>{{ else }}  {{ .HostName }}{{ end }}",
           "style": "plain",
-          "type": "session",
-          "foreground_templates": [
-            "{{ if .SSHSession }}#ff0000{{ else }}#00b3ff{{ end }}"
-          ]
+          "type": "session"
+          // "foreground_templates": [
+          //   "{{ if .SSHSession }}#ff0000{{ else }}#00b3ff{{ end }}"
+          // ]
         }
       ],
       "type": "prompt"
