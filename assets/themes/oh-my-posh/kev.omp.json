@@ -124,16 +124,16 @@
       "segments": [
         {
           "foreground": "#00b3ff",
-          "template": "\u2570\u2500 {{.UserName}} ",
-          "style": "plain",
-          "type": "session"
-        },
-        {
-          "foreground": "#00b3ff",
           "template": "{{ if .SSHSession }}<#ff00bb>󰒍 </>{{ end }}",
           "style": "plain",
           "type": "session",
           "segments": []
+        },
+        {
+          "foreground": "#00b3ff",
+          "template": "\u2570\u2500 {{.UserName}} ",
+          "style": "plain",
+          "type": "session"
         },
         {
           "foreground": "#00b3ff",
