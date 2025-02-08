@@ -129,7 +129,7 @@
           "type": "session"
         },
         {
-          "foreground_template": "{{ if .SSHSession }}#ff0000{{ else }}#00b3ff{{ end }}",
+          "foreground": "#00b3ff",
           "style": "plain",
           "properties": {
             "kali": ""
@@ -139,7 +139,7 @@
         },
         {
           "foreground": "#00b3ff",
-          "template": "{{ if .SSHSession }}<#ff00bb>󰒍 </>{{ end }}{{ .HostName }}",
+          "template": "{{ if .SSHSession }}<#ff00b3>󰒍 </>{{ end }}{{ .HostName }}",
           "style": "plain",
           "type": "session",
           "segments": []
