@@ -131,7 +131,7 @@
         {
           "foreground": "#00b3ff",
           "style": "plain",
-          "template": "{{ .Icon }} ",
+          "template": "{{ if .SSHSession }}<#ff00bb>{{ .Icon }}</>{{ else }}{{ .Icon }}{{ end }} ",
           "type": "os"
         },
         {
