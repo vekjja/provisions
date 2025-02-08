@@ -32,16 +32,16 @@
       "newline": true,
       "segments": [
         {
-          "background": "#424242",
-          "foreground": "#f2f3f8",
+          "background": "#a85cff",
+          "foreground": "#000000",
           "style": "diamond",
           "leading_diamond": "\ue0b2",
           "trailing_diamond": "\ue0b0",
-          "template": "\ue81d {{ .Context }} ",
+          "template": "󰠳 {{ .Context }} ",
           "type": "kubectl"
         },
         {
-          "background": "#ffeb87",
+          "background": "#ffcd87",
           "foreground": "#000000",
           "properties": {
             "min_width": 10,
