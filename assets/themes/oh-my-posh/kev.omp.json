@@ -131,7 +131,10 @@
         {
           "foreground": "#00b3ff",
           "style": "plain",
-          "template": "{{ if .SSHSession }}<#ff00bb>{{ .Icon }}</>{{ else }}{{ .Icon }}{{ end }} ",
+          "properties": {
+            "kali": ""
+          },
+          "template": "{{ .Icon }} ",
           "type": "os"
         },
         {
