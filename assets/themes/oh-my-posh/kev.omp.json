@@ -136,7 +136,7 @@
         },
         {
           "foreground": "#00b3ff",
-          "template": "{{ if .SSHSession }}󰒍{{ end }}{{ .HostName }}",
+          "template": "{{ if .SSHSession }}󰒍{{ end }} {{ .HostName }}",
           "style": "plain",
           "type": "session"
         }
