@@ -148,7 +148,7 @@
         },
         {
           "foreground": "#00b3ff",
-          "template": " {{.UserName}}{{ if .SSHSession }} <#ff0000>󰒍 </>{{ .HostName }}{{ else }}  {{ .HostName }}{{ end }}",
+          "template": " {{.UserName}}{{ if .SSHSession }} <#d000ff>󰒍 </>{{ .HostName }}{{ else }}  {{ .HostName }}{{ end }}",
           "style": "plain",
           "type": "session"
           // "foreground_templates": [
