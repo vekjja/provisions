@@ -124,7 +124,7 @@
       "segments": [
         {
           "foreground": "#00b3ff",
-          "template": "╰ {{ if .SSHSession }}<#ff6ad5>{{ else }}<#17e6c7>{{ end }}  ",
+          "template": "╰ {{ if .SSHSession }}<#ff6ad5>{{ else }}<#17e6c7>{{ end }}  </>",
           "style": "plain",
           "type": "session"
         },
@@ -145,7 +145,7 @@
         },
         {
           "foreground": "#00b3ff",
-          "template": "</>{{ .HostName }}:",
+          "template": "{{ .HostName }}{{ if .SSHSession }}<#ff6ad5>{{ else }}<#17e6c7>{{ end }}:",
           "style": "plain",
           "type": "session"
         }
