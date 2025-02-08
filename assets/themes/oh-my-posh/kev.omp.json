@@ -124,7 +124,7 @@
       "segments": [
         {
           "foreground": "#00b3ff",
-          "template": "╰ <#ff6ad5>{{ if .SSHSession }}{{ else }}{{ end }}  </>",
+          "template": "╰ <#17e6c7>{{ if .SSHSession }}{{ else }}{{ end }}  </>",
           "style": "plain",
           "type": "session"
         },
@@ -135,7 +135,7 @@
           "type": "session"
         },
         {
-          "foreground": "#ff6ad5",
+          "foreground": "#17e6c7",
           "style": "plain",
           "properties": {
             "kali": ""
