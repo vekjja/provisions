@@ -10,15 +10,15 @@
           "style": "diamond",
           "foreground": "#100e23",
           "background": "#906cff",
-          "leading_diamond": "\ue0b2",
+          "leading_diamond": "  \ue0b2",
           "trailing_diamond": "\ue0b0",
-          "template": "  {{ .Venv }} "
+          "template": " {{ .Venv }} "
         },
         {
           "type": "python",
           "style": "diamond",
           "foreground": "#000000",
-          "background": "#ffb74d",
+          "background": "#ffea4d",
           "leading_diamond": "<transparent,background>\ue0b0</>",
           "trailing_diamond": "\ue0b0",
           "newline": true,
@@ -74,7 +74,7 @@
           "leading_diamond": "\u256d\u2500\ue0b2",
           "trailing_diamond": "\ue0b0",
           "powerline_symbol": "\ue0b0",
-          "template": " {{ .Path }} ",
+          "template": "󰝰 {{ .Path }} ",
           "type": "path"
         },
         {
