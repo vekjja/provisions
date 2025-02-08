@@ -148,9 +148,12 @@
         },
         {
           "foreground": "#00b3ff",
-          "template": "\uedc5 {{.UserName}}{{ if .SSHSession }} \udb81\udc8d{{ else }} \uf109{{ end }} {{ .HostName }}",
+          "template": " {{.UserName}}{{ if .SSHSession }} 󰒍{{ else }} {{ end }} {{ .HostName }}",
           "style": "plain",
-          "type": "session"
+          "type": "session",
+          "foreground_templates": [
+            "{{ if .SSHSession }}#ff0000{{ else }}#00b3ff{{ end }}"
+          ]
         }
       ],
       "type": "prompt"
