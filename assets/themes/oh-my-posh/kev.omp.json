@@ -130,6 +130,13 @@
         },
         {
           "foreground": "#00b3ff",
+          "template": "{{ if .SSHSession }}<#ff00bb>󰒍 </>{{ end }}",
+          "style": "plain",
+          "type": "session",
+          "segments": []
+        },
+        {
+          "foreground": "#00b3ff",
           "style": "plain",
           "properties": {
             "kali": ""
@@ -139,9 +146,10 @@
         },
         {
           "foreground": "#00b3ff",
-          "template": "{{ if .SSHSession }}<#ff00bb>󰒍 </>{{ end }}{{ .HostName }}",
+          "template": "{{ .HostName }}",
           "style": "plain",
-          "type": "session"
+          "type": "session",
+          "segments": []
         }
       ],
       "type": "prompt"
