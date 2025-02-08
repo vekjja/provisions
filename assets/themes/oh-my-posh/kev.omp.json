@@ -124,7 +124,7 @@
       "segments": [
         {
           "foreground": "#00b3ff",
-          "template": "╰ {{ if .SSHSession }}<#ff00b7>󰒍 </>{{ end }}",
+          "template": "╰ {{ if .SSHSession }}<#e92bb4>󰒍 </>{{ end }}",
           "style": "plain",
           "type": "session"
         },
