@@ -78,10 +78,10 @@
           "type": "path"
         },
         {
-          "background": "#00ffbb",
+          "background": "#39e6b8",
           "foreground": "#000000",
           "background_templates": [
-            "{{ if or (.Working.Changed) (.Staging.Changed) }}#e92bb4{{ end }}",
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#fd3762{{ end }}",
             "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#54433a{{ end }}",
             "{{ if gt .Ahead 0 }}#ffaf00{{ end }}",
             "{{ if gt .Behind 0 }}#424242{{ end }}"
@@ -124,7 +124,7 @@
       "segments": [
         {
           "foreground": "#00b3ff",
-          "template": "╰ <#e92bb4>{{ if .SSHSession }}󰒍{{ else }}{{ end }}  </>",
+          "template": "╰ <#ff6ad5>{{ if .SSHSession }}󰒍{{ else }}{{ end }}  </>",
           "style": "plain",
           "type": "session"
         },
@@ -135,7 +135,7 @@
           "type": "session"
         },
         {
-          "foreground": "#e92bb4",
+          "foreground": "#ff6ad5",
           "style": "plain",
           "properties": {
             "kali": ""
