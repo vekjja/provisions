@@ -129,7 +129,7 @@
           "type": "text"
         },
         {
-          "foreground": "#17e6c7",
+          "foreground": "#00b3ff",
           "foreground_templates": [
             "{{ if .SSHSession }}#ff6ad5{{ end }}"
           ],
@@ -144,7 +144,7 @@
           "type": "session"
         },
         {
-          "foreground": "#dadada",
+          "foreground": "#888888",
           "style": "plain",
           "properties": {
             "kali": ""
