@@ -133,7 +133,7 @@
           "foreground_templates": [
             "{{ if .SSHSession }}#ff6ad5{{ end }}"
           ],
-          "template": "{{ if .SSHSession }}{{ else }}{{ end }}  ",
+          "template": "{{ if .SSHSession }}󰒍{{ else }}{{ end }}  ",
           "style": "plain",
           "type": "session"
         },
