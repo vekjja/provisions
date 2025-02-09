@@ -14,4 +14,7 @@ export GOBIN=$GOPATH/bin
 # export GOPROXY=https://proxy.golang.org,direct
 export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
 
+#### Linux Systems ####
+alias dfd="df -h -x tmpfs -x devtmpfs -x udf -x iso9660 -x squashfs -x overlay -x autofs"
+
 source ~/.zshrc-common
