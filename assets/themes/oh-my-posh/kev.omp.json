@@ -144,7 +144,7 @@
           "type": "session"
         },
         {
-          "foreground": "#17e6c7",
+          "foreground": "#dadada",
           "style": "plain",
           "properties": {
             "kali": ""
