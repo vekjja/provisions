@@ -4,8 +4,8 @@
 
 - name: Darwin Tasks
   ansible.builtin.include_tasks: darwin.yml
-  when: ansible_distribution == 'Darwin'
+  when: ansible_os_family == 'Darwin'
 
 - name: Windows Tasks
   ansible.builtin.include_tasks: windows.yml
-  when: ansible_distribution == 'Windows'
+  when: ansible_os_family == 'Windows'

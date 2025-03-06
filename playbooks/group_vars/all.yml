@@ -42,19 +42,18 @@ darwin:
   casks:
     - arduino-ide
     - beekeeper-studio
-    - blender
-    - discord
+    #- blender
+    #- discord
     - docker
     - firefox
     - google-chrome
     - lens
-    - logitech-g-hub
-    - slack
+    #- logitech-g-hub
+    #- slack
     - spotify
-    - steam
+    #- steam
     - visual-studio-code
-    - vlc
-    - warp
+    #- vlc
   packages:
     - awscli
     - balenaetcher
