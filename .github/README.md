@@ -3,12 +3,12 @@ Provisions Local/Remote Mac OS X, Linux and Windows
 
 ## Mac and Linux Install
 ```powershell
-curl -sL https://raw.githubusercontent.com/seemywingz/provisions/refs/heads/main/scripts/setup.sh | bash
+curl -sL https://raw.githubusercontent.com/vekjja/provisions/refs/heads/main/scripts/setup.sh | bash
 ```
 
 Add Custom Arguments
 ```shell
-curl -sL https://raw.githubusercontent.com/seemywingz/provisions/refs/heads/main/scripts/setup.sh | bash -s -- [ARGUMENTS]
+curl -sL https://raw.githubusercontent.com/vekjja/provisions/refs/heads/main/scripts/setup.sh | bash -s -- [ARGUMENTS]
 ```
 
 The script will install `git` and `ansible`, clone the repo locally to `~/git/provisions` and run  
@@ -18,7 +18,7 @@ Alternatively, you can clone the repo locally, make changes, and then run the pl
 
 ## Windows Install
 ```powershell
-iex ((Invoke-WebRequest -Uri "https://raw.githubusercontent.com/seemywingz/provisions/main/scripts/setup.ps1" -UseBasicParsing).Content)
+iex ((Invoke-WebRequest -Uri "https://raw.githubusercontent.com/vekjja/provisions/main/scripts/setup.ps1" -UseBasicParsing).Content)
 ```
 This script will install `wsl --distro Debian`, `Chocolatey` and `Python` on the Windows host.  
 It will also configure _Windows Remote Management_ to allow connection from WSL.
