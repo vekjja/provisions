@@ -23,6 +23,11 @@ if [ -f ~/.zshrc-common ]; then
   source ~/.zshrc-common
 fi
 
+# Source all .zshrc-* files
+for file in ~/.zshrc-*; do
+  [ -e "$file" ] && source "$file"
+done
+
 if [ -f ~/.api-keys ]; then
   source ~/.api-keys
 fi

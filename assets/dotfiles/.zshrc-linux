@@ -18,3 +18,8 @@ export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
 alias dfd="df -h -x tmpfs -x devtmpfs -x udf -x iso9660 -x squashfs -x overlay -x autofs"
 
 source ~/.zshrc-common
+
+# Source all .zshrc-* files
+for file in ~/.zshrc-*; do
+    [ -e "$file" ] && source "$file"
+done
