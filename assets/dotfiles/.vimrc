@@ -25,10 +25,8 @@ set backspace=indent,eol,start " Set backspace behavior
 " Force Defaults to UTF-8
 set encoding=utf-8
 
-" Automatically open NERDTree when Vim starts
-autocmd VimEnter * NERDTree
-" Open NERDTree on the side without shifting focus to it
-autocmd VimEnter * NERDTree | wincmd p
+" Always open NERDTree on startup but don't focus it
+autocmd VimEnter * NERDTreeToggle | wincmd p
 
 " Set fileencoding via autocmd
 augroup set_fileencoding
@@ -108,43 +106,21 @@ set ts=4 sw=4 et
 let g:indent_guides_start_level = 2
 let g:indent_guides_guide_size = 1 
 
-" Toggle Line Numbers
-function! NumberToggle()
-  if &number
-    set nonumber
-    set norelativenumber
-  else
-    set number
-  endif
-endfunction
-
+" Copy Mode
 let g:copy_mode = 0
 function! ToggleCopyMode()
-  " Toggle NERDTree
-  NERDTreeToggle
-
-  " Toggle GitGutter
-  call ToggleGitGutter()
-
-  " Toggle line numbers only in non-NERDTree windows
-  if g:copy_mode
-    " Exit copy mode: show numbers everywhere (except NERDTree)
-    for w in range(1, winnr('$'))
-      execute w . 'wincmd w'
-      if &filetype !=# 'nerdtree'
-        setlocal number
-      endif
-    endfor
-    let g:copy_mode = 0
-  else
-    " Enter copy mode: hide numbers everywhere (except NERDTree)
-    for w in range(1, winnr('$'))
-      execute w . 'wincmd w'
-      if &filetype !=# 'nerdtree'
-        setlocal nonumber norelativenumber
-      endif
-    endfor
+  if g:copy_mode == 0
+    " Enter copy mode: close everything
+    set nonumber norelativenumber
+    NERDTreeClose
+    GitGutterDisable
     let g:copy_mode = 1
+  else
+    " Exit copy mode: enable everything
+    set number
+    NERDTree
+    GitGutterEnable
+    let g:copy_mode = 0
   endif
 endfunction
 " Map \+Enter 
@@ -155,6 +131,8 @@ augroup vimrcEx
   autocmd!
   " Close Vim if NERDTree is the only window remaining
   autocmd BufEnter * if winnr('$') == 1 && &filetype == 'nerdtree' | quit | endif
+  " Automatically quit Vim when NERDTree is closed
+  autocmd FileType nerdtree autocmd BufWinLeave <buffer> if winnr('$') == 1 | quit | endif
   " When editing a file, always jump to the last known cursor position.
   autocmd BufReadPost *
     \ if line("'\"") > 1 && line("'\"") <= line("$") |
