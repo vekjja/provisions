@@ -108,6 +108,7 @@ set ts=4 sw=4 et
 let g:indent_guides_start_level = 2
 let g:indent_guides_guide_size = 1 
 
+
 " Copy Mode
 let g:copy_mode = 0
 function! ToggleCopyMode()
@@ -120,12 +121,12 @@ function! ToggleCopyMode()
   else
     " Exit copy mode: enable everything
     set number
-    NERDTree
+    " Open NERDTree in the current file's directory
+    execute 'NERDTree' fnameescape(expand('%:p:h'))
     GitGutterEnable
     let g:copy_mode = 0
   endif
 endfunction
-" Map \+Enter 
 nnoremap <Leader><CR> :call ToggleCopyMode()<CR>
 
 " Autocommand Group for Additional Settings
