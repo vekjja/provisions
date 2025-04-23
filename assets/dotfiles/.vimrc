@@ -25,8 +25,10 @@ set backspace=indent,eol,start " Set backspace behavior
 " Force Defaults to UTF-8
 set encoding=utf-8
 
-" Always open NERDTree on startup but don't focus it
-autocmd VimEnter * NERDTreeToggle | wincmd p
+" Open NERDTree in the directory of the current file
+autocmd VimEnter * if argc() > 0 | execute 'NERDTree' fnameescape(fnamemodify(argv(0), ':p:h')) | wincmd w | endif
+
+"autocmd BufWinEnter * if &buftype == '' && argc() > 0 | execute 'NERDTree' fnameescape(expand('%:p:h')) | wincmd p | endif
 
 " Set fileencoding via autocmd
 augroup set_fileencoding
@@ -131,8 +133,6 @@ augroup vimrcEx
   autocmd!
   " Close Vim if NERDTree is the only window remaining
   autocmd BufEnter * if winnr('$') == 1 && &filetype == 'nerdtree' | quit | endif
-  " Automatically quit Vim when NERDTree is closed
-  autocmd FileType nerdtree autocmd BufWinLeave <buffer> if winnr('$') == 1 | quit | endif
   " When editing a file, always jump to the last known cursor position.
   autocmd BufReadPost *
     \ if line("'\"") > 1 && line("'\"") <= line("$") |
