@@ -25,15 +25,10 @@ set backspace=indent,eol,start " Set backspace behavior
 " Force Defaults to UTF-8
 set encoding=utf-8
 
-" Function to automatically open NERDTree
-function! OpenNERDTreeIfNeeded()
-  if argc() == 0 || (argc() == 1 && isdirectory(argv()[0]))
-    NERDTree
-  endif
-endfunction
-
-" Automatically open NERDTree when Vim starts without arguments or with a directory
-autocmd VimEnter * call OpenNERDTreeIfNeeded()
+" Automatically open NERDTree when Vim starts
+autocmd VimEnter * NERDTree
+" Open NERDTree on the side without shifting focus to it
+autocmd VimEnter * NERDTree | wincmd p
 
 " Set fileencoding via autocmd
 augroup set_fileencoding
@@ -44,7 +39,8 @@ augroup END
 " Enable Mouse Support with SGR (xterm 1006 mouse support for more lines)
 set mouse=a
 if !has('nvim')
-  set ttymouse=xterm2
+  "set ttymouse=xterm2
+  set ttymouse=sgr
 endif
 
 " Ensure NERDTree Mouse Selection Works
@@ -83,13 +79,27 @@ Plug 'scrooloose/syntastic'
 call plug#end()
 
 " Colors
-" colorscheme iceberg
+ colorscheme iceberg
 " colorscheme molokai
-" colorscheme dracula
+
+" GitGutter Settings
+let g:gitgutter_enabled = 1
+function! ToggleGitGutter()
+  if g:gitgutter_enabled
+    GitGutterDisable
+    let g:gitgutter_enabled = 0
+  else
+    GitGutterEnable
+    let g:gitgutter_enabled = 1
+  endif
+endfunction
+
+" Map Ctrl+g to toggle GitGutter
+map <C-g> :call ToggleGitGutter()<CR>
 
 " NERDTree Settings
 let g:NERDTreeWinSize=25
-let g:NERDTreeShowHidden=1           " Show hidden files
+let g:NERDTreeShowHidden=1         " Show hidden files
 map <C-n> :NERDTreeToggle<CR>      " Open NERDTree with Ctrl+n 
 
 " Indent Guides Settings
@@ -112,6 +122,8 @@ map <C-m> :call NumberToggle()<CR>
 " Autocommand Group for Additional Settings
 augroup vimrcEx
   autocmd!
+  " Close Vim if NERDTree is the only window remaining
+  autocmd BufEnter * if winnr('$') == 1 && &filetype == 'nerdtree' | quit | endif
   " When editing a file, always jump to the last known cursor position.
   autocmd BufReadPost *
     \ if line("'\"") > 1 && line("'\"") <= line("$") |
