@@ -44,8 +44,9 @@ if !has('nvim')
 endif
 
 " Ensure NERDTree Mouse Selection Works
-autocmd FileType nerdtree setlocal mouse=a
 let g:NERDTreeMouseMode=3
+autocmd FileType nerdtree setlocal mouse=a
+autocmd FileType nerdtree setlocal nonumber norelativenumber
 
 " VIM-Markdown Configuration
 let g:vim_markdown_folding_disabled=1
@@ -93,7 +94,6 @@ function! ToggleGitGutter()
     let g:gitgutter_enabled = 1
   endif
 endfunction
-
 " Map Ctrl+g to toggle GitGutter
 map <C-g> :call ToggleGitGutter()<CR>
 
@@ -117,7 +117,38 @@ function! NumberToggle()
     set number
   endif
 endfunction
-map <C-m> :call NumberToggle()<CR>
+
+let g:copy_mode = 0
+function! ToggleCopyMode()
+  " Toggle NERDTree
+  NERDTreeToggle
+
+  " Toggle GitGutter
+  call ToggleGitGutter()
+
+  " Toggle line numbers only in non-NERDTree windows
+  if g:copy_mode
+    " Exit copy mode: show numbers everywhere (except NERDTree)
+    for w in range(1, winnr('$'))
+      execute w . 'wincmd w'
+      if &filetype !=# 'nerdtree'
+        setlocal number
+      endif
+    endfor
+    let g:copy_mode = 0
+  else
+    " Enter copy mode: hide numbers everywhere (except NERDTree)
+    for w in range(1, winnr('$'))
+      execute w . 'wincmd w'
+      if &filetype !=# 'nerdtree'
+        setlocal nonumber norelativenumber
+      endif
+    endfor
+    let g:copy_mode = 1
+  endif
+endfunction
+" Map \+Enter 
+nnoremap <Leader><CR> :call ToggleCopyMode()<CR>
 
 " Autocommand Group for Additional Settings
 augroup vimrcEx
