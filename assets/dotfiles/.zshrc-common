@@ -372,7 +372,7 @@ ENDSSH
 
   echo "${PURP}Copy Files:${BLU}"
   scp ~/git/provisions/assets/dotfiles/.zshrc-min ${HOST}:~/.zshrc
-  scp ~/.vimrc ${HOST}:~/.
+  scp ~/git/provisions/assets/dotfiles/.vimrc ${HOST}:~/.
 
   echo "${PURP}Entering Host: ${NC}${HOST}"
   ssh ${HOST}
