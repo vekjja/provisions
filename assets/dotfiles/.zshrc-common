@@ -195,6 +195,8 @@ alias kl="kubectl logs"
 alias kns="kubens"
 alias kctx="kubectx"
 
+alias alpine-box="kubectl run alpine-box --image=ghcr.io/vekjja/alpine-box:main --restart=Never --image-pull-policy=Always -it --rm"
+
 function kexec() {
   pod=$(kgp | grep ${1} | awk '{print $1}')
   kubectl exec -it ${pod} -c ${2} -- bash
