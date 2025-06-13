@@ -46,7 +46,6 @@ endif
 " Ensure NERDTree Mouse Selection Works
 let g:NERDTreeMouseMode=3
 autocmd FileType nerdtree setlocal mouse=a
-autocmd FileType nerdtree setlocal nonumber norelativenumber
 
 " VIM-Markdown Configuration
 let g:vim_markdown_folding_disabled=1
@@ -114,9 +113,9 @@ let g:copy_mode = 0
 function! ToggleCopyMode()
   if g:copy_mode == 0
     " Enter copy mode: close everything
-    set nonumber norelativenumber
     NERDTreeClose
     GitGutterDisable
+    set nonumber norelativenumber
     let g:copy_mode = 1
   else
     " Exit copy mode: enable everything
