@@ -195,7 +195,8 @@ alias kl="kubectl logs"
 alias kns="kubens"
 alias kctx="kubectx"
 
-alias alpine-box="kubectl run alpine-box --image=ghcr.io/vekjja/alpine-box:main --restart=Never --image-pull-policy=Always -it --rm"
+alias alpine-docker="docker run -it --rm --name alpine-box ghcr.io/vekjja/alpine-box:main"
+alias alpine-k8s="kubectl run alpine-box --image=ghcr.io/vekjja/alpine-box:main --restart=Never --image-pull-policy=Always -it --rm"
 
 function kexec() {
   pod=$(kgp | grep ${1} | awk '{print $1}')
