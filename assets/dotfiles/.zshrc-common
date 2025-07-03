@@ -128,52 +128,13 @@ function py-venv() {
 }
 
 #### Bettercap ####
-alias bc="sudo bettercap -iface en0"
-alias bce="sudo bettercap -iface en0 -eval\"$1\""
-alias bcui="sudo bettercap -iface en0 -eval \"ui on\""
-alias arp-mon="sudo bettercap -iface en0 -caplet ~/git/mon/caplets/arp-mon"
+#alias bc="sudo bettercap -iface en0"
+#alias bce="sudo bettercap -iface en0 -eval\"$1\""
+#alias bcui="sudo bettercap -iface en0 -eval \"ui on\""
+#alias arp-mon="sudo bettercap -iface en0 -caplet ~/git/mon/caplets/arp-mon"
 
 # Helm
 alias h="helm"
-
-# OpenTofu
-alias tf="tofu"
-alias tfi="tofu init"
-alias tfp="tofu plan"
-alias tfa="tofu apply"
-alias tfaa="tofu apply -auto-approve"
-alias tfd="tofu destroy"
-alias tfs="tofu show"
-alias tfr="tofu refresh"
-alias tfo="tofu output"
-alias tfoj="tofu output --json | jq"
-
-#### Git ####
-alias g="git"
-alias gp="git push"
-alias gs="git status"
-alias gb="git branch"
-alias gc="git commit"
-alias gpll="git pull"
-alias gco="git checkout"
-alias gpm="git add .;git commit;git push"
-alias gpn="git add .;git commit;git push --no-verify"
-alias gl="git log"
-function gsquash() {
-  git reset $(git merge-base ${1} HEAD)
-  git add -A
-  git commit -m ${2}
-}
-function gprune() {
-  git fetch origin
-  git fetch --prune origin
-  git branch --merged | egrep -v "(^\*|master|main)" | xargs git branch -d
-}
-function gpa() {
-  git add --all
-  git commit -am ${1}
-  git push
-}
 
 #### K8S ####
 if command -v kubectl &>/dev/null; then
@@ -201,15 +162,6 @@ alias alpine-k8s="kubectl run alpine-box --image=ghcr.io/vekjja/alpine-box:main 
 function kexec() {
   pod=$(kgp | grep ${1} | awk '{print $1}')
   kubectl exec -it ${pod} -c ${2} -- bash
-}
-
-function kdeleteNS() {
-  (
-    NAMESPACE=plrl-runtime
-    kubectl proxy &
-    kubectl get namespace $NAMESPACE -o json | jq '.spec = {"finalizers":[]}' >temp.json
-    curl -k -H "Content-Type: application/json" -X PUT --data-binary @temp.json 127.0.0.1:8001/api/v1/namespaces/$NAMESPACE/finalize
-  )
 }
 
 function kgrep() {
@@ -244,16 +196,10 @@ function kgrep() {
   echo
 
   if [[ -n ${delete} ]]; then
-    echo ☠️ Deleteing Resources
+    echo ☠️ Deleting Resources
     echo ${resources} | xargs kubectl delete ${namespace} ${resource}
   fi
 }
-
-#### Vagrant ####
-# alias vup="vagrant up"
-# alias vhalt="vagrant halt"
-# alias vdestroy="vagrant destroy"
-# alias vssh="vagrant ssh"
 
 #### Docker ###
 export DOCKER_BUILDKIT=1
@@ -335,7 +281,7 @@ function ssh-wait() {
   maxConnectionAttempts=30
 
   # Wait for the box to become available via ssh
-  echo "\nAttemting to SSH to $HOST"
+  echo "\nAttempting to SSH to $HOST"
 
   while (($index <= $maxConnectionAttempts)); do
     printf "\nAttempt ${index} of ${maxConnectionAttempts}\n "
@@ -353,7 +299,7 @@ function ssh-wait() {
   done
 
   if [ $index -ge $maxConnectionAttempts ]; then
-    echo "⛔️  Error: Max Connection Attemps, $HOST is unreachable "
+    echo "⛔️  Error: Max Connection Attempts, $HOST is unreachable "
   fi
 }
 
@@ -377,8 +323,29 @@ ENDSSH
   scp ~/git/provisions/assets/dotfiles/.zshrc-min ${HOST}:~/.zshrc
   scp ~/git/provisions/assets/dotfiles/.vimrc ${HOST}:~/.
 
+  # echo "${PURP}Copying to /root/ using sudo:${BLU}"
+  # scp ~/git/provisions/assets/dotfiles/.zshrc-min ${HOST}:/tmp/.zshrc-min
+  # scp ~/git/provisions/assets/dotfiles/.vimrc ${HOST}:/tmp/.vimrc
+  # ssh ${HOST} "sudo mv /tmp/.zshrc-min /root/.zshrc && sudo mv /tmp/.vimrc /root/.vimrc && sudo chown root:root /root/.zshrc /root/.vimrc"
+
   echo "${PURP}Entering Host: ${NC}${HOST}"
   ssh ${HOST}
+}
+
+function ssh-pf() {
+  if [ $# -lt 2 ] || [ $# -gt 3 ]; then
+    echo "Usage: ssh-pf [local_port] [host] [host_port (optional, defaults to local_port)]"
+    return 1
+  fi
+  local local_port=$1
+  local host=$2
+  if [ $# -eq 3 ]; then
+    local host_port=$3
+  else
+    local host_port=$1
+  fi
+  echo "Forwarding localhost:${local_port} to ${host}:${host_port} via SSH..."
+  ssh -N -L ${local_port}:localhost:${host_port} ${host}
 }
 
 #### Autojump ####
