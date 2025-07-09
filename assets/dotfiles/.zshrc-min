@@ -5,14 +5,24 @@ export PATH=$PATH:~/.local/bin
 
 # if ~/.oh-my-zsh does not exist, install it
 if [ ! -d "$ZSH" ]; then
+
+  sudo apt install zsh
+  sudo apt install autojump
+  sudo apt install zsh-autosuggestions
+
   echo "Installing Oh My Zsh..."
   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --keep-zshrc
 
-  # echo "Installing oh-my-posh..."
+  # install oh-my-posh
+  # echo "Installing Oh My Posh..."
   # curl -s https://ohmyposh.dev/install.sh | bash -s
+
+  # change the default shell to zsh
+  echo "Changing the default shell to zsh..."
+  chsh -s $(which zsh)
 fi
 
-ZSH_THEME="agnoster"
+ZSH_THEME="bira"
 
 plugins=(git)
 
