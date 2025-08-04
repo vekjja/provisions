@@ -33,7 +33,7 @@ if [ -f ~/.api-keys ]; then
 fi
 
 ## Mac Aliases
-alias flush_dns="sudo killall -HUP mDNSResponder"
+alias flush_dns="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
 alias showHidden="defaults write com.apple.finder AppleShowAllFiles YES"
 alias macInfo="system_profiler SPSoftwareDataType SPHardwareDataType"
 function copy() {
