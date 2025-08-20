@@ -88,6 +88,7 @@ alias dcs="docker-compose stop"
 alias dps="docker ps"
 alias di="docker images"
 alias dip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
+alias dl="docker logs -fn 100"
 
 #### Autojump ####
 if [ $commands[autojump] ]; then                             # check if autojump is installed
