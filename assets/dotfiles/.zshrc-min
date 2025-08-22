@@ -52,6 +52,7 @@ alias l="tree -L 1"
 alias cls="clear"
 alias la="ls -lha"
 alias sctl="sudo systemctl"
+alias sc="sudo systemctl"
 
 #### Git ####
 alias g="git"
