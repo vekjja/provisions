@@ -44,7 +44,7 @@ debian:
       - --disable=traefik
       - --disable=servicelb
       - --prefer-bundled-bin
-      # - --tls-san 10.0.0.10
+      - --tls-san 10.0.0.10
       # - --tls-san 174.44.106.30
       # - --tls-san livingroom.cloud
   fs_mounts:
