@@ -1,0 +1,10 @@
+- name: Update /etc/fstab
+  become: true
+  mount:
+    path: "{{ item.path }}"
+    src: "{{ item.src }}"
+    fstype: "{{ item.fstype }}"
+    opts: "{{ item.opts }}"
+    state: mounted
+  loop: "{{ lookup('vars', ansible_os_family | lower).fs_mounts | default([]) }}"
+  when: ansible_os_family == 'Debian'

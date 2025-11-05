@@ -1,0 +1,50 @@
+- name: Install NFS Server Packages
+  when: lookup('vars', ansible_os_family | lower).nfs_shares | default([]) | length > 0
+  become: true
+  apt:
+    pkg:
+      - nfs-kernel-server
+      - rpcbind
+    state: present
+    update_cache: true
+
+- name: Ensure rpcbind service is enabled and started
+  when: lookup('vars', ansible_os_family | lower).nfs_shares | default([]) | length > 0
+  become: true
+  ansible.builtin.systemd:
+    name: rpcbind
+    enabled: true
+    state: started
+
+- name: Ensure nfs-server service is enabled and started
+  when: lookup('vars', ansible_os_family | lower).nfs_shares | default([]) | length > 0
+  become: true
+  ansible.builtin.systemd:
+    name: nfs-server
+    enabled: true
+    state: started
+
+- name: Update NFS Exports File
+  when: lookup('vars', ansible_os_family | lower).nfs_shares | default([]) | length > 0
+  become: true
+  lineinfile:
+    path: /etc/exports
+    state: present
+    line: "{{ item }}"
+  loop: "{{ lookup('vars', ansible_os_family | lower).nfs_shares | default([]) }}"
+
+- name: Export NFS Shares
+  when: lookup('vars', ansible_os_family | lower).nfs_shares | default([]) | length > 0
+  become: true
+  shell: exportfs -ra
+
+# - name: Mount NFS Devices to Local Filesystem
+#   when: nfs_mounts is defined
+#   become: true
+#   mount:
+#     path: "{{ item.path }}"
+#     src: "{{ item.src }}"
+#     fstype: "{{ item.fstype }}"
+#     opts: "{{ item.opts }}"
+#     state: mounted
+#   loop: "{{ nfs_mounts }}"

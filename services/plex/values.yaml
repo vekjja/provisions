@@ -1,0 +1,84 @@
+# Default values for plex.
+
+replicaCount: 1
+
+image:
+  repository: linuxserver/plex
+  pullPolicy: Always
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {} # fsGroup: 2000
+
+securityContext: {}
+
+# Plex claim token from https://plex.tv/claim
+claimToken: "claim-ECh_J7FfgMvyseW-SCX-"
+
+# Set the timezone of the plex server
+timezone: America/New_York
+
+plexPort: "32400"
+
+service:
+  type: ClusterIP
+  port: 32400
+  targetPort: 32400
+  protocol: TCP
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations: { cert-manager.io/cluster-issuer: "cloudlfare-letsencrypt-production" }
+  hosts:
+  - host: plex.livingroom.cloud
+    paths:
+    - path: /
+      pathType: Prefix
+  tls:
+  - secretName: plex.livingroom.cloud-tls
+    hosts:
+    - plex.livingroom.cloud
+
+persistence:
+  movies:
+    storageClass: "ssd-movies"
+    size: 100Gi
+    accessMode: ReadWriteMany
+  series:
+    storageClass: "ssd-series"
+    size: 100Gi
+    accessMode: ReadWriteMany
+  seriesExt:
+    storageClass: "ssd-series-ext"
+    size: 100Gi
+    accessMode: ReadWriteMany
+  config:
+    storageClass: "plex-config"
+    size: 3Gi
+    accessMode: ReadWriteMany
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

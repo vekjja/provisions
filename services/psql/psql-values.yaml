@@ -1,0 +1,13 @@
+auth:
+  username: admin
+  password: "passw0rd123321"
+  database: psql
+
+primary:
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 10Gi
+
+volumePermissions:
+  enabled: true

@@ -25,6 +25,8 @@ debian:
     - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
     - { src: 'themes/oh-my-posh/kev.omp.json', dest: '~/.kev.omp.json' }
+  packages:
+    - bettercap
   k3s: # Lightweight Kubernetes: https://github.com/k3s-io/k3s/releases/
     kubeconfig: ~/.kube/k3sconfig
     local_kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/mini-cloud"
@@ -37,9 +39,53 @@ debian:
       # - --tls-san 10.0.0.10
       # - --tls-san 174.44.106.30
       # - --tls-san livingroom.cloud
-  packages:
-    - bettercap
+  fs_mounts:
+  - {
+    path: /mnt/ssd/movies,
+    src: "UUID=0CB81103B810ED48",
+    fstype: ntfs,
+    opts: "defaults,nobootwait,nofail,errors=remount-ro",
+  }
+  - {
+    path: /mnt/ssd/series,
+    src: "UUID=56885E3A885E18B7",
+    fstype: ntfs,
+    opts: "defaults,nobootwait,nofail,errors=remount-ro",
+  }
+  - {
+    path: /mnt/ssd/pny250,
+    src: "UUID=1DAC99F73EFA9CB8",
+    fstype: ntfs,
+    opts: "defaults,nobootwait,nofail,errors=remount-ro",
+  }
+  - {
+    path: /mnt/hdd/tera,
+    src: "UUID=D4504CF8504CE33A",
+    fstype: ntfs,
+    opts: "defaults,nobootwait,nofail,errors=remount-ro"
+  }
+  - {
+    path: /mnt/hdd/barracuda,
+    src: "UUID=24FEA26DFEA236C8",
+    fstype: ntfs,
+    opts: "defaults,nobootwait,nofail,errors=remount-ro"
+  }
+  - {
+    path: /mnt/ssd/ex2,
+    src: "UUID=8e0dfd97-1bfc-40f3-af1c-3bff20d80df9",
+    fstype: ext4,
+    opts: "defaults,nofail"
+  }
+  nfs_shares:
+    - /mnt/ssd/movies *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+    - /mnt/ssd/series *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+    - /mnt/ssd/pny250 *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+    - /mnt/ssd/ex2 *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+    - /mnt/hdd/tera *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+    - /mnt/hdd/barracuda *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
 
+
+# Darwin OS Variables
 darwin:
   files:
     - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
