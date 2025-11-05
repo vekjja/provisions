@@ -18,19 +18,15 @@ unix_packages:
 nerd_fonts:
   - "FiraMono"
 
-redhat:
-  golang: true
-  pyenv: true
-  toshy: true
+debian:
+  golang: false
   files:
-    - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
-    - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
     - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
+    - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
-    - { src: 'configs/ssh.config', dest: '~/.ssh/config' }
+    - { src: 'themes/oh-my-posh/kev.omp.json', dest: '~/.kev.omp.json' }
   packages:
-    - kubernetes-kubeadm
-
+    - bettercap
 
 darwin:
   files:
@@ -39,6 +35,7 @@ darwin:
     - { src: 'dotfiles/.zshrc-mac', dest: '~/.zshrc' }
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
     - { src: 'configs/ssh.config', dest: '~/.ssh/config' }
+    - { src: 'themes/oh-my-posh/kev.omp.json', dest: '~/.kev.omp.json' }
   casks:
     - arduino-ide
     - beekeeper-studio
@@ -55,7 +52,7 @@ darwin:
     - visual-studio-code
     #- vlc
   packages:
-    - awscli
+    # - awscli
     - balenaetcher
     - helm
     - iterm2
@@ -63,16 +60,18 @@ darwin:
     - kubectl
     - kubectx
 
-debian:
+redhat:
   golang: true
-  xfce_configs: false
+  pyenv: true
+  toshy: true
   files:
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
     - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
-    - { src: 'dotfiles/.Xmodmap', dest: '~/.Xmodmap' }
     - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
+    - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
+    - { src: 'configs/ssh.config', dest: '~/.ssh/config' }
   packages:
-    - bettercap
+    - kubernetes-kubeadm
 
 windows:
   files:

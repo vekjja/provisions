@@ -32,36 +32,23 @@
     name: unzip
     state: present
 
-- name: Check if Oh My Posh is already installed
-  ansible.builtin.stat:
-    path: "{{ ansible_env.HOME }}/.local/bin/oh-my-posh"
-  register: oh_my_posh
+# - name: Check if Oh My Posh is already installed
+#   ansible.builtin.stat:
+#     path: "{{ ansible_env.HOME }}/.local/bin/oh-my-posh"
+#   register: oh_my_posh
 
 - name: Download Oh My Posh Install Script
   ansible.builtin.get_url:
     url: https://ohmyposh.dev/install.sh
     dest: /tmp/install-oh-my-posh.sh
     mode: '0755'
-  when: not oh_my_posh.stat.exists
+  # when: not oh_my_posh.stat.exists
 
 - name: Install Oh My Posh
   ansible.builtin.command:
     cmd: bash /tmp/install-oh-my-posh.sh
     creates: "{{ ansible_env.HOME }}/.poshthemes"
-  when: not oh_my_posh.stat.exists
-
-- name: Install Pyenv
-  ansible.builtin.git:
-    repo: https://github.com/pyenv/pyenv.git
-    dest: "{{ ansible_env.HOME }}/.pyenv"
-  when: lookup('vars', ansible_os_family | lower).pyenv | default([])
-
-- name: Clone Toshy repository
-  ansible.builtin.git:
-    repo: https://github.com/RedBearAK/toshy.git
-    dest: "{{ ansible_env.HOME }}/.toshy"
-  when: lookup('vars', ansible_os_family | lower).toshy | default([])
-  notify: Print Toshy Install Command
+  # when: not oh_my_posh.stat.exists
 
 - name: Debian Tasks
   ansible.builtin.include_tasks: debian.yml

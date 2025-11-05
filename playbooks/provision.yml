@@ -8,8 +8,3 @@
     - { role: files, tags: ['files'] }
     - { role: nerd-fonts, tags: ['nerd-fonts'] }
     - { role: golang, tags: ['go'] }
-  
-  handlers:
-    - name: Print Toshy Install Command
-      debug:
-        msg: "Toshy has been downloaded. Please run:  `{{ ansible_env.HOME }}/.toshy/setup_toshy.py install`"

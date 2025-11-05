@@ -377,4 +377,5 @@ fi
 source $ZSH/oh-my-zsh.sh
 
 #### Oh My Posh ####
-eval "$(oh-my-posh init zsh --config ~/git/provisions/assets/themes/oh-my-posh/kev.omp.json)"
+# eval "$(oh-my-posh init zsh --config ~/git/provisions/assets/themes/oh-my-posh/kev.omp.json)"
+eval "$(oh-my-posh init zsh --config ~/.kev.omp.json)"

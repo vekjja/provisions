@@ -1,10 +1,10 @@
 # Inventory File for Ansible
 
 [local]
-localhost ansible_connection=local
+#localhost ansible_connection=local
 
 [remote]
-mainnet-node-0
+mini-cloud
 
-[windows]
-winhost ansible_port=5985 ansible_connection=winrm ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore ansible_python_interpreter=C:\Python313\python.exe
+#[windows]
+#winhost ansible_port=5985 ansible_connection=winrm ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore ansible_python_interpreter=C:\Python313\python.exe
