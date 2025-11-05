@@ -80,6 +80,18 @@ fi
 #### GCP ####
 export PATH="$PATH:/opt/homebrew/share/google-cloud-sdk/bin"
 
+#### Pulumi ####
+alias p="pulumi"
+alias pup="pulumi up"
+
+#### Terraform ####
+alias tf="terraform"
+alias tfp="terraform plan"
+alias tfa="terraform apply"
+alias tfd="terraform destroy"
+alias tfi="terraform init"
+alias tfo="terraform output"
+
 ### ESP8266 ESP32C3 ###
 function esp-fs-upload() {
 
@@ -183,3 +195,11 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 
 #### Autojump ####
 [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
+
+# pnpm
+export PNPM_HOME="/Users/kevin.jayne/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
