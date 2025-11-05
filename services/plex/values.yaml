@@ -23,7 +23,7 @@ podSecurityContext: {} # fsGroup: 2000
 securityContext: {}
 
 # Plex claim token from https://plex.tv/claim
-claimToken: "claim-ECh_J7FfgMvyseW-SCX-"
+claimToken: "claim-R8yyapwMJ9ymk5UE91qX"
 
 # Set the timezone of the plex server
 timezone: America/New_York
@@ -39,7 +39,7 @@ service:
 ingress:
   enabled: true
   className: "nginx"
-  annotations: { cert-manager.io/cluster-issuer: "cloudlfare-letsencrypt-production" }
+  annotations: { cert-manager.io/cluster-issuer: "cloudflare-letsencrypt-production" }
   hosts:
   - host: plex.livingroom.cloud
     paths:
@@ -74,7 +74,7 @@ autoscaling:
   enabled: false
   minReplicas: 1
   maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
+  # targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}

@@ -8,7 +8,11 @@
 # ░╚════╝░╚══════╝╚═╝░░╚═╝░░░╚═╝░░░░░░░░░╚═╝░░░░░╚═╝╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░░╚═╝░╚═════╝░╚══════╝╚═╝░░╚═╝
 
 # kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.16.2/cert-manager.yaml
-kubectl apply -f ./yaml/cert-manager_v1.16.2.yaml
+# kubectl apply -f ./yaml/cert-manager_v1.16.2.yaml
+
+# Install Cert Manager using Helm
+helm repo add jetstack https://charts.jetstack.io
+helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set installCRDs=true
 
 cat <<EOF | kubectl apply -f -
 ---
@@ -28,7 +32,7 @@ cat <<EOF | kubectl apply -f -
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: cloudlfare-letsencrypt-staging
+  name: cloudflare-letsencrypt-staging
 spec:
   acme:
     email: seemywings@gmail.com
@@ -49,7 +53,7 @@ cat <<EOF | kubectl apply -f -
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: cloudlfare-letsencrypt-production
+  name: cloudflare-letsencrypt-production
 spec:
   acme:
     email: seemywings@gmail.com

@@ -21,11 +21,13 @@ nerd_fonts:
 debian:
   golang: false
   static_ip:
+    hostname: mini-cloud  # Hostname to add to /etc/hosts
     interface: enp4s0  # Network interface name (use 'ip a' to find)
+    gateway: 10.0.0.1 # Gateway IP address
     address: 10.0.0.10  # Static IP address
     netmask: 16 # Subnet mask
-    gateway: 10.0.0.1 # Gateway IP address
     nameservers:  # DNS servers (default: [8.8.8.8, 8.8.4.4])
+      - 10.0.0.1
       - 1.1.1.1
       - 8.8.8.8
   files:
