@@ -19,6 +19,48 @@ alias dfd="df -h -x tmpfs -x devtmpfs -x udf -x iso9660 -x squashfs -x overlay -
 
 source ~/.zshrc-common
 
+wakeLocalUI() {
+  # find the active local (seat0) session
+  local SID U UID TYPE
+  SID=$(loginctl list-sessions | awk '/seat0/ && /yes/ {print $1; exit}')
+  [ -z "$SID" ] && { echo "No active seat0 session found."; return 1; }
+
+  TYPE=$(loginctl show-session "$SID" -p Type | cut -d= -f2)
+  U=$(loginctl show-session "$SID" -p Name | cut -d= -f2)
+  UID=$(id -u "$U")
+  export XDG_RUNTIME_DIR="/run/user/$UID"
+
+  echo "Waking UI for session $SID ($TYPE) user $U..."
+
+  if [[ "$TYPE" == "wayland" ]]; then
+    # run as the GUI user to avoid polkit password prompts
+    sudo -u "$U" loginctl unlock-session "$SID" >/dev/null 2>&1 || true
+    sudo -u "$U" loginctl activate "$SID" >/dev/null 2>&1 || true
+
+    # nudge GNOME screensaver (often enough to wake monitors)
+    sudo -u "$U" XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+      gdbus call --session \
+      --dest org.gnome.ScreenSaver \
+      --object-path /org/gnome/ScreenSaver \
+      --method org.gnome.ScreenSaver.SetActive false >/dev/null 2>&1 || true
+
+    # optional extra nudge if available (ignore if missing)
+    command -v gdbus >/dev/null || echo "Tip: install gdbus (glib2) for best results."
+
+  else
+    # X11 path: run xset/xrandr as the GUI user with proper auth
+    local DISPLAY=:0
+    local XA="/run/user/$UID/gdm/Xauthority"
+    [[ -f "$XA" ]] || XA="/home/$U/.Xauthority"
+
+    sudo -u "$U" DISPLAY=$DISPLAY XAUTHORITY="$XA" xset dpms force on >/dev/null 2>&1 || true
+    sudo -u "$U" DISPLAY=$DISPLAY XAUTHORITY="$XA" xrandr -q >/dev/null 2>&1 || true
+  fi
+
+  echo "Done."
+}
+
+
 # Source all .zshrc-* files
 for file in ~/.zshrc-*; do
     [ -e "$file" ] && source "$file"
