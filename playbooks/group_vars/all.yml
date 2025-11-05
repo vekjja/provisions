@@ -25,6 +25,18 @@ debian:
     - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
     - { src: 'themes/oh-my-posh/kev.omp.json', dest: '~/.kev.omp.json' }
+  k3s: # Lightweight Kubernetes: https://github.com/k3s-io/k3s/releases/
+    kubeconfig: ~/.kube/k3sconfig
+    local_kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/mini-cloud"
+    args:
+      - --write-kubeconfig-mode 644
+      - --write-kubeconfig ~/.kube/k3sconfig
+      - --disable=traefik
+      - --disable=servicelb
+      - --prefer-bundled-bin
+      # - --tls-san 10.0.0.10
+      # - --tls-san 174.44.106.30
+      # - --tls-san livingroom.cloud
   packages:
     - bettercap
 

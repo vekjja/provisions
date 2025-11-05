@@ -1,0 +1,27 @@
+- name: Download K3S installer
+  get_url:
+    url: https://get.k3s.io
+    dest: "/tmp/k3s.sh"
+    mode: "0777"
+
+- name: Execute the K3S Installer
+  shell: "/tmp/k3s.sh {{ lookup('vars', ansible_os_family | lower).k3s.args | join(' ')}}"
+
+
+- name: Remove the K3S Installer
+  file:
+    path: "/tmp/k3s.sh"
+    state: absent
+
+- name: Get K3S Kubeconfig
+  run_once: true
+  fetch:
+    src: "{{ lookup('vars', ansible_os_family | lower).k3s.kubeconfig }}"
+    dest: "{{ lookup('vars', ansible_os_family | lower).k3s.local_kubeconfig }}"
+    flat: yes
+  tags: get-kubeconfig
+
+# vim:ft=ansible
+- name: Debian Tasks
+  ansible.builtin.include_tasks: debian.yml
+  when: ansible_os_family == 'Debian'

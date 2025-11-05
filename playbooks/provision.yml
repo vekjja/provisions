@@ -8,3 +8,4 @@
     - { role: files, tags: ['files'] }
     - { role: nerd-fonts, tags: ['nerd-fonts'] }
     - { role: golang, tags: ['go'] }
+    - { role: k3s, tags: ['k3s'] }
