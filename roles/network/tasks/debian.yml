@@ -1,0 +1,84 @@
+- name: Ensure netplan is installed
+  become: true
+  when: lookup('vars', ansible_os_family | lower).static_ip is defined
+  apt:
+    name: netplan.io
+    state: present
+    update_cache: true
+
+- name: Find existing Netplan configuration files
+  become: true
+  when: lookup('vars', ansible_os_family | lower).static_ip is defined
+  find:
+    paths: /etc/netplan
+    patterns: "*.yaml,*.yml"
+    file_type: file
+  register: netplan_files
+
+- name: Backup existing Netplan configuration
+  become: true
+  when: 
+    - lookup('vars', ansible_os_family | lower).static_ip is defined
+    - netplan_files.files | length > 0
+  copy:
+    src: "{{ item.path }}"
+    dest: "{{ item.path }}.backup"
+    remote_src: true
+  loop: "{{ netplan_files.files }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+- name: Create Netplan static IP configuration
+  become: true
+  when: lookup('vars', ansible_os_family | lower).static_ip is defined
+  copy:
+    dest: /etc/netplan/99-static-ip-config.yaml
+    content: |
+      network:
+        version: 2
+        renderer: networkd
+        ethernets:
+          {{ lookup('vars', ansible_os_family | lower).static_ip.interface }}:
+            dhcp4: no
+            addresses: [{{ lookup('vars', ansible_os_family | lower).static_ip.address }}/{{ lookup('vars', ansible_os_family | lower).static_ip.netmask | default('24') }}]
+            routes:
+              - to: default
+                via: {{ lookup('vars', ansible_os_family | lower).static_ip.gateway }}
+            nameservers:
+              addresses: {{ lookup('vars', ansible_os_family | lower).static_ip.nameservers | default(['8.8.8.8', '8.8.4.4']) }}
+              {% if lookup('vars', ansible_os_family | lower).static_ip.search is defined %}
+              search: {{ lookup('vars', ansible_os_family | lower).static_ip.search }}
+              {% endif %}
+    mode: '0644'
+    owner: root
+    group: root
+
+- name: Apply Netplan configuration
+  become: true
+  when: lookup('vars', ansible_os_family | lower).static_ip is defined
+  command: netplan apply
+  register: netplan_apply_result
+  changed_when: true
+
+- name: Ensure hostname is in /etc/hosts
+  become: true
+  when: lookup('vars', ansible_os_family | lower).static_ip is defined
+  lineinfile:
+    path: /etc/hosts
+    regexp: '^\s*{{ lookup("vars", ansible_os_family | lower).static_ip.address }}\s+'
+    line: "{{ lookup('vars', ansible_os_family | lower).static_ip.address }} {{ ansible_hostname }} {{ ansible_fqdn | default(ansible_hostname) }}"
+    state: present
+    backup: true
+
+- name: Verify static IP configuration
+  become: true
+  when: lookup('vars', ansible_os_family | lower).static_ip is defined
+  command: ip addr show {{ lookup('vars', ansible_os_family | lower).static_ip.interface }}
+  register: ip_show_result
+  changed_when: false
+
+- name: Display IP configuration
+  when: lookup('vars', ansible_os_family | lower).static_ip is defined
+  debug:
+    var: ip_show_result.stdout_lines
+

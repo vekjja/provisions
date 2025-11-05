@@ -20,6 +20,14 @@ nerd_fonts:
 
 debian:
   golang: false
+  static_ip:
+    interface: enp4s0  # Network interface name (use 'ip a' to find)
+    address: 10.0.0.10  # Static IP address
+    netmask: 16 # Subnet mask
+    gateway: 10.0.0.1 # Gateway IP address
+    nameservers:  # DNS servers (default: [8.8.8.8, 8.8.4.4])
+      - 1.1.1.1
+      - 8.8.8.8
   files:
     - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
     - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }

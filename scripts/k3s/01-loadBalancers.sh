@@ -13,6 +13,10 @@
 # wget https://raw.githubusercontent.com/metallb/metallb/v0.14.5/config/manifests/metallb-native.yaml
 kubectl apply -f ./yaml/metallb-native_v0.14.5.yaml
 
+# Install Metallb using Helm
+helm repo add metallb https://metallb.github.io/metallb
+helm install metallb metallb/metallb
+
 # Apply From Source:
 # kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.5/config/manifests/metallb-native.yaml
 

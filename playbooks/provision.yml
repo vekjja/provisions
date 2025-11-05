@@ -11,3 +11,4 @@
     - { role: golang, tags: ['go'] }
     - { role: k3s, tags: ['k3s'] }
     - { role: nfs, tags: ['nfs'] }
+    - { role: network, tags: ['network'] }
