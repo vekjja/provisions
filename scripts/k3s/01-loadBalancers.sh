@@ -9,16 +9,14 @@
 #
 # https://metallb.universe.tf/installation/
 
-# Downloaded from:
-# wget https://raw.githubusercontent.com/metallb/metallb/v0.14.5/config/manifests/metallb-native.yaml
-# kubectl apply -f ./yaml/metallb-native_v0.14.5.yaml
-
-# Apply From Source:
-# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.5/config/manifests/metallb-native.yaml
 
 # Install Metallb using Helm
 helm repo add metallb https://metallb.github.io/metallb
-helm install metallb metallb/metallb --namespace metallb-system --create-namespace
+helm repo update
+
+helm upgrade --install metallb metallb/metallb \
+  --namespace metallb-system \
+  --create-namespace
 
 # Create MetalLB Address Pool
 cat <<EOF | kubectl apply -f -
@@ -53,18 +51,19 @@ EOF
 # ╚═╝╚═╝░░╚══╝░╚═════╝░╚═╝░░╚═╝╚══════╝╚═════╝░╚═════╝░░░░░░░╚═╝░░╚══╝░╚═════╝░╚═╝╚═╝░░╚══╝╚═╝░░╚═╝
 # Official Kubernetes Ingress: https://kubernetes.github.io/ingress-nginx/deploy/
 
-# wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.3/deploy/static/provider/cloud/deploy.yaml
-# kubectl apply -f ./yaml/ingress-nginx_v1.11.3.yaml
+# Install Ingress Nginx using Helm
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+
+helm install ingress-nginx ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx \
+  --create-namespace
 
 # Wait for ingress controller to be ready
 # kubectl wait --namespace ingress-nginx \
 #   --for=condition=ready pod \
 #   --selector=app.kubernetes.io/component=controller \
 #   --timeout=120s
-
-# Install Ingress Nginx using Helm
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace
 
 # Restart Ingress Controller
 kubectl rollout restart deployment ingress-nginx-controller -n ingress-nginx

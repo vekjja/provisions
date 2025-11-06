@@ -1,8 +1,0 @@
-primary:
-  persistence:
-    enabled: true
-    storageClass: local-path
-    size: 10Gi
-
-volumePermissions:
-  enabled: true
