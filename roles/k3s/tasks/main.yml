@@ -1,4 +1,4 @@
 # vim:ft=ansible
 - name: Unix Tasks
   ansible.builtin.include_tasks: unix.yml
-  when: ansible_distribution != 'Windows'  and  'k3s' in lookup('vars', ansible_os_family | lower)
+  when: ansible_distribution != 'Windows' and (lookup('vars', ansible_os_family | lower).k3s is defined)

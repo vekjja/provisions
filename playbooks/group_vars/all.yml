@@ -41,14 +41,14 @@ debian:
     kubeconfig: ~/.kube/k3sconfig
     local_kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/mini-cloud"
     args:
-      - --write-kubeconfig-mode 644
-      - --write-kubeconfig ~/.kube/k3sconfig
       - --disable=traefik
+      - --tls-san 10.0.0.10
       - --disable=servicelb
       - --prefer-bundled-bin
-      - --tls-san 10.0.0.10
-      # - --tls-san 174.44.106.30
-      # - --tls-san livingroom.cloud
+      - --write-kubeconfig-mode 644
+      - --write-kubeconfig ~/.kube/k3sconfig
+      #  ensure that the device is formatted as linux ext4 for use with Postgresql
+      - --default-local-storage-path /mnt/ssd/ex2/k3s/storage
   fs_mounts:
   - {
     path: /mnt/ssd/movies,
@@ -89,10 +89,10 @@ debian:
   nfs_shares:
     - /mnt/ssd/movies *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
     - /mnt/ssd/series *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
-    - /mnt/ssd/pny250 *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
-    - /mnt/ssd/ex2 *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
     - /mnt/hdd/tera *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
     - /mnt/hdd/barracuda *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+    # - /mnt/ssd/pny250 *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1001,anongid=1001)
+    # - /mnt/ssd/ex2 *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
 
 
 # Darwin OS Variables
@@ -107,20 +107,15 @@ darwin:
   casks:
     - arduino-ide
     - beekeeper-studio
-    #- blender
-    #- discord
     - docker
     - firefox
     - google-chrome
     - lens
-    #- logitech-g-hub
     #- slack
     - spotify
     #- steam
-    - visual-studio-code
     #- vlc
   packages:
-    # - awscli
     - balenaetcher
     - helm
     - iterm2
@@ -136,7 +131,6 @@ redhat:
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
     - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
     - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
-    - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
     - { src: 'configs/ssh.config', dest: '~/.ssh/config' }
   packages:
     - kubernetes-kubeadm

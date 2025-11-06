@@ -7,7 +7,6 @@
 - name: Execute the K3S Installer
   shell: "/tmp/k3s.sh {{ lookup('vars', ansible_os_family | lower).k3s.args | join(' ')}}"
 
-
 - name: Remove the K3S Installer
   file:
     path: "/tmp/k3s.sh"
@@ -21,7 +20,6 @@
     flat: yes
   tags: get-kubeconfig
 
-# vim:ft=ansible
 - name: Debian Tasks
   ansible.builtin.include_tasks: debian.yml
   when: ansible_os_family == 'Debian'
