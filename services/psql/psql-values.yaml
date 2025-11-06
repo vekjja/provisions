@@ -1,8 +1,3 @@
-auth:
-  username: admin
-  password: "passw0rd123321"
-  database: psql
-
 primary:
   persistence:
     enabled: true

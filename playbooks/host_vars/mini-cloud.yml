@@ -6,7 +6,7 @@ debian:
     gateway: 10.0.0.1 # Gateway IP address
     address: 10.0.0.10  # Static IP address
     netmask: 16 # Subnet mask
-    nameservers:  # DNS servers (default: [8.8.8.8, 8.8.4.4])
+    nameservers:
       - 10.0.0.1
       - 1.1.1.1
       - 8.8.8.8
