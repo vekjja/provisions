@@ -1,0 +1,75 @@
+debian:
+  golang: false
+  static_ip:
+    hostname: mini-cloud  # Hostname to add to /etc/hosts
+    interface: enp4s0  # Network interface name (use 'ip a' to find)
+    gateway: 10.0.0.1 # Gateway IP address
+    address: 10.0.0.10  # Static IP address
+    netmask: 16 # Subnet mask
+    nameservers:  # DNS servers (default: [8.8.8.8, 8.8.4.4])
+      - 10.0.0.1
+      - 1.1.1.1
+      - 8.8.8.8
+  files:
+    - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
+    - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
+    - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
+    - { src: 'themes/oh-my-posh/kev.omp.json', dest: '~/.kev.omp.json' }
+  packages:
+    - bettercap
+  k3s: # Lightweight Kubernetes: https://github.com/k3s-io/k3s/releases/
+    kubeconfig: ~/.kube/k3sconfig
+    local_kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/mini-cloud"
+    args:
+      - --disable=traefik
+      - --tls-san 10.0.0.10
+      - --disable=servicelb
+      - --prefer-bundled-bin
+      - --write-kubeconfig-mode 644
+      - --write-kubeconfig ~/.kube/k3sconfig
+      #  ensure that the device is formatted as linux ext4 for use with Postgresql
+      - --default-local-storage-path /mnt/ssd/ex2/k3s/storage
+  fs_mounts:
+  - {
+    path: /mnt/ssd/movies,
+    src: "UUID=0CB81103B810ED48",
+    fstype: ntfs,
+    opts: "defaults,nobootwait,nofail,errors=remount-ro",
+  }
+  - {
+    path: /mnt/ssd/series,
+    src: "UUID=56885E3A885E18B7",
+    fstype: ntfs,
+    opts: "defaults,nobootwait,nofail,errors=remount-ro",
+  }
+  - {
+    path: /mnt/ssd/pny250,
+    src: "UUID=1DAC99F73EFA9CB8",
+    fstype: ntfs,
+    opts: "defaults,nobootwait,nofail,errors=remount-ro",
+  }
+  - {
+    path: /mnt/hdd/tera,
+    src: "UUID=D4504CF8504CE33A",
+    fstype: ntfs,
+    opts: "defaults,nobootwait,nofail,errors=remount-ro"
+  }
+  - {
+    path: /mnt/hdd/barracuda,
+    src: "UUID=24FEA26DFEA236C8",
+    fstype: ntfs,
+    opts: "defaults,nobootwait,nofail,errors=remount-ro"
+  }
+  - {
+    path: /mnt/ssd/ex2,
+    src: "UUID=8e0dfd97-1bfc-40f3-af1c-3bff20d80df9",
+    fstype: ext4,
+    opts: "defaults,nofail"
+  }
+  nfs_shares:
+    - /mnt/ssd/movies *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+    - /mnt/ssd/series *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+    - /mnt/hdd/tera *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+    - /mnt/hdd/barracuda *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+    # - /mnt/ssd/pny250 *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1001,anongid=1001)
+    # - /mnt/ssd/ex2 *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
