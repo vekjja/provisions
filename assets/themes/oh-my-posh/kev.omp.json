@@ -2,7 +2,6 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "palette": {
     "blue": "#00b3ff",
-    "red": "#ff0000",
     "pink": "#e7357c",
     "gray": "#888888"
   },
