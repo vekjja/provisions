@@ -69,7 +69,7 @@
       "newline": true,
       "segments": [
         {
-          "background": "#16b9ff",
+          "background": "p:blue",
           "background_templates": [
             "{{ if eq .Env.USER \"root\" }}p:pink{{ end }}"
           ],
