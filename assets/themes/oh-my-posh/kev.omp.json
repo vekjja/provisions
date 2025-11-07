@@ -1,5 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "palette": {
+    "blue": "#00b3ff",
+    "red": "#ff0000",
+    "pink": "#e7357c",
+    "gray": "#888888"
+  },
   "blocks": [
     {
       "alignment": "left",
@@ -65,6 +71,9 @@
       "segments": [
         {
           "background": "#16b9ff",
+          "background_templates": [
+            "{{ if eq .Env.USER \"root\" }}p:pink{{ end }}"
+          ],
           "foreground": "#000000",
           "properties": {
             "style": "agnoster_full",
@@ -123,28 +132,39 @@
       "newline": true,
       "segments": [
         {
-          "foreground": "#00b3ff",
+          "foreground": "p:blue",
+          "foreground_templates": [
+            "{{ if eq .Env.USER \"root\" }}p:pink{{ end }}"
+          ],
           "template": "╰ ",
           "style": "plain",
           "type": "text"
         },
         {
-          "foreground": "#00b3ff",
+          "foreground": "p:gray",
           "foreground_templates": [
-            "{{ if .SSHSession }}#ff6ad5{{ end }}"
+            "{{ if eq .Env.USER \"root\" }}p:blue{{ end }}",
+            "{{ if .SSHSession }}p:pink{{ end }}"
           ],
           "template": "{{ if .SSHSession }}󰅟{{ else }}{{ end }} ",
           "style": "plain",
           "type": "session"
         },
         {
-          "foreground": "#00b3ff",
+          "foreground": "p:blue",
+          "foreground_templates": [
+            "{{ if eq .UserName \"root\" }}p:pink{{ end }}"
+          ],
           "template": "{{.UserName}}",
           "style": "plain",
           "type": "session"
         },
         {
-          "foreground": "#888888",
+          "foreground": "p:gray",
+          "foreground_templates": [
+            "{{ if .Env.SSH_CONNECTION }}p:pink{{ end }}",
+            "{{ if eq .Env.USER \"root\" }}p:blue{{ end }}"
+          ],
           "style": "plain",
           "properties": {
             "kali": ""
@@ -153,7 +173,10 @@
           "type": "os"
         },
         {
-          "foreground": "#00b3ff",
+          "foreground": "p:blue",
+          "foreground_templates": [
+            "{{ if eq .UserName \"root\" }}p:pink{{ end }}"
+          ],
           "template": "{{ .HostName }}:",
           "style": "plain",
           "type": "session"
