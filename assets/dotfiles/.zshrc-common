@@ -273,6 +273,11 @@ http-server() {
 }
 
 #### SSH ####
+
+function rssh(){
+ssh -t $1 "sudo su"
+}
+
 function ssh-wait() {
   # Vars
   HOST=$1
