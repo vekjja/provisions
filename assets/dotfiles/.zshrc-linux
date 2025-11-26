@@ -52,7 +52,9 @@ wakeLocalUI() {
 
 
 
-# Source all .zshrc-* files
+# Source all additional .zshrc-* files (skip main and common to avoid duplicates)
 for file in ~/.zshrc-*; do
-    [ -e "$file" ] && source "$file"
+    if [ -e "$file" ] && [ "$file" != "$HOME/.zshrc-linux" ] && [ "$file" != "$HOME/.zshrc-common" ]; then
+        source "$file"
+    fi
 done

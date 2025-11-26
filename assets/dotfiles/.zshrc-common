@@ -379,8 +379,12 @@ if [ $commands[autojump] ]; then                             # check if autojump
 fi
 
 # Oh My Zsh
-source $ZSH/oh-my-zsh.sh
+if [ -f "$ZSH/oh-my-zsh.sh" ]; then
+  source $ZSH/oh-my-zsh.sh
+fi
 
 #### Oh My Posh ####
 # eval "$(oh-my-posh init zsh --config ~/git/provisions/assets/themes/oh-my-posh/kev.omp.json)"
-eval "$(oh-my-posh init zsh --config ~/.kev.omp.json)"
+if command -v oh-my-posh &>/dev/null; then
+  eval "$(oh-my-posh init zsh --config ~/.kev.omp.json)"
+fi

@@ -45,6 +45,7 @@
   # when: not oh_my_posh.stat.exists
 
 - name: Install Oh My Posh
+  become: true
   ansible.builtin.command:
     cmd: bash /tmp/install-oh-my-posh.sh
     creates: "{{ ansible_env.HOME }}/.poshthemes"
