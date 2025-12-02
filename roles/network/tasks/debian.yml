@@ -82,3 +82,45 @@
   debug:
     var: ip_show_result.stdout_lines
 
+- name: Ensure UFW is installed
+  become: true
+  apt:
+    name: ufw
+    state: present
+    update_cache: true
+
+- name: Configure UFW firewall rules
+  become: true
+  ufw:
+    rule: "{{ item.rule | default('allow') }}"
+    port: "{{ item.port | default(omit) }}"
+    proto: "{{ item.proto | default('tcp') }}"
+    from: "{{ item.from | default(omit) }}"
+    comment: "{{ item.comment | default(omit) }}"
+  loop: "{{ lookup('vars', ansible_os_family | lower).firewall_rules | default([]) }}"
+  when: lookup('vars', ansible_os_family | lower).firewall_rules is defined
+
+- name: Allow NFS from local network (TCP)
+  become: true
+  when: 
+    - lookup('vars', ansible_os_family | lower).static_ip is defined
+    - lookup('vars', ansible_os_family | lower).firewall_rules is defined
+  ufw:
+    rule: allow
+    from: "{{ lookup('vars', ansible_os_family | lower).static_ip.address | regex_replace('^([0-9]+\\.[0-9]+)\\.[0-9]+\\.[0-9]+$', '\\1.0.0') }}/{{ lookup('vars', ansible_os_family | lower).static_ip.netmask | default('16') }}"
+    port: '111,2049'
+    proto: tcp
+    comment: 'NFS from local network (TCP)'
+
+- name: Allow NFS from local network (UDP)
+  become: true
+  when: 
+    - lookup('vars', ansible_os_family | lower).static_ip is defined
+    - lookup('vars', ansible_os_family | lower).firewall_rules is defined
+  ufw:
+    rule: allow
+    from: "{{ lookup('vars', ansible_os_family | lower).static_ip.address | regex_replace('^([0-9]+\\.[0-9]+)\\.[0-9]+\\.[0-9]+$', '\\1.0.0') }}/{{ lookup('vars', ansible_os_family | lower).static_ip.netmask | default('16') }}"
+    port: '111,2049'
+    proto: udp
+    comment: 'NFS from local network (UDP)'
+

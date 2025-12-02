@@ -28,6 +28,16 @@ debian:
     - { src: 'themes/oh-my-posh/kev.omp.json', dest: '~/.kev.omp.json' }
   packages:
     - bettercap
+  firewall_rules:
+    - { port: '22', proto: 'tcp', comment: 'SSH' }
+    - { port: '3389', proto: 'tcp', comment: 'RDP' }
+    - { port: '6443', proto: 'tcp', comment: 'Kubernetes API' }
+    - { port: '111', proto: 'tcp', comment: 'NFS rpcbind' }
+    - { port: '111', proto: 'udp', comment: 'NFS rpcbind' }
+    - { port: '2049', proto: 'tcp', comment: 'NFS server' }
+    - { port: '2049', proto: 'udp', comment: 'NFS server' }
+    - { port: '32765:65535', proto: 'tcp', comment: 'NFS dynamic ports' }
+    - { port: '32765:65535', proto: 'udp', comment: 'NFS dynamic ports' }
 
 # Darwin OS Variables
 # Includes macOS, etc.
