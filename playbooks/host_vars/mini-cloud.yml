@@ -1,5 +1,6 @@
 debian:
   golang: false
+ 
   static_ip:
     hostname: mini-cloud  # Hostname to add to /etc/hosts
     interface: enp4s0  # Network interface name (use 'ip a' to find)
@@ -10,8 +11,10 @@ debian:
       - 10.0.0.1
       - 1.1.1.1
       - 8.8.8.8
+  
   packages:
     - bettercap
+  
   firewall_rules:
     - { port: '22', proto: 'tcp', comment: 'SSH' }
     - { port: '3389', proto: 'tcp', comment: 'RDP' }
@@ -22,11 +25,13 @@ debian:
     - { port: '2049', proto: 'udp', comment: 'NFS server' }
     - { port: '32765:65535', proto: 'tcp', comment: 'NFS dynamic ports' }
     - { port: '32765:65535', proto: 'udp', comment: 'NFS dynamic ports' }
+  
   files:
     - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
     - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
     - { src: 'themes/oh-my-posh/kev.omp.json', dest: '~/.kev.omp.json' }
+ 
   wireguard:
     server_endpoint: livingroom.cloud
     interfaces:
@@ -35,7 +40,9 @@ debian:
         peers:
           - name: workMac
             allowed_ips: 10.0.10.2/32
-  k3s: # Lightweight Kubernetes: https://github.com/k3s-io/k3s/releases/
+  
+  k3s: 
+    # Lightweight Kubernetes: https://github.com/k3s-io/k3s/releases/
     kubeconfig: ~/.kube/k3sconfig
     local_kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/mini-cloud"
     args:
@@ -47,6 +54,7 @@ debian:
       - --write-kubeconfig ~/.kube/k3sconfig
       #  ensure that the device is formatted as linux ext4 for use with Postgresql
       - --default-local-storage-path /mnt/ssd/ex2/k3s/storage
+  
   fs_mounts:
   - {
     path: /mnt/ssd/movies,

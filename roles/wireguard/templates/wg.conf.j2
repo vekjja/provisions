@@ -14,11 +14,7 @@ PostDown = iptables -D FORWARD -i {{ item.name }} -j ACCEPT; iptables -D FORWARD
 
 [Peer]
 PublicKey = {{ wg_client_public_key_map[item.name + '_' + peer.name] }}
-{% if peer.allowed_ips is string %}
 AllowedIPs = {{ peer.allowed_ips }}
-{% else %}
-AllowedIPs = {{ peer.allowed_ips | join(', ') }}
-{% endif %}
 {% if peer.preshared_key is defined %}
 PreSharedKey = {{ peer.preshared_key }}
 {% endif %}

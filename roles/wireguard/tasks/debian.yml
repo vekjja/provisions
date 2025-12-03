@@ -164,6 +164,17 @@
   changed_when: false
   failed_when: false
 
+- name: Validate peer configuration
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+    - item.1.allowed_ips is not defined
+  fail:
+    msg: "Peer '{{ item.1.name }}' in interface '{{ item.0.name }}' is missing required 'allowed_ips' field"
+  with_subelements:
+    - "{{ lookup('vars', ansible_os_family | lower).wireguard.interfaces | default([]) }}"
+    - peers
+
 - name: Create WireGuard interface configuration
   become: true
   when:
@@ -282,6 +293,7 @@
     client_private_key: "{{ wg_client_private_keys.results | selectattr('item.0.name', 'equalto', item.0.name) | selectattr('item.1.name', 'equalto', item.1.name) | map(attribute='content') | first | b64decode | trim }}"
     server_public_key: "{{ wg_server_public_keys.results | selectattr('item.name', 'equalto', item.0.name) | map(attribute='content') | first | b64decode | trim }}"
     server_endpoint: "{{ lookup('vars', ansible_os_family | lower).wireguard.server_endpoint }}"
+    client_address: "{{ item.1.allowed_ips }}"
 
 - name: Validate WireGuard configuration syntax
   become: true

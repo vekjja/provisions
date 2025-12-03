@@ -1,10 +1,6 @@
 [Interface]
 PrivateKey = {{ client_private_key }}
-{% if peer.allowed_ips is string %}
-Address = {{ peer.allowed_ips }}
-{% else %}
-Address = {{ peer.allowed_ips | join(', ') }}
-{% endif %}
+Address = {{ client_address }}
 DNS = 1.1.1.1, 8.8.8.8, 9.9.9.9
 
 [Peer]

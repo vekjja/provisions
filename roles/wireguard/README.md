@@ -63,7 +63,7 @@ Just copy the client config file to the client device and import it into WireGua
 ### Peer Options (Required)
 
 - `name` (required): Client name (used for key generation and config file naming)
-- `allowed_ips` (required): Allowed IP addresses/CIDR ranges for this peer (list or string)
+- `allowed_ips` (required): Client IP address/CIDR (e.g., `10.0.0.2/32`)
 
 ### Peer Options (Optional)
 
