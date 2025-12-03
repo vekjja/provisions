@@ -1,0 +1,338 @@
+- name: Update apt cache
+  become: true
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install WireGuard packages
+  become: true
+  apt:
+    pkg:
+      - wireguard
+      - wireguard-tools
+    state: present
+
+- name: Enable IP forwarding
+  become: true
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    state: present
+    sysctl_set: true
+    reload: true
+
+- name: Allow WireGuard port in UFW (if firewall_rules is defined)
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).firewall_rules is defined
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+  ufw:
+    rule: allow
+    port: '51820'
+    proto: udp
+    comment: 'WireGuard VPN'
+
+- name: Ensure WireGuard configuration directory exists
+  become: true
+  when: lookup('vars', ansible_os_family | lower).wireguard is defined
+  file:
+    path: /etc/wireguard
+    state: directory
+    mode: '0700'
+    owner: root
+    group: root
+
+- name: Ensure WireGuard clients directory exists
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+  file:
+    path: /etc/wireguard/clients
+    state: directory
+    mode: '0700'
+    owner: root
+    group: root
+
+- name: Generate WireGuard private key if not provided
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+  shell: |
+    if [ ! -f /etc/wireguard/{{ item.name }}_private.key ]; then
+      wg genkey | tee /etc/wireguard/{{ item.name }}_private.key | wg pubkey > /etc/wireguard/{{ item.name }}_public.key
+      chmod 600 /etc/wireguard/{{ item.name }}_private.key
+      chmod 644 /etc/wireguard/{{ item.name }}_public.key
+    fi
+  args:
+    creates: /etc/wireguard/{{ item.name }}_private.key
+  loop: "{{ lookup('vars', ansible_os_family | lower).wireguard.interfaces | default([]) }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: wg_keygen_result
+  changed_when: "'created' in wg_keygen_result.stdout | default('')"
+
+- name: Read server public key
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+  slurp:
+    src: /etc/wireguard/{{ item.name }}_public.key
+  loop: "{{ lookup('vars', ansible_os_family | lower).wireguard.interfaces | default([]) }}"
+  register: wg_server_public_keys
+  changed_when: false
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Read generated WireGuard private keys
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+    - item.private_key is not defined
+  slurp:
+    src: /etc/wireguard/{{ item.name }}_private.key
+  loop: "{{ lookup('vars', ansible_os_family | lower).wireguard.interfaces | default([]) }}"
+  register: wg_private_keys
+  changed_when: false
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Create mapping of interface names to private keys
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+    - wg_private_keys is defined
+  set_fact:
+    wg_private_key_map: "{{ wg_private_key_map | default({}) | combine({item.item.name: item.content | b64decode | trim}) }}"
+  loop: "{{ wg_private_keys.results | default([]) | selectattr('item.private_key', 'undefined') | list }}"
+
+- name: Generate client keys for all peers
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+    - item.peers is defined
+  shell: |
+    mkdir -p /etc/wireguard/clients
+    {% for peer in item.peers %}
+    if [ ! -f /etc/wireguard/clients/{{ item.name }}_{{ peer.name }}_private.key ]; then
+      wg genkey | tee /etc/wireguard/clients/{{ item.name }}_{{ peer.name }}_private.key | wg pubkey > /etc/wireguard/clients/{{ item.name }}_{{ peer.name }}_public.key
+      chmod 600 /etc/wireguard/clients/{{ item.name }}_{{ peer.name }}_private.key
+      chmod 644 /etc/wireguard/clients/{{ item.name }}_{{ peer.name }}_public.key
+    fi
+    {% endfor %}
+  loop: "{{ lookup('vars', ansible_os_family | lower).wireguard.interfaces | default([]) }}"
+  loop_control:
+    label: "{{ item.name }}"
+  changed_when: false
+
+- name: Read generated client public keys
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+  slurp:
+    src: /etc/wireguard/clients/{{ item.0.name }}_{{ item.1.name }}_public.key
+  with_subelements:
+    - "{{ lookup('vars', ansible_os_family | lower).wireguard.interfaces | default([]) }}"
+    - peers
+  register: wg_client_public_keys
+  changed_when: false
+  ignore_errors: true
+
+- name: Create mapping of peer names to public keys
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+    - wg_client_public_keys is defined
+  set_fact:
+    wg_client_public_key_map: "{{ wg_client_public_key_map | default({}) | combine({(item.item.0.name + '_' + item.item.1.name): item.content | b64decode | trim}) }}"
+  loop: "{{ wg_client_public_keys.results | default([]) | selectattr('content', 'defined') | list }}"
+
+
+- name: Get default network interface for NAT
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+  shell: ip route | grep default | awk '{print $5}' | head -1
+  register: wg_default_interface
+  changed_when: false
+  failed_when: false
+
+- name: Create WireGuard interface configuration
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+  template:
+    src: wg.conf.j2
+    dest: /etc/wireguard/{{ item.name }}.conf
+    mode: '0600'
+    owner: root
+    group: root
+  loop: "{{ lookup('vars', ansible_os_family | lower).wireguard.interfaces | default([]) }}"
+  loop_control:
+    label: "{{ item.name }}"
+  vars:
+    wg_client_public_key_map: "{{ wg_client_public_key_map | default({}) }}"
+    wg_nat_interface: "{{ lookup('vars', ansible_os_family | lower).static_ip.interface | default(wg_default_interface.stdout | default('eth0')) }}"
+
+- name: Read client private keys for config generation
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.server_endpoint is defined
+  slurp:
+    src: /etc/wireguard/clients/{{ item.0.name }}_{{ item.1.name }}_private.key
+  with_subelements:
+    - "{{ lookup('vars', ansible_os_family | lower).wireguard.interfaces | default([]) }}"
+    - peers
+  register: wg_client_private_keys
+  changed_when: false
+
+- name: Get list of desired client names
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+  set_fact:
+    desired_client_names: "{{ desired_client_names | default([]) + [item.0.name + '_' + item.1.name] }}"
+  with_subelements:
+    - "{{ lookup('vars', ansible_os_family | lower).wireguard.interfaces | default([]) }}"
+    - peers
+
+- name: Find all client config files
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+  find:
+    paths: /etc/wireguard/clients
+    patterns: "{{ item.name }}_*.conf"
+    file_type: file
+  loop: "{{ lookup('vars', ansible_os_family | lower).wireguard.interfaces | default([]) }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: existing_client_configs
+  changed_when: false
+
+- name: Delete orphaned client config files
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - existing_client_configs is defined
+    - item.path | basename | replace('.conf', '') not in (desired_client_names | default([]))
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ existing_client_configs.results | default([]) | map(attribute='files') | flatten }}"
+  loop_control:
+    label: "{{ item.path | basename }}"
+
+- name: Find all client key files
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+  find:
+    paths: /etc/wireguard/clients
+    patterns: "{{ item.name }}_*_*.key"
+    file_type: file
+  loop: "{{ lookup('vars', ansible_os_family | lower).wireguard.interfaces | default([]) }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: existing_client_keys
+  changed_when: false
+
+- name: Delete orphaned client key files
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - existing_client_keys is defined
+    - (item.path | basename | regex_replace('_(private|public)\\.key$', '')) not in (desired_client_names | default([]))
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ existing_client_keys.results | default([]) | map(attribute='files') | flatten }}"
+  loop_control:
+    label: "{{ item.path | basename }}"
+
+- name: Create client configuration files
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.server_endpoint is defined
+  template:
+    src: client.conf.j2
+    dest: /etc/wireguard/clients/{{ item.0.name }}_{{ item.1.name }}.conf
+    mode: '0600'
+    owner: root
+    group: root
+  with_subelements:
+    - "{{ lookup('vars', ansible_os_family | lower).wireguard.interfaces | default([]) }}"
+    - peers
+  vars:
+    peer: "{{ item.1 }}"
+    client_private_key: "{{ wg_client_private_keys.results | selectattr('item.0.name', 'equalto', item.0.name) | selectattr('item.1.name', 'equalto', item.1.name) | map(attribute='content') | first | b64decode | trim }}"
+    server_public_key: "{{ wg_server_public_keys.results | selectattr('item.name', 'equalto', item.0.name) | map(attribute='content') | first | b64decode | trim }}"
+    server_endpoint: "{{ lookup('vars', ansible_os_family | lower).wireguard.server_endpoint }}"
+
+- name: Validate WireGuard configuration syntax
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+  command: wg-quick strip {{ item.name }}
+  args:
+    chdir: /etc/wireguard
+  loop: "{{ lookup('vars', ansible_os_family | lower).wireguard.interfaces | default([]) }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: wg_config_validate
+  changed_when: false
+  failed_when: wg_config_validate.rc != 0
+
+- name: Stop WireGuard interface if running
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+  systemd:
+    name: wg-quick@{{ item.name }}
+    state: stopped
+  loop: "{{ lookup('vars', ansible_os_family | lower).wireguard.interfaces | default([]) }}"
+  loop_control:
+    label: "{{ item.name }}"
+  ignore_errors: true
+
+- name: Ensure WireGuard interfaces are enabled and started
+  become: true
+  when:
+    - lookup('vars', ansible_os_family | lower).wireguard is defined
+    - lookup('vars', ansible_os_family | lower).wireguard.interfaces is defined
+  systemd:
+    name: wg-quick@{{ item.name }}
+    enabled: true
+    state: started
+  loop: "{{ lookup('vars', ansible_os_family | lower).wireguard.interfaces | default([]) }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: wg_service_start
+  failed_when: false
+
+- name: Show WireGuard service status on failure
+  when:
+    - wg_service_start is defined
+    - wg_service_start.results | selectattr('failed', 'equalto', true) | list | length > 0
+    - item.failed | default(false)
+  debug:
+    msg: "WireGuard service failed to start. Check the config file at /etc/wireguard/{{ item.item.name }}.conf and run 'systemctl status wg-quick@{{ item.item.name }}.service' for details."
+  loop: "{{ wg_service_start.results | default([]) }}"
+  loop_control:
+    label: "{{ item.item.name }}"

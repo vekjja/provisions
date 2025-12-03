@@ -10,6 +10,8 @@ debian:
       - 10.0.0.1
       - 1.1.1.1
       - 8.8.8.8
+  packages:
+    - bettercap
   firewall_rules:
     - { port: '22', proto: 'tcp', comment: 'SSH' }
     - { port: '3389', proto: 'tcp', comment: 'RDP' }
@@ -25,8 +27,14 @@ debian:
     - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
     - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
     - { src: 'themes/oh-my-posh/kev.omp.json', dest: '~/.kev.omp.json' }
-  packages:
-    - bettercap
+  wireguard:
+    server_endpoint: livingroom.cloud
+    interfaces:
+      - name: wg0
+        address: 10.0.10.0/24
+        peers:
+          - name: workMac
+            allowed_ips: 10.0.10.2/32
   k3s: # Lightweight Kubernetes: https://github.com/k3s-io/k3s/releases/
     kubeconfig: ~/.kube/k3sconfig
     local_kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/mini-cloud"

@@ -1,0 +1,26 @@
+[Interface]
+{% if item.private_key is defined %}
+PrivateKey = {{ item.private_key }}
+{% elif wg_private_key_map[item.name] is defined %}
+PrivateKey = {{ wg_private_key_map[item.name] }}
+{% endif %}
+Address = {{ item.address }}
+ListenPort = 51820
+{% if wg_nat_interface is defined %}
+PostUp = iptables -A FORWARD -i {{ item.name }} -j ACCEPT; iptables -A FORWARD -o {{ item.name }} -j ACCEPT; iptables -t nat -A POSTROUTING -o {{ wg_nat_interface }} -j MASQUERADE
+PostDown = iptables -D FORWARD -i {{ item.name }} -j ACCEPT; iptables -D FORWARD -o {{ item.name }} -j ACCEPT; iptables -t nat -D POSTROUTING -o {{ wg_nat_interface }} -j MASQUERADE
+{% endif %}
+{% for peer in item.peers %}
+
+[Peer]
+PublicKey = {{ wg_client_public_key_map[item.name + '_' + peer.name] }}
+{% if peer.allowed_ips is string %}
+AllowedIPs = {{ peer.allowed_ips }}
+{% else %}
+AllowedIPs = {{ peer.allowed_ips | join(', ') }}
+{% endif %}
+{% if peer.preshared_key is defined %}
+PreSharedKey = {{ peer.preshared_key }}
+{% endif %}
+{% endfor %}
+
