@@ -41,6 +41,10 @@ debian:
         peers:
           - name: workMac
             allowed_ips: 10.0.10.2/32
+          - name: macAir
+            allowed_ips: 10.0.10.3/32
+          - name: notYouriPhone
+            allowed_ips: 10.0.10.4/32
   
   k3s: # Lightweight Kubernetes: https://github.com/k3s-io/k3s/releases/
     kubeconfig: ~/.kube/k3sconfig
