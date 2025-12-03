@@ -42,8 +42,7 @@ debian:
           - name: workMac
             allowed_ips: 10.0.10.2/32
   
-  k3s: 
-    # Lightweight Kubernetes: https://github.com/k3s-io/k3s/releases/
+  k3s: # Lightweight Kubernetes: https://github.com/k3s-io/k3s/releases/
     kubeconfig: ~/.kube/k3sconfig
     local_kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/mini-cloud"
     args:
@@ -93,6 +92,7 @@ debian:
     fstype: ext4,
     opts: "defaults,nofail"
   }
+
   nfs_shares:
     - /mnt/ssd/movies *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
     - /mnt/ssd/series *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
