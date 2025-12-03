@@ -23,6 +23,7 @@ debian:
     - { port: '111', proto: 'udp', comment: 'NFS rpcbind' }
     - { port: '2049', proto: 'tcp', comment: 'NFS server' }
     - { port: '2049', proto: 'udp', comment: 'NFS server' }
+    - { port: '51820', proto: 'udp', comment: 'WireGuard VPN' }
     - { port: '32765:65535', proto: 'tcp', comment: 'NFS dynamic ports' }
     - { port: '32765:65535', proto: 'udp', comment: 'NFS dynamic ports' }
   
