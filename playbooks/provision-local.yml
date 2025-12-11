@@ -1,5 +1,5 @@
 - name: Provisions Local Machine
-  hosts: remote
+  hosts: local
   gather_facts: true
   
   roles:
@@ -7,9 +7,4 @@
     - { role: nerd-fonts, tags: ['nerd-fonts'] }
     - { role: system, tags: ['system'] }
     - { role: files, tags: ['files'] }
-    - { role: fstab, tags: ['fstab'] }
     - { role: golang, tags: ['go'] }
-    - { role: k3s, tags: ['k3s'] }
-    - { role: nfs, tags: ['nfs'] }
-    - { role: network, tags: ['network'] }
-    - { role: wireguard, tags: ['wireguard'] }

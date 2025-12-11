@@ -5,7 +5,7 @@
     mode: "0777"
 
 - name: Execute the K3S Installer
-  shell: "/tmp/k3s.sh {{ lookup('vars', ansible_os_family | lower).k3s.args | join(' ')}}"
+  shell: "/tmp/k3s.sh {{ lookup('vars', ansible_facts['os_family'] | lower).k3s.args | join(' ')}}"
 
 - name: Remove the K3S Installer
   file:
@@ -15,11 +15,11 @@
 - name: Get K3S Kubeconfig
   run_once: true
   fetch:
-    src: "{{ lookup('vars', ansible_os_family | lower).k3s.kubeconfig }}"
-    dest: "{{ lookup('vars', ansible_os_family | lower).k3s.local_kubeconfig }}"
+    src: "{{ lookup('vars', ansible_facts['os_family'] | lower).k3s.kubeconfig }}"
+    dest: "{{ lookup('vars', ansible_facts['os_family'] | lower).k3s.local_kubeconfig }}"
     flat: yes
   tags: get-kubeconfig
 
 - name: Debian Tasks
   ansible.builtin.include_tasks: debian.yml
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian'
