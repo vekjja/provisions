@@ -50,15 +50,10 @@ darwin:
     - { src: 'configs/ssh.config', dest: '~/.ssh/config' }
     - { src: 'themes/oh-my-posh/kev.omp.json', dest: '~/.kev.omp.json' }
   casks:
+    - aptakube
     - beekeeper-studio
-    - docker
-    - firefox
     - google-chrome
-    - lens
-    #- slack
     - spotify
-    #- steam
-    #- vlc
   packages:
     - balenaetcher
     - helm
