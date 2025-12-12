@@ -11,13 +11,7 @@ static_ip:
     - 8.8.8.8
 
 packages:
-  - bettercap
-  - curl
   - kubectx
-  - git
-  - jq
-  - vim
-  - zsh
 
 firewall_rules:
   - { port: '22', proto: 'tcp', comment: 'SSH' }
