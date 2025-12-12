@@ -1,7 +1,7 @@
 - name: Debian Tasks
   ansible.builtin.include_tasks: debian.yml
-  when: ansible_os_family == 'Debian' and lookup('vars', ansible_os_family | lower).static_ip is defined
+  when: ansible_facts['os_family'] == 'Debian' and lookup('vars', ansible_facts['os_family'] | lower).static_ip is defined
 
 - name: RedHat Tasks
   ansible.builtin.include_tasks: redhat.yml
-  when: ansible_os_family == 'RedHat' and lookup('vars', ansible_os_family | lower).static_ip is defined
+  when: ansible_facts['os_family'] == 'RedHat' and lookup('vars', ansible_facts['os_family'] | lower).static_ip is defined

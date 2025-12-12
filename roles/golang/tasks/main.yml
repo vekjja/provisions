@@ -1,11 +1,11 @@
 - name: Unix Tasks
   ansible.builtin.include_tasks: unix.yml
-  when: ansible_os_family not in ['Darwin', 'Windows'] and lookup('vars', ansible_os_family | lower).golang | default([])
+  when: ansible_facts['os_family'] not in ['Darwin', 'Windows'] and lookup('vars', ansible_facts['os_family'] | lower).golang | default([])
 
 - name: Darwin Tasks
   ansible.builtin.include_tasks: darwin.yml
-  when: ansible_distribution == 'Darwin'
+  when: ansible_facts['distribution'] == 'Darwin'
 
 - name: Windows Tasks
   ansible.builtin.include_tasks: windows.yml
-  when: ansible_distribution == 'Windows'
+  when: ansible_facts['distribution'] == 'Windows'

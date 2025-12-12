@@ -23,13 +23,13 @@
 
 - name: Set WireGuard configuration variable
   set_fact:
-    wg_config: "{{ lookup('vars', ansible_os_family | lower).wireguard | default({}) }}"
-  when: lookup('vars', ansible_os_family | lower).wireguard is defined
+    wg_config: "{{ lookup('vars', ansible_facts['os_family'] | lower).wireguard | default({}) }}"
+  when: lookup('vars', ansible_facts['os_family'] | lower).wireguard is defined
 
 - name: Allow WireGuard port in UFW
   become: true
   when:
-    - lookup('vars', ansible_os_family | lower).firewall_rules is defined
+    - lookup('vars', ansible_facts['os_family'] | lower).firewall_rules is defined
     - wg_config.interfaces is defined
   ufw:
     rule: allow
@@ -183,7 +183,7 @@
     label: "{{ item.name }}"
   vars:
     wg_client_public_key_map: "{{ wg_client_public_key_map | default({}) }}"
-    wg_nat_interface: "{{ lookup('vars', ansible_os_family | lower).static_ip.interface | default(wg_default_interface.stdout | default('eth0')) }}"
+    wg_nat_interface: "{{ lookup('vars', ansible_facts['os_family'] | lower).static_ip.interface | default(wg_default_interface.stdout | default('eth0')) }}"
 
 - name: Get list of desired client names
   when: wg_config.interfaces is defined

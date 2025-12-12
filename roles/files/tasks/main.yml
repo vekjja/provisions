@@ -6,21 +6,21 @@
     state: link
     force: true
     follow: false
-  loop: "{{ lookup('vars', ansible_os_family | lower).files | default([]) }}"
-  when: ansible_os_family != "Windows" and 'local' in group_names
+  loop: "{{ lookup('vars', ansible_facts['os_family'] | lower).files | default([]) }}"
+  when: ansible_facts['os_family'] != "Windows" and 'local' in group_names
 
 - name: Copy OS-Specific Files (Remote Group)
   ansible.builtin.copy:
     src: "{{ lookup('pipe', 'realpath ' + inventory_dir + '/../assets/' + item.src) }}"
     dest: "{{ item.dest }}"
     mode: "0644"
-  loop: "{{ lookup('vars', ansible_os_family | lower).files | default([]) }}"
-  when: ansible_os_family != "Windows" and 'remote' in group_names
+  loop: "{{ lookup('vars', ansible_facts['os_family'] | lower).files | default([]) }}"
+  when: ansible_facts['os_family'] != "Windows" and 'remote' in group_names
 
 - name: Copy OS-Specific Files (Windows)
   ansible.builtin.copy:
     src: "{{ lookup('pipe', 'realpath ' + inventory_dir + '/../assets/' + item.src) }}"
     dest: "{{ item.dest }}"
     mode: "0644"
-  loop: "{{ lookup('vars', ansible_os_family | lower).files | default([]) }}"
-  when: ansible_os_family == "Windows"
+  loop: "{{ lookup('vars', ansible_facts['os_family'] | lower).files | default([]) }}"
+  when: ansible_facts['os_family'] == "Windows"

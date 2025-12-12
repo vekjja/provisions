@@ -1,6 +1,6 @@
 - name: Set Privilege Escalation Requirements
   ansible.builtin.set_fact:
-    use_sudo: "{{ ansible_os_family != 'Darwin' }}"
+    use_sudo: "{{ ansible_facts['os_family'] != 'Darwin' }}"
 
 - name: Install Unix Packages
   ansible.builtin.package:
@@ -12,11 +12,11 @@
 
 - name: Install OS-Specific Packages (Mac/Linux)
   ansible.builtin.package:
-    name: "{{ lookup('vars', ansible_os_family | lower).packages | default([]) }}"
+    name: "{{ lookup('vars', ansible_facts['os_family'] | lower).packages | default([]) }}"
     state: present
   become: "{{ use_sudo }}"
-  when: lookup('vars', ansible_os_family | lower).packages is defined
+  when: lookup('vars', ansible_facts['os_family'] | lower).packages is defined
 
 - name: Include Darwin Tasks
   ansible.builtin.include_tasks: darwin.yml
-  when: ansible_os_family == 'Darwin'
+  when: ansible_facts['os_family'] == 'Darwin'

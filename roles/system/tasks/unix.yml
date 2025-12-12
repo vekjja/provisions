@@ -1,6 +1,6 @@
 - name: Set privilege escalation variable
   ansible.builtin.set_fact:
-    use_sudo: "{{ ansible_os_family != 'Darwin' and ansible_os_family != 'Windows' }}"
+    use_sudo: "{{ ansible_facts['os_family'] != 'Darwin' and ansible_facts['os_family'] != 'Windows' }}"
 
 - name: Create Unix Directories
   ansible.builtin.file:
@@ -53,10 +53,10 @@
 
 - name: Debian Tasks
   ansible.builtin.include_tasks: debian.yml
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian'
   tags: debian
 
 - name: RedHat Tasks
   ansible.builtin.include_tasks: redhat.yml
-  when: ansible_os_family == 'RedHat'
+  when: ansible_facts['os_family'] == 'RedHat'
   tags: redhat
