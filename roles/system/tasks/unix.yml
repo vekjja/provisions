@@ -1,6 +1,6 @@
 - name: Set privilege escalation variable
   ansible.builtin.set_fact:
-    use_sudo: "{{ ansible_facts['os_family'] != 'Darwin' and ansible_facts['os_family'] != 'Windows' }}"
+    use_sudo: "{{ ansible_facts['os_family'] != 'Darwin' }}"
 
 - name: Create Unix Directories
   ansible.builtin.file:
