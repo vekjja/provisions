@@ -11,6 +11,8 @@ unix_packages:
   - btop
   - coreutils
   - curl
+  - ncdu
+  - gdu
   - git
   - jq
   - python3
