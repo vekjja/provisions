@@ -1,5 +1,5 @@
 - name: Install Mac Casks
   ansible.builtin.homebrew_cask:
-    name: "{{ lookup('vars', ansible_facts['os_family'] | lower).casks | default([]) }}"
+    name: "{{ casks | default([]) }}"
     state: present
   tags: casks

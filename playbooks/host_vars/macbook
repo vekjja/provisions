@@ -1,0 +1,23 @@
+ansible_python_interpreter: /opt/homebrew/bin/python3.14
+
+files:
+- { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
+- { src: 'dotfiles/.bashrc', dest: '~/.bashrc' }
+- { src: 'dotfiles/.zshrc-mac', dest: '~/.zshrc' }
+- { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
+- { src: 'configs/ssh.config', dest: '~/.ssh/config' }
+- { src: 'themes/oh-my-posh/kev.omp.json', dest: '~/.kev.omp.json' }
+
+casks:
+- aptakube
+- beekeeper-studio
+- cursor
+- google-chrome
+- spotify
+
+packages:
+- helm
+- iterm2
+- k9s
+- kubectl
+- kubectx

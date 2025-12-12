@@ -1,7 +1,7 @@
 # Inventory File for Ansible
 
 [local]
-macAir ansible_connection=local
+macbook ansible_connection=local
 
 [remote]
 mini-cloud

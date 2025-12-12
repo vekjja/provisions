@@ -1,5 +1,5 @@
 - name: Install NFS Server Packages
-  when: lookup('vars', ansible_facts['os_family'] | lower).nfs_shares | default([]) | length > 0
+  when: nfs_shares | default([]) | length > 0
   become: true
   apt:
     pkg:
@@ -9,7 +9,7 @@
     update_cache: true
 
 - name: Ensure rpcbind service is enabled and started
-  when: lookup('vars', ansible_facts['os_family'] | lower).nfs_shares | default([]) | length > 0
+  when: nfs_shares | default([]) | length > 0
   become: true
   ansible.builtin.systemd:
     name: rpcbind
@@ -17,7 +17,7 @@
     state: started
 
 - name: Ensure nfs-server service is enabled and started
-  when: lookup('vars', ansible_facts['os_family'] | lower).nfs_shares | default([]) | length > 0
+  when: nfs_shares | default([]) | length > 0
   become: true
   ansible.builtin.systemd:
     name: nfs-server
@@ -25,16 +25,16 @@
     state: started
 
 - name: Update NFS Exports File
-  when: lookup('vars', ansible_facts['os_family'] | lower).nfs_shares | default([]) | length > 0
+  when: nfs_shares | default([]) | length > 0
   become: true
   lineinfile:
     path: /etc/exports
     state: present
     line: "{{ item }}"
-  loop: "{{ lookup('vars', ansible_facts['os_family'] | lower).nfs_shares | default([]) }}"
+  loop: "{{ nfs_shares | default([]) }}"
 
 - name: Export NFS Shares
-  when: lookup('vars', ansible_facts['os_family'] | lower).nfs_shares | default([]) | length > 0
+  when: nfs_shares | default([]) | length > 0
   become: true
   shell: exportfs -ra
 

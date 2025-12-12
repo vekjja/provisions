@@ -12,10 +12,10 @@
 
 - name: Install OS-Specific Packages (Mac/Linux)
   ansible.builtin.package:
-    name: "{{ lookup('vars', ansible_facts['os_family'] | lower).packages | default([]) }}"
+    name: "{{ packages | default([]) }}"
     state: present
   become: "{{ use_sudo }}"
-  when: lookup('vars', ansible_facts['os_family'] | lower).packages is defined
+  when: packages is defined
 
 - name: Include Darwin Tasks
   ansible.builtin.include_tasks: darwin.yml
