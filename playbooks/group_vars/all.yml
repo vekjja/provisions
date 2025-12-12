@@ -1,8 +1,11 @@
 # vim:ft=ansible
 
+nerd_fonts:
+  - "FiraMono"
+
 unix_directories:
   - ~/.history
-
+  
 unix_packages:
   - autojump
   - btop
@@ -13,81 +16,6 @@ unix_packages:
   - python3
   - tree
   - vim
+  - wget
   - zsh
 
-nerd_fonts:
-  - "FiraMono"
-
-# Debian Family Variables
-# Includes Debian, Ubuntu, etc.
-debian:
-  files:
-    - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
-    - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
-    - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
-    - { src: 'themes/oh-my-posh/kev.omp.json', dest: '~/.kev.omp.json' }
-  packages:
-    - bettercap
-  firewall_rules:
-    - { port: '22', proto: 'tcp', comment: 'SSH' }
-    - { port: '3389', proto: 'tcp', comment: 'RDP' }
-    - { port: '6443', proto: 'tcp', comment: 'Kubernetes API' }
-    - { port: '111', proto: 'tcp', comment: 'NFS rpcbind' }
-    - { port: '111', proto: 'udp', comment: 'NFS rpcbind' }
-    - { port: '2049', proto: 'tcp', comment: 'NFS server' }
-    - { port: '2049', proto: 'udp', comment: 'NFS server' }
-    - { port: '32765:65535', proto: 'tcp', comment: 'NFS dynamic ports' }
-    - { port: '32765:65535', proto: 'udp', comment: 'NFS dynamic ports' }
-
-# Darwin OS Variables
-# Includes macOS, etc.
-darwin:
-  files:
-    - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
-    - { src: 'dotfiles/.bashrc', dest: '~/.bashrc' }
-    - { src: 'dotfiles/.zshrc-mac', dest: '~/.zshrc' }
-    - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
-    - { src: 'configs/ssh.config', dest: '~/.ssh/config' }
-    - { src: 'themes/oh-my-posh/kev.omp.json', dest: '~/.kev.omp.json' }
-  casks:
-    - aptakube
-    - beekeeper-studio
-    - google-chrome
-    - spotify
-  packages:
-    - balenaetcher
-    - helm
-    - iterm2
-    - k9s
-    - kubectl
-    - kubectx
-
-# RedHat Family Variables
-# Includes RedHat, CentOS, PiOS, etc.
-redhat:
-  golang: true
-  pyenv: true
-  toshy: true
-  files:
-    - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
-    - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
-    - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
-    - { src: 'configs/ssh.config', dest: '~/.ssh/config' }
-  packages:
-    - kubernetes-kubeadm
-
-# Windows Family Variables
-# Includes Windows, etc.
-windows:
-  files:
-    - {
-      src: 'windows/MacToWinKeys.ahk',
-      dest: '{{ lookup("env", "USERPROFILE") }}\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\MacToWinKeys.ahk'}
-    - {
-      src: 'windows/Microsoft.PowerShell_profile.ps1',
-      dest: '{{ lookup("env", "USERPROFILE") }}\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1'}
-    - {
-      src: 'themes/oh-my-posh/kev.omp.json',
-      dest: '{{ lookup("env", "USERPROFILE") }}\Documents\WindowsPowerShell\kev.omp.json'}
-  packages:
-    - git
