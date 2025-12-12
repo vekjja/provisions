@@ -15,6 +15,7 @@ debian:
   packages:
     - bettercap
     - curl
+    - kubectx
     - git
     - jq
     - vim
