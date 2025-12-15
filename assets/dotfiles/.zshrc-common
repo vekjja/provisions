@@ -318,21 +318,20 @@ function ssh-init() {
 sudo apt-get update
 sudo apt-get install -y \
   curl \
+  ncdu \
   zsh \
   vim \
   autojump
-
-
 ENDSSH
 
   echo "${PURP}Copy Files:${BLU}"
   scp ~/git/provisions/assets/dotfiles/.zshrc-min ${HOST}:~/.zshrc
   scp ~/git/provisions/assets/dotfiles/.vimrc ${HOST}:~/.
 
-   echo "${PURP}Copying to /root/ using sudo:${BLU}"
-   scp ~/git/provisions/assets/dotfiles/.zshrc-min ${HOST}:/tmp/.zshrc-min
-   scp ~/git/provisions/assets/dotfiles/.vimrc ${HOST}:/tmp/.vimrc
-   ssh ${HOST} "sudo mv /tmp/.zshrc-min /root/.zshrc && sudo mv /tmp/.vimrc /root/.vimrc && sudo chown root:root /root/.zshrc /root/.vimrc"
+  echo "${PURP}Copying to /root/ using sudo:${BLU}"
+  scp ~/git/provisions/assets/dotfiles/.zshrc-min ${HOST}:/tmp/.zshrc-min
+  scp ~/git/provisions/assets/dotfiles/.vimrc ${HOST}:/tmp/.vimrc
+  ssh ${HOST} "sudo mv /tmp/.zshrc-min /root/.zshrc && sudo mv /tmp/.vimrc /root/.vimrc && sudo chown root:root /root/.zshrc /root/.vimrc"
 
   echo "${PURP}Entering Host: ${NC}${HOST}"
   ssh ${HOST}
