@@ -5,7 +5,7 @@ nerd_fonts:
 
 unix_directories:
   - ~/.history
-  
+
 unix_packages:
   - autojump
   - btop

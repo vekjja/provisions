@@ -12,6 +12,7 @@ static_ip:
 
 packages:
   - kubectx
+  - k9s
 
 firewall_rules:
   - { port: '22', proto: 'tcp', comment: 'SSH' }
@@ -54,7 +55,6 @@ k3s: # Lightweight Kubernetes: https://github.com/k3s-io/k3s/releases/
     - --prefer-bundled-bin
     - --write-kubeconfig-mode 644
     - --write-kubeconfig ~/.kube/k3sconfig
-    #  ensure that the device is formatted as linux ext4 for use with Postgresql
     - --default-local-storage-path /mnt/ssd/ex2/k3s/storage
 
 fs_mounts:
