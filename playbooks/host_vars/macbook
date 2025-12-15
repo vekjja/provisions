@@ -15,6 +15,7 @@ casks:
 - google-chrome
 - iterm2
 - spotify
+- thebrowsercompany-dia
 
 packages:
 - helm
