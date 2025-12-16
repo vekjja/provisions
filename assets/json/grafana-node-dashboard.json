@@ -1068,7 +1068,7 @@
         }
     ],
     "preload": false,
-    "refresh": "5s",
+    "refresh": "10s",
     "schemaVersion": 42,
     "tags": [
         "node-exporter-mixin"
@@ -1130,5 +1130,5 @@
     "timezone": "browser",
     "title": "Mini Cloud",
     "uid": "7d57716318ee0dddbac5a7f451fb7754",
-    "version": 20
+    "version": 21
 }
