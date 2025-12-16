@@ -71,7 +71,7 @@ spec:
 ---
 EOF
 
-#
+
 # ℹ️ Personal ISP Blocks Port 80 So HTTP ACME Challenge Fails
 # Certificate Issuer LetsEncrypt Staging
 #
