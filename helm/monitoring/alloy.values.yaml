@@ -1,0 +1,65 @@
+# Default values for grafana/alloy
+# https://github.com/grafana/helm-charts/tree/main/charts/alloy
+# Alloy replaced Promtail as the recommended log collection agent
+# Documentation: https://grafana.com/docs/loki/latest/send-data/alloy/
+
+# Alloy configuration for Kubernetes log collection
+# This will be configured to scrape logs from all pods and send to Loki
+# Using River configuration language (Alloy's config format)
+alloy:
+  configMap:
+    content: |-
+      logging {
+        level  = "info"
+        format = "logfmt"
+      }
+
+      discovery.kubernetes "pods" {
+        role = "pod"
+        selectors {
+          role = "pod"
+        }
+      }
+
+      loki.write "loki_write" {
+        endpoint {
+          url = "http://loki:3100/loki/api/v1/push"
+        }
+      }
+
+      loki.relabel "extract_labels" {
+        forward_to = [loki.write.loki_write.receiver]
+
+        rule {
+          source_labels = ["instance"]
+          regex          = "([^/]+)/([^:]+):(.+)"
+          target_label   = "namespace"
+          replacement    = "$1"
+        }
+
+        rule {
+          source_labels = ["instance"]
+          regex          = "([^/]+)/([^:]+):(.+)"
+          target_label   = "pod"
+          replacement    = "$2"
+        }
+
+        rule {
+          source_labels = ["instance"]
+          regex          = "([^/]+)/([^:]+):(.+)"
+          target_label   = "container"
+          replacement    = "$3"
+        }
+
+        rule {
+          source_labels = ["instance"]
+          regex          = "([^/]+)/([^:]+):(.+)"
+          target_label   = "service_name"
+          replacement    = "$2"
+        }
+      }
+
+      loki.source.kubernetes "k8s_logs" {
+        targets = discovery.kubernetes.pods.targets
+        forward_to = [loki.relabel.extract_labels.receiver]
+      }

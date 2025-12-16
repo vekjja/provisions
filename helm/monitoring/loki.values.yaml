@@ -1,0 +1,73 @@
+# Default values for grafana/loki
+# https://github.com/grafana/helm-charts/tree/main/charts/loki
+
+# Use Loki 3.2.0+ to support volume_enabled
+image:
+  tag: "3.3.0"
+
+# Deployment mode - using SingleBinary for simpler deployment with local storage
+deploymentMode: SingleBinary
+
+# Loki configuration - all config must be under loki section
+loki:
+  # Common configuration - set replication factor to 1 for SingleBinary mode
+  commonConfig:
+    replication_factor: 1
+
+  storage:
+    bucketNames:
+      chunks: chunks
+      ruler: ruler
+      admin: admin
+
+  # Disable multi-tenancy/auth for simpler setup
+  # This prevents "no org id" 401 errors from Grafana
+  auth_enabled: false
+
+  # Schema configuration - required for Loki
+  schemaConfig:
+    configs:
+    - from: "2024-01-01"
+      store: tsdb
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+  # Limits configuration
+  limits_config:
+    retention_period: 192h
+    volume_enabled: true
+
+  # Disable ruler component (alerting not needed)
+  # This prevents S3 access attempts
+  ruler:
+    enable_api: false
+
+  # Storage configuration for filesystem
+  # Volume is mounted at /var/loki, so use that path
+  storage_config:
+    filesystem:
+      directory: /var/loki/chunks
+
+# Disable cache components for SingleBinary mode
+chunksCache:
+  enabled: false
+
+resultsCache:
+  enabled: false
+
+# Disable gateway for SingleBinary mode (not needed)
+gateway:
+  enabled: false
+
+# Disable ruler component (alerting not needed)
+ruler:
+  enabled: false
+
+# Persistence
+persistence:
+  enabled: true
+  storageClassName: local-path
+  size: 20Gi
