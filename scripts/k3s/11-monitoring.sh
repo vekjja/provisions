@@ -21,7 +21,7 @@ data:
 EOF
 
 # Install kube-prometheus-stack (includes Prometheus, Grafana, Alertmanager, Node Exporter, etc.)
-helm upgrade --install prometheus-stack prometheus-community/kube-prometheus-stack \
+helm upgrade --install monitoring-stack prometheus-community/kube-prometheus-stack \
   --namespace "monitoring" \
   --create-namespace \
   --values ./helm/monitoring/values.yaml

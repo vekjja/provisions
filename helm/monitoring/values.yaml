@@ -47,29 +47,7 @@ grafana:
     port: 80
 
   # Dashboard configuration
-  # Enable/disable default dashboards that come with kube-prometheus-stack
-  defaultDashboardsEnabled:
-    # Core Kubernetes dashboards
-    k8sCluster: true
-    k8sNode: true
-    k8sPod: true
-    k8sResource: true
-    k8sApiserver: true
-    k8sKubelet: true
-    k8sProxy: true
-    k8sScheduler: true
-    k8sControllerManager: true
-    k8sEtcd: true
-    # Node exporter dashboards
-    nodeExporter: true
-    nodeExporterNodes: true
-    # Prometheus dashboards
-    prometheus: true
-    prometheusOperator: true
-    # Kube-state-metrics dashboards
-    kubeStateMetrics: true
-    # Grafana dashboards
-    grafana: false
+  defaultDashboardsEnabled: true
 
   # Sidecar for auto-discovering dashboards from ConfigMaps
   # Any ConfigMap with label "grafana_dashboard: 1" will be automatically loaded
