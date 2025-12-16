@@ -63,6 +63,19 @@ grafana:
       # Search in all namespaces or specific namespace
       searchNamespace: ALL
 
+  # Datasources - configure Loki for logging
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+      - name: Loki
+        type: loki
+        access: proxy
+        url: http://loki:3100
+        isDefault: false
+        jsonData:
+          maxLines: 1000
+
 # Prometheus configuration
 prometheus:
   prometheusSpec:
