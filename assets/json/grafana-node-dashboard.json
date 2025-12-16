@@ -18,52 +18,25 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 1,
-    "id": 29,
+    "id": 0,
     "links": [],
     "panels": [
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "${datasource}"
             },
             "fieldConfig": {
                 "defaults": {
-                    "color": {
-                        "mode": "palette-classic"
-                    },
                     "custom": {
-                        "axisBorderShow": false,
-                        "axisCenteredZero": false,
-                        "axisColorMode": "text",
-                        "axisLabel": "",
-                        "axisPlacement": "auto",
-                        "barAlignment": 0,
-                        "barWidthFactor": 0.6,
-                        "drawStyle": "line",
-                        "fillOpacity": 0,
-                        "gradientMode": "none",
-                        "hideFrom": {
-                            "legend": false,
-                            "tooltip": false,
-                            "viz": false
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
                         },
-                        "insertNulls": false,
-                        "lineInterpolation": "linear",
-                        "lineWidth": 1,
-                        "pointSize": 5,
-                        "scaleDistribution": {
-                            "type": "linear"
+                        "footer": {
+                            "reducers": []
                         },
-                        "showPoints": "auto",
-                        "showValues": false,
-                        "spanNulls": false,
-                        "stacking": {
-                            "group": "A",
-                            "mode": "none"
-                        },
-                        "thresholdsStyle": {
-                            "mode": "off"
-                        }
+                        "inspect": false
                     },
                     "mappings": [],
                     "thresholds": {
@@ -74,46 +47,223 @@
                                 "value": 0
                             },
                             {
+                                "color": "yellow",
+                                "value": 0.8
+                            },
+                            {
                                 "color": "red",
-                                "value": 80
+                                "value": 0.9
+                            }
+                        ]
+                    },
+                    "unit": "decbytes"
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Mounted on"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 260
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Size"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 93
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Used"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 72
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Available"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 88
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Used, %"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "percentunit"
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "type": "gauge"
+                                }
+                            },
+                            {
+                                "id": "max",
+                                "value": 1
+                            },
+                            {
+                                "id": "min",
+                                "value": 0
                             }
                         ]
                     }
-                },
-                "overrides": []
+                ]
             },
             "gridPos": {
-                "h": 6,
+                "h": 10,
                 "w": 12,
                 "x": 0,
                 "y": 0
             },
-            "id": 15,
+            "id": 14,
             "options": {
-                "legend": {
-                    "calcs": [],
-                    "displayMode": "list",
-                    "placement": "bottom",
-                    "showLegend": true
-                },
-                "tooltip": {
-                    "hideZeros": false,
-                    "mode": "single",
-                    "sort": "none"
-                }
+                "cellHeight": "sm",
+                "showHeader": true,
+                "sortBy": [
+                    {
+                        "desc": true,
+                        "displayName": "Used, %"
+                    }
+                ]
             },
             "pluginVersion": "12.3.0",
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "$datasource"
+                    },
                     "editorMode": "code",
-                    "expr": "100 * (node_filesystem_avail_bytes{device=~\"/dev/(sd|nvme).*\",fstype!~\"tmpfs|rootfs\",mountpoint!~\"/(boot|run|sys|proc|dev).*\"} / on(instance,device,mountpoint,fstype) node_filesystem_size_bytes{device=~\"/dev/(sd|nvme).*\",fstype!~\"tmpfs|rootfs\",mountpoint!~\"/(boot|run|sys|proc|dev).*\"})",
-                    "legendFormat": "{{device}} - {{mountpoint}}",
-                    "range": true,
+                    "expr": "max by (mountpoint) (node_filesystem_size_bytes{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\", fstype!=\"\", mountpoint!=\"\", device=~\"/dev/(sd|nvme).*\"})",
+                    "format": "table",
+                    "instant": true,
+                    "legendFormat": "",
                     "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "max by (mountpoint) (node_filesystem_avail_bytes{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\", fstype!=\"\", mountpoint!=\"\", device=~\"/dev/(sd|nvme).*\"})\n",
+                    "format": "table",
+                    "instant": true,
+                    "legendFormat": "",
+                    "refId": "B"
                 }
             ],
-            "title": "Device Storage Available",
-            "type": "timeseries"
+            "title": "Disk Space Usage",
+            "transformations": [
+                {
+                    "id": "groupBy",
+                    "options": {
+                        "fields": {
+                            "Value #A": {
+                                "aggregations": [
+                                    "lastNotNull"
+                                ],
+                                "operation": "aggregate"
+                            },
+                            "Value #B": {
+                                "aggregations": [
+                                    "lastNotNull"
+                                ],
+                                "operation": "aggregate"
+                            },
+                            "mountpoint": {
+                                "aggregations": [],
+                                "operation": "groupby"
+                            }
+                        }
+                    }
+                },
+                {
+                    "id": "merge"
+                },
+                {
+                    "id": "calculateField",
+                    "options": {
+                        "alias": "Used",
+                        "binary": {
+                            "left": "Value #A (lastNotNull)",
+                            "operator": "-",
+                            "reducer": "sum",
+                            "right": "Value #B (lastNotNull)"
+                        },
+                        "mode": "binary",
+                        "reduce": {
+                            "reducer": "sum"
+                        }
+                    }
+                },
+                {
+                    "id": "calculateField",
+                    "options": {
+                        "alias": "Used, %",
+                        "binary": {
+                            "left": "Used",
+                            "operator": "/",
+                            "reducer": "sum",
+                            "right": "Value #A (lastNotNull)"
+                        },
+                        "mode": "binary",
+                        "reduce": {
+                            "reducer": "sum"
+                        }
+                    }
+                },
+                {
+                    "id": "organize",
+                    "options": {
+                        "excludeByName": {},
+                        "indexByName": {},
+                        "renameByName": {
+                            "Value #A (lastNotNull)": "Size",
+                            "Value #B (lastNotNull)": "Available",
+                            "mountpoint": "Mounted on"
+                        }
+                    }
+                },
+                {
+                    "id": "sortBy",
+                    "options": {
+                        "fields": {},
+                        "sort": [
+                            {
+                                "field": "Mounted on"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "type": "table"
         },
         {
             "datasource": {
@@ -482,19 +632,46 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "prometheus"
             },
             "fieldConfig": {
                 "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
                     "custom": {
-                        "align": "auto",
-                        "cellOptions": {
-                            "type": "auto"
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
                         },
-                        "footer": {
-                            "reducers": []
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
                         },
-                        "inspect": false
+                        "showPoints": "auto",
+                        "showValues": false,
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
                     },
                     "mappings": [],
                     "thresholds": {
@@ -505,223 +682,46 @@
                                 "value": 0
                             },
                             {
-                                "color": "yellow",
-                                "value": 0.8
-                            },
-                            {
                                 "color": "red",
-                                "value": 0.9
-                            }
-                        ]
-                    },
-                    "unit": "decbytes"
-                },
-                "overrides": [
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "Mounted on"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.width",
-                                "value": 260
-                            }
-                        ]
-                    },
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "Size"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.width",
-                                "value": 93
-                            }
-                        ]
-                    },
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "Used"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.width",
-                                "value": 72
-                            }
-                        ]
-                    },
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "Available"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.width",
-                                "value": 88
-                            }
-                        ]
-                    },
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "Used, %"
-                        },
-                        "properties": [
-                            {
-                                "id": "unit",
-                                "value": "percentunit"
-                            },
-                            {
-                                "id": "custom.cellOptions",
-                                "value": {
-                                    "type": "gauge"
-                                }
-                            },
-                            {
-                                "id": "max",
-                                "value": 1
-                            },
-                            {
-                                "id": "min",
-                                "value": 0
+                                "value": 80
                             }
                         ]
                     }
-                ]
+                },
+                "overrides": []
             },
             "gridPos": {
-                "h": 10,
+                "h": 6,
                 "w": 12,
                 "x": 0,
-                "y": 6
+                "y": 10
             },
-            "id": 14,
+            "id": 15,
             "options": {
-                "cellHeight": "sm",
-                "showHeader": true,
-                "sortBy": [
-                    {
-                        "desc": true,
-                        "displayName": "Used, %"
-                    }
-                ]
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "single",
+                    "sort": "none"
+                }
             },
             "pluginVersion": "12.3.0",
             "targets": [
                 {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "$datasource"
-                    },
                     "editorMode": "code",
-                    "expr": "max by (mountpoint) (node_filesystem_size_bytes{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\", fstype!=\"\", mountpoint!=\"\", device=~\"/dev/(sd|nvme).*\"})",
-                    "format": "table",
-                    "instant": true,
-                    "legendFormat": "",
+                    "expr": "100 * (node_filesystem_avail_bytes{device=~\"/dev/(sd|nvme).*\",fstype!~\"tmpfs|rootfs\",mountpoint!~\"/(boot|run|sys|proc|dev).*\"} / on(instance,device,mountpoint,fstype) node_filesystem_size_bytes{device=~\"/dev/(sd|nvme).*\",fstype!~\"tmpfs|rootfs\",mountpoint!~\"/(boot|run|sys|proc|dev).*\"})",
+                    "legendFormat": "{{device}} - {{mountpoint}}",
+                    "range": true,
                     "refId": "A"
-                },
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "$datasource"
-                    },
-                    "editorMode": "code",
-                    "expr": "max by (mountpoint) (node_filesystem_avail_bytes{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\", fstype!=\"\", mountpoint!=\"\", device=~\"/dev/(sd|nvme).*\"})\n",
-                    "format": "table",
-                    "instant": true,
-                    "legendFormat": "",
-                    "refId": "B"
                 }
             ],
-            "title": "Disk Space Usage",
-            "transformations": [
-                {
-                    "id": "groupBy",
-                    "options": {
-                        "fields": {
-                            "Value #A": {
-                                "aggregations": [
-                                    "lastNotNull"
-                                ],
-                                "operation": "aggregate"
-                            },
-                            "Value #B": {
-                                "aggregations": [
-                                    "lastNotNull"
-                                ],
-                                "operation": "aggregate"
-                            },
-                            "mountpoint": {
-                                "aggregations": [],
-                                "operation": "groupby"
-                            }
-                        }
-                    }
-                },
-                {
-                    "id": "merge"
-                },
-                {
-                    "id": "calculateField",
-                    "options": {
-                        "alias": "Used",
-                        "binary": {
-                            "left": "Value #A (lastNotNull)",
-                            "operator": "-",
-                            "reducer": "sum",
-                            "right": "Value #B (lastNotNull)"
-                        },
-                        "mode": "binary",
-                        "reduce": {
-                            "reducer": "sum"
-                        }
-                    }
-                },
-                {
-                    "id": "calculateField",
-                    "options": {
-                        "alias": "Used, %",
-                        "binary": {
-                            "left": "Used",
-                            "operator": "/",
-                            "reducer": "sum",
-                            "right": "Value #A (lastNotNull)"
-                        },
-                        "mode": "binary",
-                        "reduce": {
-                            "reducer": "sum"
-                        }
-                    }
-                },
-                {
-                    "id": "organize",
-                    "options": {
-                        "excludeByName": {},
-                        "indexByName": {},
-                        "renameByName": {
-                            "Value #A (lastNotNull)": "Size",
-                            "Value #B (lastNotNull)": "Available",
-                            "mountpoint": "Mounted on"
-                        }
-                    }
-                },
-                {
-                    "id": "sortBy",
-                    "options": {
-                        "fields": {},
-                        "sort": [
-                            {
-                                "field": "Mounted on"
-                            }
-                        ]
-                    }
-                }
-            ],
-            "type": "table"
+            "title": "Device Storage Available",
+            "type": "timeseries"
         },
         {
             "datasource": {
@@ -1123,12 +1123,12 @@
         ]
     },
     "time": {
-        "from": "now-1h",
+        "from": "now-3h",
         "to": "now"
     },
     "timepicker": {},
     "timezone": "browser",
     "title": "Mini Cloud",
     "uid": "7d57716318ee0dddbac5a7f451fb7754",
-    "version": 19
+    "version": 20
 }
