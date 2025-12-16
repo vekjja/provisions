@@ -40,4 +40,3 @@ helm upgrade --install loki grafana/loki-stack \
   --set loki.persistence.size=20Gi \
   --set promtail.enabled=true \
   --set loki.config.limits_config.retention_period=192h
-
