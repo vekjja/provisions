@@ -17,6 +17,10 @@ grafana:
     storageClassName: "local-path"
     size: 10Gi
 
+  # Disable init container that changes ownership (causes issues with local-path storage)
+  initChownData:
+    enabled: false
+
   # Ingress
   ingress:
     enabled: true

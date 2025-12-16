@@ -17,7 +17,7 @@ metadata:
 type: Opaque
 data:
   admin-user: $(echo -n "admin" | base64)
-  admin-password: $(echo -n "admin" | base64)
+  admin-password: $(echo -n "YOUR_PASSWORD" | base64)
 EOF
 
 # Install kube-prometheus-stack (includes Prometheus, Grafana, Alertmanager, Node Exporter, etc.)
