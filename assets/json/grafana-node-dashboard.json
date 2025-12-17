@@ -503,9 +503,9 @@
                         "axisLabel": "",
                         "axisPlacement": "auto",
                         "barAlignment": 0,
-                        "barWidthFactor": 0.6,
+                        "barWidthFactor": 1,
                         "drawStyle": "line",
-                        "fillOpacity": 23,
+                        "fillOpacity": 27,
                         "gradientMode": "opacity",
                         "hideFrom": {
                             "legend": false,
@@ -513,12 +513,12 @@
                             "viz": false
                         },
                         "insertNulls": false,
-                        "lineInterpolation": "linear",
+                        "lineInterpolation": "smooth",
                         "lineStyle": {
                             "fill": "solid"
                         },
-                        "lineWidth": 3,
-                        "pointSize": 4,
+                        "lineWidth": 1,
+                        "pointSize": 5,
                         "scaleDistribution": {
                             "type": "linear"
                         },
@@ -581,12 +581,14 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "builder",
-                    "expr": "1 - avg by (instance, cpu) (\n  rate(node_cpu_seconds_total{mode=\"idle\",job=\"node-exporter\",instance=\"$instance\",cluster=\"$cluster\"}[$__rate_interval])\n)",
+                    "exemplar": false,
+                    "expr": "1 - avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[$__rate_interval]))",
+                    "format": "time_series",
                     "hide": false,
-                    "intervalFactor": 5,
-                    "legendFormat": "CPU: {{cpu}}",
+                    "instant": false,
+                    "legendFormat": "Node CPU Usage",
                     "range": true,
-                    "refId": "A"
+                    "refId": "Node CPU Usage"
                 },
                 {
                     "datasource": {
@@ -594,14 +596,12 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "code",
-                    "exemplar": false,
-                    "expr": "1 - avg by (instance) (\n  rate(node_cpu_seconds_total{mode=\"idle\",job=\"node-exporter\",instance=\"$instance\",cluster=\"$cluster\"}[$__rate_interval])\n)",
-                    "format": "time_series",
+                    "expr": "sum by(namespace, pod) (rate(container_cpu_usage_seconds_total[$__rate_interval]))",
                     "hide": false,
                     "instant": false,
-                    "legendFormat": "Total CPU Usage",
+                    "legendFormat": "{{namespace}}: {{pod}}",
                     "range": true,
-                    "refId": "B"
+                    "refId": "Pod CPU Usage"
                 }
             ],
             "title": "CPU Usage",
@@ -626,15 +626,15 @@
                         "barAlignment": 0,
                         "barWidthFactor": 0.6,
                         "drawStyle": "line",
-                        "fillOpacity": 6,
-                        "gradientMode": "opacity",
+                        "fillOpacity": 0,
+                        "gradientMode": "hue",
                         "hideFrom": {
                             "legend": false,
                             "tooltip": false,
                             "viz": false
                         },
                         "insertNulls": false,
-                        "lineInterpolation": "linear",
+                        "lineInterpolation": "smooth",
                         "lineStyle": {
                             "fill": "solid"
                         },
@@ -643,9 +643,9 @@
                         "scaleDistribution": {
                             "type": "linear"
                         },
-                        "showPoints": "never",
+                        "showPoints": "auto",
                         "showValues": true,
-                        "spanNulls": false,
+                        "spanNulls": 3600000,
                         "stacking": {
                             "group": "A",
                             "mode": "none"
@@ -717,7 +717,7 @@
                     "expr": "node_memory_MemTotal_bytes{job=\"node-exporter\",instance=\"$instance\",cluster=\"$cluster\"}\n- (\n  node_memory_MemFree_bytes{job=\"node-exporter\",instance=\"$instance\",cluster=\"$cluster\"}\n  + node_memory_Buffers_bytes{job=\"node-exporter\",instance=\"$instance\",cluster=\"$cluster\"}\n  + node_memory_Cached_bytes{job=\"node-exporter\",instance=\"$instance\",cluster=\"$cluster\"}\n)",
                     "hide": false,
                     "instant": false,
-                    "legendFormat": "System Memory Used",
+                    "legendFormat": "Used System Memory",
                     "range": true,
                     "refId": "E"
                 },
@@ -756,15 +756,15 @@
                         "barAlignment": 0,
                         "barWidthFactor": 0.6,
                         "drawStyle": "line",
-                        "fillOpacity": 0,
-                        "gradientMode": "none",
+                        "fillOpacity": 27,
+                        "gradientMode": "opacity",
                         "hideFrom": {
                             "legend": false,
                             "tooltip": false,
                             "viz": false
                         },
                         "insertNulls": false,
-                        "lineInterpolation": "linear",
+                        "lineInterpolation": "smooth",
                         "lineWidth": 1,
                         "pointSize": 5,
                         "scaleDistribution": {
@@ -823,14 +823,6 @@
             "pluginVersion": "12.3.0",
             "targets": [
                 {
-                    "editorMode": "code",
-                    "expr": "sum by (namespace, pod) (\n  rate(container_network_receive_bytes_total{namespace!=\"\",pod!=\"\",interface!=\"lo\"}[$__rate_interval])\n)",
-                    "hide": false,
-                    "legendFormat": "{{namespace}}: {{pod}}",
-                    "range": true,
-                    "refId": "A"
-                },
-                {
                     "datasource": {
                         "type": "prometheus",
                         "uid": "prometheus"
@@ -842,6 +834,14 @@
                     "legendFormat": "Total Bytes/Sec",
                     "range": true,
                     "refId": "B"
+                },
+                {
+                    "editorMode": "code",
+                    "expr": "sum by (namespace, pod) (\n  rate(container_network_receive_bytes_total{namespace!=\"\",pod!=\"\",interface!=\"lo\"}[$__rate_interval])\n)",
+                    "hide": false,
+                    "legendFormat": "{{namespace}}: {{pod}}",
+                    "range": true,
+                    "refId": "A"
                 }
             ],
             "title": "Network Rx",
@@ -865,15 +865,15 @@
                         "barAlignment": 0,
                         "barWidthFactor": 0.6,
                         "drawStyle": "line",
-                        "fillOpacity": 0,
-                        "gradientMode": "none",
+                        "fillOpacity": 27,
+                        "gradientMode": "opacity",
                         "hideFrom": {
                             "legend": false,
                             "tooltip": false,
                             "viz": false
                         },
                         "insertNulls": false,
-                        "lineInterpolation": "linear",
+                        "lineInterpolation": "smooth",
                         "lineWidth": 1,
                         "pointSize": 5,
                         "scaleDistribution": {
@@ -931,13 +931,6 @@
             "pluginVersion": "12.3.0",
             "targets": [
                 {
-                    "editorMode": "builder",
-                    "expr": "sum by(pod, namespace) (rate(container_network_transmit_bytes_total{pod!=\"\", namespace!=\"\", interface!=\"lo\"}[$__rate_interval]))",
-                    "legendFormat": "{{namespace}}: {{pod}}",
-                    "range": true,
-                    "refId": "A"
-                },
-                {
                     "datasource": {
                         "type": "prometheus",
                         "uid": "prometheus"
@@ -949,6 +942,13 @@
                     "legendFormat": "Total Tx Bytes/Sec",
                     "range": true,
                     "refId": "B"
+                },
+                {
+                    "editorMode": "builder",
+                    "expr": "sum by(pod, namespace) (rate(container_network_transmit_bytes_total{pod!=\"\", namespace!=\"\", interface!=\"lo\"}[$__rate_interval]))",
+                    "legendFormat": "{{namespace}}: {{pod}}",
+                    "range": true,
+                    "refId": "A"
                 }
             ],
             "title": "Network Tx",
@@ -1011,12 +1011,12 @@
         ]
     },
     "time": {
-        "from": "now-6h",
+        "from": "now-15m",
         "to": "now"
     },
     "timepicker": {},
     "timezone": "browser",
     "title": "Mini Cloud",
     "uid": "7d57716318ee0dddbac5a7f451fb7754",
-    "version": 102
+    "version": 112
 }
