@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 29,
+  "id": 0,
   "links": [],
   "panels": [
     {
@@ -54,7 +54,7 @@
               }
             ]
           },
-          "unit": "percentunit"
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -84,7 +84,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "1 - avg by (instance) (\n  rate(node_cpu_seconds_total{mode=\"idle\",job=\"node-exporter\"}[$__rate_interval])\n)",
+          "expr": "100 * avg by (instance) (\n  1 - sum by (instance, cpu) (\n    rate(node_cpu_seconds_total{job=\"node-exporter\", mode=~\"idle|iowait\"}[$__rate_interval])\n  )\n)",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -536,7 +536,7 @@
             }
           },
           "mappings": [],
-          "max": 1,
+          "max": 100,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -551,7 +551,7 @@
               }
             ]
           },
-          "unit": "percentunit"
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -584,11 +584,11 @@
           },
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "1 - avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[$__rate_interval]))",
+          "expr": "100 * avg by (instance) (1 - sum by (instance, cpu) (rate(node_cpu_seconds_total{job=\"node-exporter\", mode=~\"idle|iowait\"}[$__rate_interval])))",
           "format": "time_series",
           "hide": false,
           "instant": false,
-          "legendFormat": "Node CPU Usage",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "Node CPU Usage"
         },
@@ -967,9 +967,7 @@
     "list": [
       {
         "current": {
-          "text": [
-            "All"
-          ],
+          "text": "All",
           "value": [
             "$__all"
           ]
@@ -1005,5 +1003,5 @@
   "timezone": "browser",
   "title": "Mini Cloud",
   "uid": "7d57716318ee0dddbac5a7f451fb7754",
-  "version": 120
+  "version": 123
 }
