@@ -80,7 +80,7 @@ grafana:
 prometheus:
   prometheusSpec:
     # Scrape interval - how often to collect metrics (default is 30s)
-    scrapeInterval: 15s
+    scrapeInterval: 6s
     scrapeTimeout: 10s
 
     # Evaluation interval - how often to evaluate rules (default is 30s)
@@ -121,6 +121,14 @@ alertmanager:
 # Node Exporter (collects node metrics)
 nodeExporter:
   enabled: true
+
+# prometheus-node-exporter:
+#   extraArgs:
+#   # Keep kube-prometheus-stack's default filesystem exclusions to avoid noisy/duplicated mount metrics
+#   - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|run/containerd/.+|var/lib/docker/.+|var/lib/kubelet/.+)($|/)
+#   - --collector.filesystem.fs-types-exclude=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs|erofs)$
+#   - --collector.systemd
+#   - --collector.processes
 
 # Kube State Metrics (collects Kubernetes resource metrics)
 kubeStateMetrics:
