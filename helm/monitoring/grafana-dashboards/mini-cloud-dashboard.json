@@ -276,7 +276,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "100 * sum by (namespace, pod, container) (\n  rate(container_cpu_usage_seconds_total{\n    namespace=~\"$namespace\",\n    pod=~\".+\",\n    container=~\".+\",\n    container!=\"POD\",\n    image=~\".+\"\n  }[$__rate_interval])\n)",
+          "expr": "100 *\nsum by (namespace, pod, container, node) (\n  rate(container_cpu_usage_seconds_total{\n    namespace=~\"$namespace\",\n    pod=~\".+\",\n    container=~\".+\",\n    container!=\"POD\",\n    image=~\".+\"\n  }[$__rate_interval])\n)\n/\non (node) group_left\nmax by (node) (machine_cpu_cores)",
           "hide": false,
           "instant": false,
           "legendFormat": "{{namespace}}: {{container}}",
@@ -1003,5 +1003,5 @@
   "timezone": "browser",
   "title": "Mini Cloud",
   "uid": "7d57716318ee0dddbac5a7f451fb7754",
-  "version": 132
+  "version": 134
 }
