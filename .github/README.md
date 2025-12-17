@@ -23,6 +23,11 @@ curl -fsSL https://raw.githubusercontent.com/vekjja/provisions/main/scripts/setu
 curl -fsSL https://raw.githubusercontent.com/vekjja/provisions/main/scripts/setup.sh | bash -s -- -r -t k3s
 ```
 
+## Common tags
+
+- **Workstation**: `packages`, `casks`, `nerd-fonts`, `system`, `files`, `go`
+- **Homelab/remote**: `fstab`, `k3s`, `nfs`, `network`, `wireguard`
+
 ## Remote host provisioning
 
 Remote mode runs `playbooks/provision.yml` against the `remote` inventory group:
@@ -38,6 +43,14 @@ Remote mode runs `playbooks/provision.yml` against the `remote` inventory group:
   - `[remote]` (SSH)
 - **Local playbook**: `playbooks/provision-local.yml` (targets `hosts: local`)
 - **Remote playbook**: `playbooks/provision.yml` (targets `hosts: remote`)
+
+## Repo layout
+
+- **`playbooks/`**: Ansible entrypoints + `group_vars/` + `host_vars/`
+- **`roles/`**: Ansible roles
+- **`assets/`**: dotfiles/configs/themes/docs
+- **`helm/`**: Helm charts/values used by the cluster
+- **`scripts/`**: bootstrap + K3s helper scripts
 
 ## Windows (bootstrap)
 
