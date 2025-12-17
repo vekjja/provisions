@@ -90,7 +90,7 @@
                     "refId": "A"
                 }
             ],
-            "title": "Total CPU Usage",
+            "title": "Current CPU Usage",
             "type": "gauge"
         },
         {
@@ -157,7 +157,7 @@
                     "refId": "A"
                 }
             ],
-            "title": "Total Memory Usage",
+            "title": "Current Memory Usage",
             "type": "gauge"
         },
         {
@@ -693,19 +693,6 @@
                         "uid": "${datasource}"
                     },
                     "editorMode": "builder",
-                    "expr": "avg by(pod, namespace) (container_memory_usage_bytes)",
-                    "hide": false,
-                    "instant": false,
-                    "legendFormat": "{{namespace}}: {{pod}}",
-                    "range": true,
-                    "refId": "A"
-                },
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "${datasource}"
-                    },
-                    "editorMode": "builder",
                     "expr": "sum(node_memory_MemTotal_bytes)",
                     "hide": false,
                     "instant": false,
@@ -725,6 +712,19 @@
                     "legendFormat": "System Memory Used",
                     "range": true,
                     "refId": "E"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${datasource}"
+                    },
+                    "editorMode": "builder",
+                    "expr": "sum by(container, namespace) (container_memory_usage_bytes{container!~\"\"})",
+                    "hide": false,
+                    "instant": false,
+                    "legendFormat": "{{namespace}}: {{container}}",
+                    "range": true,
+                    "refId": "B"
                 }
             ],
             "title": "Memory Usage",
@@ -1003,12 +1003,12 @@
         ]
     },
     "time": {
-        "from": "now-3h",
+        "from": "now-1h",
         "to": "now"
     },
     "timepicker": {},
     "timezone": "browser",
     "title": "Mini Cloud",
     "uid": "7d57716318ee0dddbac5a7f451fb7754",
-    "version": 93
+    "version": 97
 }
