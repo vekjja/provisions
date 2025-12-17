@@ -158,7 +158,38 @@ alias kns="kubens"
 alias kctx="kubectx"
 
 alias alpine-docker="docker run -it --rm --name alpine-box ghcr.io/vekjja/alpine-box:main"
-alias alpine-k8s="kubectl run alpine-box --image=ghcr.io/vekjja/alpine-box:main --restart=Never --image-pull-policy=Always -it --rm"
+
+# Run an ephemeral alpine toolbox pod. Supports either:
+# - alpine-k8s sh -c 'echo hi'
+# - alpine-k8s 'echo hi'          (runs via sh -lc inside the pod)
+function alpine-k8s() {
+  if [[ $# -eq 0 ]]; then
+    kubectl run alpine-box \
+      --image=ghcr.io/vekjja/alpine-box:main \
+      --restart=Never \
+      --image-pull-policy=Always \
+      -it --rm \
+      --command -- zsh
+    return $?
+  fi
+
+  if [[ $# -eq 1 ]]; then
+    kubectl run alpine-box \
+      --image=ghcr.io/vekjja/alpine-box:main \
+      --restart=Never \
+      --image-pull-policy=Always \
+      -it --rm \
+      --command -- sh -c "$1"
+    return $?
+  fi
+
+  kubectl run alpine-box \
+    --image=ghcr.io/vekjja/alpine-box:main \
+    --restart=Never \
+    --image-pull-policy=Always \
+    -it --rm \
+    --command -- "$@"
+}
 
 function kexec() {
   pod=$(kgp | grep ${1} | awk '{print $1}')
