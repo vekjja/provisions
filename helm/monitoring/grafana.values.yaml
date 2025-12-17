@@ -51,7 +51,7 @@ grafana:
     port: 80
 
   # Dashboard configuration
-  defaultDashboardsEnabled: true
+  defaultDashboardsEnabled: false
 
   # Sidecar for auto-discovering dashboards from ConfigMaps
   # Any ConfigMap with label "grafana_dashboard: 1" will be automatically loaded
