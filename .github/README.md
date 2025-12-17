@@ -54,6 +54,11 @@ Remote mode runs `playbooks/provision.yml` against the `remote` inventory group:
 - **`helm/`**: Helm charts/values used by the cluster
 - **`scripts/`**: bootstrap + K3s helper scripts
 
+## 📚 Docs (deeper dives)
+
+- **Playbooks usage**: **[`playbooks/README.md`](../playbooks/README.md)**
+- **Vars reference**: **[`playbooks/VARS.md`](../playbooks/VARS.md)**
+
 ## 🪟 Windows (bootstrap)
 
 This sets up WSL + WinRM prerequisites; after it completes, open WSL (Debian) and run the Linux one-liner above.
