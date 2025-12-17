@@ -96,7 +96,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "prometheus"
             },
             "fieldConfig": {
                 "defaults": {
@@ -157,7 +157,9 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "100 -\n(\n  avg(node_memory_MemAvailable_bytes{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\"}) /\n  avg(node_memory_MemTotal_bytes{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\"})\n* 100\n)\n",
+                    "editorMode": "code",
+                    "expr": "100 -\n(\n  avg(node_memory_MemAvailable_bytes{job=\"node-exporter\"}) /\n  avg(node_memory_MemTotal_bytes{job=\"node-exporter\"})\n* 100\n)\n",
+                    "range": true,
                     "refId": "A"
                 }
             ],
@@ -239,7 +241,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "prometheus"
             },
             "fieldConfig": {
                 "defaults": {
@@ -381,7 +383,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "max by (mountpoint) (node_filesystem_size_bytes{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\", fstype!=\"\",  mountpoint!~\"/boot.*\", device=~\"/dev/(sd|nvme).*\"})",
+                    "expr": "max by (mountpoint) (node_filesystem_size_bytes{job=\"node-exporter\", fstype!=\"\",  mountpoint!~\"/boot.*\", device=~\"/dev/(sd|nvme).*\"})",
                     "format": "table",
                     "instant": true,
                     "legendFormat": "",
@@ -393,7 +395,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "max by (mountpoint) (node_filesystem_avail_bytes{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\", fstype!=\"\", mountpoint!~\"/boot.*\", device=~\"/dev/(sd|nvme).*\"})\n",
+                    "expr": "max by (mountpoint) (node_filesystem_avail_bytes{job=\"node-exporter\", fstype!=\"\", mountpoint!~\"/boot.*\", device=~\"/dev/(sd|nvme).*\"})\n",
                     "format": "table",
                     "instant": true,
                     "legendFormat": "",
@@ -595,8 +597,8 @@
                         "type": "prometheus",
                         "uid": "prometheus"
                     },
-                    "editorMode": "code",
-                    "expr": "sum by(namespace, pod) (rate(container_cpu_usage_seconds_total[$__rate_interval]))",
+                    "editorMode": "builder",
+                    "expr": "sum by(namespace, pod) (rate(container_cpu_usage_seconds_total{namespace=~\"$namespace\"}[$__rate_interval]))",
                     "hide": false,
                     "instant": false,
                     "legendFormat": "{{namespace}}: {{pod}}",
@@ -610,7 +612,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "prometheus"
             },
             "fieldConfig": {
                 "defaults": {
@@ -700,7 +702,7 @@
                         "type": "prometheus",
                         "uid": "${datasource}"
                     },
-                    "editorMode": "builder",
+                    "editorMode": "code",
                     "expr": "sum(node_memory_MemTotal_bytes)",
                     "hide": false,
                     "instant": false,
@@ -714,7 +716,7 @@
                         "uid": "${datasource}"
                     },
                     "editorMode": "code",
-                    "expr": "node_memory_MemTotal_bytes{job=\"node-exporter\",instance=\"$instance\",cluster=\"$cluster\"}\n- (\n  node_memory_MemFree_bytes{job=\"node-exporter\",instance=\"$instance\",cluster=\"$cluster\"}\n  + node_memory_Buffers_bytes{job=\"node-exporter\",instance=\"$instance\",cluster=\"$cluster\"}\n  + node_memory_Cached_bytes{job=\"node-exporter\",instance=\"$instance\",cluster=\"$cluster\"}\n)",
+                    "expr": "node_memory_MemTotal_bytes{job=\"node-exporter\"}\n- (\n  node_memory_MemFree_bytes{job=\"node-exporter\"}\n  + node_memory_Buffers_bytes{job=\"node-exporter\"}\n  + node_memory_Cached_bytes{job=\"node-exporter\"}\n)",
                     "hide": false,
                     "instant": false,
                     "legendFormat": "Used System Memory",
@@ -727,7 +729,7 @@
                         "uid": "${datasource}"
                     },
                     "editorMode": "builder",
-                    "expr": "sum by(container, namespace) (container_memory_usage_bytes{container!~\"\"})",
+                    "expr": "sum by(container, namespace) (container_memory_usage_bytes{container!~\"\", namespace=~\"$namespace\"})",
                     "hide": false,
                     "instant": false,
                     "legendFormat": "{{namespace}}: {{container}}",
@@ -836,8 +838,8 @@
                     "refId": "B"
                 },
                 {
-                    "editorMode": "code",
-                    "expr": "sum by (namespace, pod) (\n  rate(container_network_receive_bytes_total{namespace!=\"\",pod!=\"\",interface!=\"lo\"}[$__rate_interval])\n)",
+                    "editorMode": "builder",
+                    "expr": "sum by(namespace, pod) (rate(container_network_receive_bytes_total{namespace!=\"\", pod!=\"\", interface!=\"lo\", namespace=~\"$namespace\"}[$__rate_interval]))",
                     "hide": false,
                     "legendFormat": "{{namespace}}: {{pod}}",
                     "range": true,
@@ -945,7 +947,7 @@
                 },
                 {
                     "editorMode": "builder",
-                    "expr": "sum by(pod, namespace) (rate(container_network_transmit_bytes_total{pod!=\"\", namespace!=\"\", interface!=\"lo\"}[$__rate_interval]))",
+                    "expr": "sum by(pod, namespace) (rate(container_network_transmit_bytes_total{pod!=\"\", namespace=~\"$namespace\", interface!=\"lo\"}[$__rate_interval]))",
                     "legendFormat": "{{namespace}}: {{pod}}",
                     "range": true,
                     "refId": "A"
@@ -964,59 +966,37 @@
     "templating": {
         "list": [
             {
+                "allValue": "",
                 "current": {
-                    "text": "Prometheus",
-                    "value": "prometheus"
+                    "text": "All",
+                    "value": [
+                        "$__all"
+                    ]
                 },
-                "name": "datasource",
+                "definition": "label_values(kube_pod_container_info{}, namespace)",
+                "includeAll": true,
+                "multi": true,
+                "name": "namespace",
                 "options": [],
-                "query": "prometheus",
-                "refresh": 1,
-                "type": "datasource"
-            },
-            {
-                "allValue": ".*",
-                "current": {
-                    "text": "",
-                    "value": ""
+                "query": {
+                    "qryType": 5,
+                    "query": "label_values(kube_pod_container_info{}, namespace)",
+                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
                 },
-                "datasource": {
-                    "type": "prometheus",
-                    "uid": "${datasource}"
-                },
-                "hide": 2,
-                "label": "Cluster",
-                "name": "cluster",
-                "options": [],
-                "query": "label_values(node_uname_info{job=\"node-exporter\", sysname!=\"Darwin\"}, cluster)",
                 "refresh": 2,
-                "type": "query"
-            },
-            {
-                "current": {
-                    "text": "10.0.0.10:9100",
-                    "value": "10.0.0.10:9100"
-                },
-                "datasource": {
-                    "type": "prometheus",
-                    "uid": "${datasource}"
-                },
-                "label": "Instance",
-                "name": "instance",
-                "options": [],
-                "query": "label_values(node_uname_info{job=\"node-exporter\", cluster=\"$cluster\", sysname!=\"Darwin\"}, instance)",
-                "refresh": 2,
+                "regex": "",
+                "sort": 1,
                 "type": "query"
             }
         ]
     },
     "time": {
-        "from": "now-15m",
+        "from": "now-3h",
         "to": "now"
     },
     "timepicker": {},
     "timezone": "browser",
     "title": "Mini Cloud",
     "uid": "7d57716318ee0dddbac5a7f451fb7754",
-    "version": 113
+    "version": 116
 }
