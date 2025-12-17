@@ -1,5 +1,4 @@
 - name: Install NFS Server Packages
-  when: nfs_shares | default([]) | length > 0
   become: true
   apt:
     pkg:
@@ -8,8 +7,22 @@
     state: present
     update_cache: true
 
+- name: Configure NFS firewall rules
+  become: true
+  ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    comment: "{{ item.comment }}"
+  loop:
+    - { port: '111', proto: 'tcp', comment: 'NFS rpcbind' }
+    - { port: '111', proto: 'udp', comment: 'NFS rpcbind' }
+    - { port: '2049', proto: 'tcp', comment: 'NFS server' }
+    - { port: '2049', proto: 'udp', comment: 'NFS server' }
+    - { port: '32765:65535', proto: 'tcp', comment: 'NFS dynamic ports' }
+    - { port: '32765:65535', proto: 'udp', comment: 'NFS dynamic ports' }
+
 - name: Ensure rpcbind service is enabled and started
-  when: nfs_shares | default([]) | length > 0
   become: true
   ansible.builtin.systemd:
     name: rpcbind
@@ -17,7 +30,6 @@
     state: started
 
 - name: Ensure nfs-server service is enabled and started
-  when: nfs_shares | default([]) | length > 0
   become: true
   ansible.builtin.systemd:
     name: nfs-server
@@ -25,7 +37,6 @@
     state: started
 
 - name: Update NFS Exports File
-  when: nfs_shares | default([]) | length > 0
   become: true
   lineinfile:
     path: /etc/exports
@@ -34,17 +45,5 @@
   loop: "{{ nfs_shares | default([]) }}"
 
 - name: Export NFS Shares
-  when: nfs_shares | default([]) | length > 0
   become: true
   shell: exportfs -ra
-
-# - name: Mount NFS Devices to Local Filesystem
-#   when: nfs_mounts is defined
-#   become: true
-#   mount:
-#     path: "{{ item.path }}"
-#     src: "{{ item.src }}"
-#     fstype: "{{ item.fstype }}"
-#     opts: "{{ item.opts }}"
-#     state: mounted
-#   loop: "{{ nfs_mounts }}"

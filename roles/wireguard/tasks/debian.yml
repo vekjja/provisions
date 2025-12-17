@@ -28,9 +28,7 @@
 
 - name: Allow WireGuard port in UFW
   become: true
-  when:
-    - firewall_rules is defined
-    - wg_config.interfaces is defined
+  when: wg_config.interfaces is defined
   ufw:
     rule: allow
     port: '51820'
