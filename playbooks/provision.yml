@@ -1,15 +1,19 @@
-- name: Provisions Local Machine
+- name: Provisions Remote Machines
   hosts: remote
   gather_facts: true
   
   roles:
-    - { role: packages, tags: ['packages', 'casks'] }
-    - { role: nerd-fonts, tags: ['nerd-fonts'] }
-    - { role: system, tags: ['system'] }
-    - { role: files, tags: ['files'] }
-    - { role: fstab, tags: ['fstab'] }
+    
+    - { role: files, tags: ['files', 'config'] }
+    - { role: shell, tags: ['shell', 'config'] }
+    - { role: nerd-fonts, tags: ['nerd-fonts', 'config'] }
+    - { role: packages, tags: ['packages', 'casks', 'config'] }
+
+    - { role: fstab, tags: ['fstab','filesystem'] }
+    - { role: nfs, tags: ['nfs', 'filesystem'] }
+
+    - { role: network, tags: ['network', 'net'] }
+    - { role: wireguard, tags: ['wireguard', 'wg', 'net'] }
+
     - { role: golang, tags: ['go'] }
     - { role: k3s, tags: ['k3s'] }
-    - { role: nfs, tags: ['nfs'] }
-    - { role: network, tags: ['network'] }
-    - { role: wireguard, tags: ['wireguard'] }
