@@ -39,6 +39,21 @@ loki:
   limits_config:
     retention_period: 192h
     volume_enabled: true
+    # Grafana Logs Drilldown uses `service_name`. Loki auto-populates it from a list of candidate labels.
+    # Add `pod` so Kubernetes logs don't collapse into `unknown_service` when no app/service labels exist.
+    discover_service_name:
+    - service_name
+    - service
+    - app
+    - application
+    - name
+    - app_kubernetes_io_name
+    - pod
+    - container
+    - container_name
+    - component
+    - workload
+    - job
 
   # Disable ruler component (alerting not needed)
   # This prevents S3 access attempts

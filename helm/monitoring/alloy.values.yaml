@@ -57,6 +57,15 @@ alloy:
           target_label   = "service_name"
           replacement    = "$2"
         }
+
+        // Fallback: ensure service_name is always set (prevents Loki/Grafana showing unknown_service).
+        // loki.source.kubernetes already provides `pod`, so use it when instance parsing doesn't apply.
+        rule {
+          source_labels = ["pod"]
+          regex         = "(.+)"
+          target_label  = "service_name"
+          replacement   = "$1"
+        }
       }
 
       loki.source.kubernetes "k8s_logs" {
