@@ -83,7 +83,7 @@ Examples:
 
 All variable schemas + examples live in:
 
-- 📄 **`playbooks/VARS.md`**
+- 📄 **[`playbooks/VARS.md`](./VARS.md)**
 
 ## 📁 How `files:` works (important)
 
