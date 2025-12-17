@@ -1,3 +1,9 @@
+# Guard against double-sourcing (can happen due to ~/.zshrc-* loaders)
+if [[ -n "${__ZSHRC_COMMON_LOADED:-}" ]]; then
+  return
+fi
+export __ZSHRC_COMMON_LOADED=1
+
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 

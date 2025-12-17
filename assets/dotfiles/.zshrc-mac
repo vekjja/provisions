@@ -19,10 +19,6 @@ export GOBIN=$GOPATH/bin
 export GOPROXY=https://proxy.golang.org,direct
 export PATH="${GOPATH}/bin:${GOROOT}/bin:$PATH"
 
-if [ -f ~/.zshrc-common ]; then
-  source ~/.zshrc-common
-fi
-
 # Source all .zshrc-* files
 for file in ~/.zshrc-*; do
   [ -e "$file" ] && source "$file"
