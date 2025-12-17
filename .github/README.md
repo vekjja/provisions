@@ -1,35 +1,48 @@
-Provisions Local/Remote Mac OS X, Linux and Windows
-=====================================
+# Provisions
 
-## Mac and Linux Install
-```powershell
-curl -sL https://raw.githubusercontent.com/vekjja/provisions/refs/heads/main/scripts/setup.sh | bash
+Modern, repeatable **local** + **remote** provisioning with **Ansible**, plus Helm values/scripts for a small homelab stack.
+
+## macOS / Linux (one-liner install)
+
+This downloads and runs the bootstrap script which:
+- Installs **Ansible** (and Git where needed)
+- Clones this repo to `~/git/provisions`
+- Runs the **local** playbook (`playbooks/provision-local.yml`) by default
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/vekjja/provisions/main/scripts/setup.sh | bash
 ```
 
-Add Custom Arguments
-```shell
-curl -sL https://raw.githubusercontent.com/vekjja/provisions/refs/heads/main/scripts/setup.sh | bash -s -- [ARGUMENTS]
+### Custom arguments
+
+Pass args through to the script (examples):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/vekjja/provisions/main/scripts/setup.sh | bash -s -- -t packages
+curl -fsSL https://raw.githubusercontent.com/vekjja/provisions/main/scripts/setup.sh | bash -s -- -e nerd-fonts
+curl -fsSL https://raw.githubusercontent.com/vekjja/provisions/main/scripts/setup.sh | bash -s -- -r -t k3s
 ```
 
-The script will install `git` and `ansible`, clone the repo locally to `~/git/provisions` and run  
-`ansible-playbook playbooks/local.yaml`
+## Remote host provisioning
 
-Alternatively, you can clone the repo locally, make changes, and then run the playbook.
+Remote mode runs `playbooks/provision.yml` against the `remote` inventory group:
 
-## Windows Install
+```bash
+./scripts/setup.sh -r
+```
+
+## Inventory + playbooks (quick map)
+
+- **Inventory**: `.ansible/hosts`
+  - `[local]` (uses `ansible_connection=local`)
+  - `[remote]` (SSH)
+- **Local playbook**: `playbooks/provision-local.yml` (targets `hosts: local`)
+- **Remote playbook**: `playbooks/provision.yml` (targets `hosts: remote`)
+
+## Windows (bootstrap)
+
+This sets up WSL + WinRM prerequisites; after it completes, open WSL (Debian) and run the Linux install one-liner above.
+
 ```powershell
 iex ((Invoke-WebRequest -Uri "https://raw.githubusercontent.com/vekjja/provisions/main/scripts/setup.ps1" -UseBasicParsing).Content)
 ```
-This script will install `wsl --distro Debian`, `Chocolatey` and `Python` on the Windows host.  
-It will also configure _Windows Remote Management_ to allow connection from WSL.
-
-Once setup succeeds on the Windows host, enter `wsl -d Debian` and run the Linux install script above.  
-You may need to run `sudo apt update && sudo apt install curl -y` first.
-
-Navigate to `~/git/provisions` and add the file `playbooks/group_vars/windows.yaml` with contents:
-```
-ansible_user: YOUR_WINDOWS_USER
-ansible_password: YOUR_WINDOWS_PASSWORD
-ansible_host: YOUR_WINDOWS_IP (e.g. 10.0.0.123)
-```
-Then run `ansible-playbook playbooks/remote.yml`
