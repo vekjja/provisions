@@ -1,4 +1,27 @@
- 
+
+packages:
+  - kubectx
+  - k9s
+
+files:
+  - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
+  - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
+  - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
+  - { src: 'themes/oh-my-posh/kev.omp.json', dest: '~/.kev.omp.json' }
+  
+k3s: # Lightweight Kubernetes: https://github.com/k3s-io/k3s/releases/
+  kubeconfig: 
+    remote: ~/.kube/k3sconfig
+    local: "{{ lookup('env', 'HOME') }}/.kube/mini-cloud"
+  args:
+    - --disable=traefik
+    - --tls-san 10.0.0.10
+    - --disable=servicelb
+    - --prefer-bundled-bin
+    - --write-kubeconfig-mode 644
+    - --write-kubeconfig ~/.kube/k3sconfig
+    - --default-local-storage-path /mnt/ssd/ex2/k3s/storage
+
 static_ip:
   hostname: mini-cloud  # Hostname to add to /etc/hosts
   interface: enp4s0  # Network interface name (use 'ip a' to find)
@@ -9,28 +32,6 @@ static_ip:
     - 10.0.0.1
     - 1.1.1.1
     - 8.8.8.8
-
-packages:
-  - kubectx
-  - k9s
-
-firewall_rules:
-  - { port: '22', proto: 'tcp', comment: 'SSH' }
-  - { port: '3389', proto: 'tcp', comment: 'RDP' }
-  - { port: '6443', proto: 'tcp', comment: 'Kubernetes API' }
-  - { port: '111', proto: 'tcp', comment: 'NFS rpcbind' }
-  - { port: '111', proto: 'udp', comment: 'NFS rpcbind' }
-  - { port: '2049', proto: 'tcp', comment: 'NFS server' }
-  - { port: '2049', proto: 'udp', comment: 'NFS server' }
-  - { port: '51820', proto: 'udp', comment: 'WireGuard VPN' }
-  - { port: '32765:65535', proto: 'tcp', comment: 'NFS dynamic ports' }
-  - { port: '32765:65535', proto: 'udp', comment: 'NFS dynamic ports' }
-
-files:
-  - { src: 'dotfiles/.vimrc', dest: '~/.vimrc' }
-  - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
-  - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
-  - { src: 'themes/oh-my-posh/kev.omp.json', dest: '~/.kev.omp.json' }
 
 wireguard:
   server_endpoint: livingroom.cloud
@@ -45,17 +46,17 @@ wireguard:
         - name: notYouriPhone
           allowed_ips: 10.0.10.4/32
 
-k3s: # Lightweight Kubernetes: https://github.com/k3s-io/k3s/releases/
-  kubeconfig: ~/.kube/k3sconfig
-  local_kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/mini-cloud"
-  args:
-    - --disable=traefik
-    - --tls-san 10.0.0.10
-    - --disable=servicelb
-    - --prefer-bundled-bin
-    - --write-kubeconfig-mode 644
-    - --write-kubeconfig ~/.kube/k3sconfig
-    - --default-local-storage-path /mnt/ssd/ex2/k3s/storage
+firewall_rules:
+  - { port: '22', proto: 'tcp', comment: 'SSH' }
+  - { port: '3389', proto: 'tcp', comment: 'RDP' }
+  - { port: '6443', proto: 'tcp', comment: 'Kubernetes API' }
+  - { port: '111', proto: 'tcp', comment: 'NFS rpcbind' }
+  - { port: '111', proto: 'udp', comment: 'NFS rpcbind' }
+  - { port: '2049', proto: 'tcp', comment: 'NFS server' }
+  - { port: '2049', proto: 'udp', comment: 'NFS server' }
+  - { port: '51820', proto: 'udp', comment: 'WireGuard VPN' }
+  - { port: '32765:65535', proto: 'tcp', comment: 'NFS dynamic ports' }
+  - { port: '32765:65535', proto: 'udp', comment: 'NFS dynamic ports' }
 
 fs_mounts:
 - {
@@ -101,4 +102,3 @@ nfs_shares:
   - /mnt/hdd/tera *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
   - /mnt/hdd/barracuda *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
   # - /mnt/ssd/pny250 *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1001,anongid=1001)
-  # - /mnt/ssd/ex2 *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)

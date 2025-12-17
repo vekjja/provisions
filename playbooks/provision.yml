@@ -1,13 +1,13 @@
 - name: Provisions Remote Machines
   hosts: remote
   gather_facts: true
-  
+
   roles:
-    
+
     - { role: files, tags: ['files', 'config'] }
     - { role: shell, tags: ['shell', 'config'] }
     - { role: nerd-fonts, tags: ['nerd-fonts', 'config'] }
-    - { role: packages, tags: ['packages', 'casks', 'config'] }
+    - { role: packages, tags: ['packages', 'config'] }
 
     - { role: fstab, tags: ['fstab','filesystem'] }
     - { role: nfs, tags: ['nfs', 'filesystem'] }

@@ -19,8 +19,8 @@
 - name: Get K3S Kubeconfig
   run_once: true
   fetch:
-    src: "{{ k3s.kubeconfig }}"
-    dest: "{{ k3s.local_kubeconfig }}"
+    src: "{{ k3s.kubeconfig.remote }}"
+    dest: "{{ k3s.kubeconfig.local }}"
     flat: yes
   tags: get-kubeconfig
 

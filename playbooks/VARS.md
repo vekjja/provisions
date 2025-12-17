@@ -210,7 +210,7 @@ k3s:
 
 Notes:
 - `args` is appended to the installer command: `/tmp/k3s.sh {{ k3s.args | join(' ') }}`
-- The `get-kubeconfig` tag fetches `k3s.kubeconfig` to `k3s.local_kubeconfig`
+- The `get-kubeconfig` tag fetches `k3s.kubeconfig.remote` to `k3s.kubeconfig.local`
 
 ### 🧩 `k3s_tuning` (inotify + NOFILE tuning for Kubernetes log tailing)
 
