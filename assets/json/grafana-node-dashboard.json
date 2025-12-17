@@ -84,7 +84,7 @@
             "targets": [
                 {
                     "editorMode": "code",
-                    "expr": "1 - avg by (instance) (\n  rate(node_cpu_seconds_total{mode=\"idle\",job=\"node-exporter\",instance=\"$instance\",cluster=\"$cluster\"}[$__rate_interval])\n)",
+                    "expr": "1 - avg by (instance) (\n  rate(node_cpu_seconds_total{mode=\"idle\",job=\"node-exporter\"}[$__rate_interval])\n)",
                     "legendFormat": "__auto",
                     "range": true,
                     "refId": "A"
@@ -1006,5 +1006,5 @@
     "timezone": "browser",
     "title": "Mini Cloud",
     "uid": "7d57716318ee0dddbac5a7f451fb7754",
-    "version": 117
+    "version": 118
 }
