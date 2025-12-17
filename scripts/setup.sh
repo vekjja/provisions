@@ -6,15 +6,22 @@ rootDir="$(cd "$(dirname "$0")" && pwd)"
 cd "${rootDir}/.."
 
 # Define Ansible options
-ansibleOptions=""
+ansibleArgs=()
+mode="local" # local | remote
 
-while getopts 't:e:' flag; do
+while getopts 't:e:rl' flag; do
   case "${flag}" in
   t) # tag
-    ansibleOptions="${ansibleOptions} --tags ${OPTARG}"
+    ansibleArgs+=(--tags "${OPTARG}")
     ;;
   e) # exclude tag
-    ansibleOptions="${ansibleOptions} --skip-tags ${OPTARG}"
+    ansibleArgs+=(--skip-tags "${OPTARG}")
+    ;;
+  r) # remote mode (uses provision.yml)
+    mode="remote"
+    ;;
+  l) # local mode (uses provision-local.yml)
+    mode="local"
     ;;
   *)
     echo "Unexpected option ${flag}"
@@ -79,7 +86,7 @@ fi
 
 # Clone the repository if it doesn’t exist
 REPO_NAME="provisions"
-REPO_URL="https://github.com/seemywingz/$REPO_NAME.git"
+REPO_URL="https://github.com/vekjja/$REPO_NAME.git"
 if [ ! -d "$GIT_DIR/$REPO_NAME" ]; then
   echo "Cloning repository: $REPO_URL into $GIT_DIR"
   git clone "$REPO_URL" "$GIT_DIR/$REPO_NAME"
@@ -92,9 +99,23 @@ fi
 
 # Run Ansible Playbook
 cd "$GIT_DIR/$REPO_NAME"
-ansiblePlaybook="playbooks/provision.yml"
-echo "Running Setup: ansible-playbook ${ansibleOptions} ${ansiblePlaybook}"
-ansible-playbook ${ansibleOptions} ${ansiblePlaybook}
+ansiblePlaybook="playbooks/provision-local.yml"
+if [[ "${mode}" == "remote" ]]; then
+  ansiblePlaybook="playbooks/provision.yml"
+fi
+
+# If sudo requires a password, prompt Ansible for it (otherwise become tasks can fail)
+if isInstalled sudo; then
+  if ! sudo -n true >/dev/null 2>&1; then
+    # Only add prompt when running interactively
+    if [[ -t 0 ]]; then
+      ansibleArgs+=(--ask-become-pass)
+    fi
+  fi
+fi
+
+echo "Running Setup: ansible-playbook ${ansibleArgs[*]} ${ansiblePlaybook}"
+ansible-playbook "${ansibleArgs[@]}" "${ansiblePlaybook}"
 exitOnError $? "Running Ansible Playbook"
 
 cd -
