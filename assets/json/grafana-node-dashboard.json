@@ -42,15 +42,15 @@
                             },
                             {
                                 "color": "yellow",
-                                "value": 0.5
+                                "value": 54
                             },
                             {
                                 "color": "orange",
-                                "value": 0.8
+                                "value": 75
                             },
                             {
                                 "color": "dark-red",
-                                "value": 0.9
+                                "value": 96
                             }
                         ]
                     },
@@ -77,7 +77,7 @@
                     "values": false
                 },
                 "showThresholdLabels": false,
-                "showThresholdMarkers": false,
+                "showThresholdMarkers": true,
                 "sizing": "auto"
             },
             "pluginVersion": "12.3.0",
@@ -111,12 +111,16 @@
                                 "value": 0
                             },
                             {
+                                "color": "#EAB839",
+                                "value": 81
+                            },
+                            {
                                 "color": "orange",
-                                "value": 80
+                                "value": 90
                             },
                             {
                                 "color": "rgba(245, 54, 54, 0.9)",
-                                "value": 90
+                                "value": 96
                             }
                         ]
                     },
@@ -143,7 +147,7 @@
                     "values": false
                 },
                 "showThresholdLabels": false,
-                "showThresholdMarkers": false,
+                "showThresholdMarkers": true,
                 "sizing": "auto"
             },
             "pluginVersion": "12.3.0",
@@ -259,11 +263,15 @@
                             },
                             {
                                 "color": "yellow",
-                                "value": 0.6
+                                "value": 0.25
+                            },
+                            {
+                                "color": "orange",
+                                "value": 0.75
                             },
                             {
                                 "color": "red",
-                                "value": 0.9
+                                "value": 0.8
                             }
                         ]
                     },
@@ -373,7 +381,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "max by (mountpoint) (node_filesystem_size_bytes{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\", fstype!=\"\", mountpoint!=\"\", device=~\"/dev/(sd|nvme).*\"})",
+                    "expr": "max by (mountpoint) (node_filesystem_size_bytes{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\", fstype!=\"\",  mountpoint!~\"/boot.*\", device=~\"/dev/(sd|nvme).*\"})",
                     "format": "table",
                     "instant": true,
                     "legendFormat": "",
@@ -385,7 +393,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "max by (mountpoint) (node_filesystem_avail_bytes{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\", fstype!=\"\", mountpoint!=\"\", device=~\"/dev/(sd|nvme).*\"})\n",
+                    "expr": "max by (mountpoint) (node_filesystem_avail_bytes{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\", fstype!=\"\", mountpoint!~\"/boot.*\", device=~\"/dev/(sd|nvme).*\"})\n",
                     "format": "table",
                     "instant": true,
                     "legendFormat": "",
@@ -1003,12 +1011,12 @@
         ]
     },
     "time": {
-        "from": "now-1h",
+        "from": "now-6h",
         "to": "now"
     },
     "timepicker": {},
     "timezone": "browser",
     "title": "Mini Cloud",
     "uid": "7d57716318ee0dddbac5a7f451fb7754",
-    "version": 97
+    "version": 102
 }
