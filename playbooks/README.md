@@ -79,38 +79,11 @@ Examples:
 ./scripts/setup.sh -r -t k3s
 ```
 
-## 🧩 Vars: `group_vars/` + `host_vars/`
+## 🧩 Vars (recommended reading)
 
-This repo uses standard Ansible precedence:
+All variable schemas + examples live in:
 
-1) **`group_vars/all.yml`** applies to **everyone** (shared defaults)
-2) **`host_vars/<hostname>`** (or `.yml`) applies to one host and **overrides** group vars
-
-### 📦 `group_vars/all.yml`
-
-Use this for defaults that should apply across machines, e.g.
-- `unix_packages`
-- `unix_directories`
-- `nerd_fonts`
-
-### 🏷️ Group-specific vars (optional)
-
-If you want defaults per group, add files like:
-- `group_vars/local.yml` (applies to the `local` group)
-- `group_vars/remote.yml` (applies to the `remote` group)
-
-### 🖥️ `host_vars/`
-
-Host var filenames match the inventory hostname.
-
-Current examples:
-- `host_vars/macbook` (local workstation)
-- `host_vars/mini-cloud.yml` (remote server)
-
-Typical host vars you’ll see in this repo:
-- **`packages` / `casks`**: lists used by the `packages` role
-- **`files`**: a list of `{ src, dest }` used by the `files` role
-- **`static_ip`**, **`firewall_rules`**, **`wireguard`**, **`k3s`**, **`nfs_*`**, **`fs_mounts`**: remote-only features
+- 📄 **`playbooks/VARS.md`**
 
 ## 📁 How `files:` works (important)
 
