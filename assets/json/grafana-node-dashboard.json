@@ -968,9 +968,11 @@
             {
                 "allValue": "",
                 "current": {
-                    "text": "All",
+                    "text": [
+                        "None"
+                    ],
                     "value": [
-                        "$__all"
+                        ""
                     ]
                 },
                 "definition": "label_values(kube_pod_container_info{}, namespace)",
@@ -983,9 +985,15 @@
                     "query": "label_values(kube_pod_container_info{}, namespace)",
                     "refId": "PrometheusVariableQueryEditor-VariableQuery"
                 },
-                "refresh": 2,
+                "refresh": 1,
                 "regex": "",
                 "sort": 1,
+                "staticOptions": [
+                    {
+                        "text": "None",
+                        "value": ""
+                    }
+                ],
                 "type": "query"
             }
         ]
@@ -998,5 +1006,5 @@
     "timezone": "browser",
     "title": "Mini Cloud",
     "uid": "7d57716318ee0dddbac5a7f451fb7754",
-    "version": 116
+    "version": 117
 }
