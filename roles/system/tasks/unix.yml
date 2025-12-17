@@ -12,18 +12,18 @@
 - name: Change the default shell to zsh
   become: true
   ansible.builtin.user:
-    name: "{{ ansible_user_id }}"
+    name: "{{ ansible_facts['user_id'] }}"
     shell: /bin/zsh
 
 - name: Check if Oh My Zsh is already installed
   ansible.builtin.stat:
-    path: "{{ ansible_env.HOME }}/.oh-my-zsh"
+    path: "{{ ansible_facts['env']['HOME'] }}/.oh-my-zsh"
   register: oh_my_zsh
 
 - name: Install Oh My Zsh
   ansible.builtin.shell:
     cmd: unset ZSH && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --keep-zshrc
-    creates: "{{ ansible_env.HOME }}/.oh-my-zsh"
+    creates: "{{ ansible_facts['env']['HOME'] }}/.oh-my-zsh"
   when: not oh_my_zsh.stat.exists
 
 - name: Ensure unzip is installed (Required for Oh My Posh)
@@ -34,7 +34,7 @@
 
 # - name: Check if Oh My Posh is already installed
 #   ansible.builtin.stat:
-#     path: "{{ ansible_env.HOME }}/.local/bin/oh-my-posh"
+#     path: "{{ ansible_facts['env']['HOME'] }}/.local/bin/oh-my-posh"
 #   register: oh_my_posh
 
 - name: Download Oh My Posh Install Script
@@ -48,7 +48,7 @@
   become: true
   ansible.builtin.command:
     cmd: bash /tmp/install-oh-my-posh.sh
-    creates: "{{ ansible_env.HOME }}/.poshthemes"
+    creates: "{{ ansible_facts['env']['HOME'] }}/.poshthemes"
   # when: not oh_my_posh.stat.exists
 
 - name: Debian Tasks

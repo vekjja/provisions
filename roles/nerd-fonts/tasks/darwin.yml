@@ -1,14 +1,14 @@
 - name: Ensure user fonts directory exists
   ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/Library/Fonts"
+    path: "{{ ansible_facts['env']['HOME'] }}/Library/Fonts"
     state: directory
     mode: '0755'
 
 - name: Install Nerd Fonts (Darwin)
   ansible.builtin.unarchive:
     src: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/{{ item }}.zip"
-    dest: "{{ ansible_env.HOME }}/Library/Fonts/"
-    creates: "{{ ansible_env.HOME }}/Library/Fonts/{{ item }}"
+    dest: "{{ ansible_facts['env']['HOME'] }}/Library/Fonts/"
+    creates: "{{ ansible_facts['env']['HOME'] }}/Library/Fonts/{{ item }}"
     remote_src: true
     keep_newer: true
     exclude:
