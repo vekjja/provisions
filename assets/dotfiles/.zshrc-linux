@@ -1,60 +1,15 @@
 # ZSH
 
-#### PATH ####
-export PATH="$PATH:/bin:/sbin"
-export PATH="$PATH:/usr/bin:/usr/sbin"
-export PATH="$PATH:/usr/local/bin:/usr/local/sbin"
-export PATH="$PATH:$HOME/.local/bin"
-export PATH="$PATH:/mnt/c/Windows/System32"
+# Source all .zshrc-* files
+for file in ~/.zshrc-*; do
+  [ -e "$file" ] && source "$file"
+done
+
+if [ -f ~/.api-keys ]; then
+  source ~/.api-keys
+fi
 
 ## Go
 export GOROOT=/usr/local/go
-export GOPATH="${HOME}/.go"
-export GOBIN=$GOPATH/bin
-# export GOPROXY=https://proxy.golang.org,direct
-export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
-
-#### Linux Systems ####
-alias dfd="df -h -x tmpfs -x devtmpfs -x udf -x iso9660 -x squashfs -x overlay -x autofs"
-
-source ~/.zshrc-common
-
-wakeLocalUI() {
-  # Find the active local session
-  local SID U UID TYPE
-  SID=$(loginctl list-sessions | awk '/seat0/ && /yes/ {print $1; exit}')
-  [ -z "$SID" ] && { echo "No active seat0 session found."; return 1; }
-
-  TYPE=$(loginctl show-session "$SID" -p Type | cut -d= -f2)
-  U=$(loginctl show-session "$SID" -p Name | cut -d= -f2)
-  UID=$(id -u "$U")
-  export XDG_RUNTIME_DIR=/run/user/$UID
-
-  echo "Waking UI for session $SID ($TYPE) user $U..."
-
-  if [[ "$TYPE" == "wayland" ]]; then
-    loginctl unlock-session "$SID"
-    loginctl activate "$SID"
-    sudo -u "$U" XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR \
-      gdbus call --session \
-      --dest org.gnome.ScreenSaver \
-      --object-path /org/gnome/ScreenSaver \
-      --method org.gnome.ScreenSaver.SetActive false >/dev/null 2>&1 || true
-  else
-    local DISPLAY=:0
-    local XA="/run/user/$UID/gdm/Xauthority"
-    [ -f "$XA" ] || XA="/home/$U/.Xauthority"
-    sudo -u "$U" DISPLAY=$DISPLAY XAUTHORITY=$XA xset dpms force on
-  fi
-
-  echo "Done."
-}
 
 
-
-# Source all additional .zshrc-* files (skip main and common to avoid duplicates)
-for file in ~/.zshrc-*; do
-    if [ -e "$file" ] && [ "$file" != "$HOME/.zshrc-linux" ] && [ "$file" != "$HOME/.zshrc-common" ]; then
-        source "$file"
-    fi
-done

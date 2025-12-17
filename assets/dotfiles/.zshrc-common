@@ -5,9 +5,6 @@ export PATH="$PATH:/usr/bin:/usr/sbin"
 export PATH="$PATH:/usr/local/bin:/usr/local/sbin"
 export PATH="$PATH:$HOME/.local/bin"
 
-#### GCP ####
-export PATH="$PATH:/opt/homebrew/share/google-cloud-sdk/bin"
-
 # Terminal Colors
 export PURP='\033[0;35m'
 export BLU='\033[0;34m'
@@ -30,16 +27,13 @@ alias t="tree"
 alias l="tree -L 1"
 alias cls="clear"
 alias la="ls -lha"
-alias sz="du -h -d 1"
 alias gdu="gdu-go"
 alias wakeGameBox="wakeonlan -i 10.0.255.255 A8:5E:45:E3:E2:35"
 alias wakeMacMini="wakeonlan -i 10.0.255.255 14:C2:13:ED:EF:FE"
 alias pubip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias listening="lsof -nP +c 15 | grep LISTEN"
-alias mount-nfs="sudo mount -t nfs -o nolocks,resvport,rw"
 alias hack_hosts="sudo vim /etc/hosts"
 alias chrome-socks='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --proxy-server="socks5://127.0.0.1:8080" --host-resolver-rules="MAP * 0.0.0.0 , EXCLUDE localhost"'
-alias rm-arp-cache=" sudo arp -a | awk '{print $2}' | tr -d '()' | xargs -n1 sudo arp -d"
 
 #### Go ####
 export GOPATH="${HOME}/.go"
@@ -77,14 +71,6 @@ function gpa() {
 #### Pulumi ####
 alias p="pulumi"
 alias pup="pulumi up"
-
-#### Terraform ####
-alias tf="terraform"
-alias tfp="terraform plan"
-alias tfa="terraform apply"
-alias tfd="terraform destroy"
-alias tfi="terraform init"
-alias tfo="terraform output"
 
 #### Oh My Zsh ####
 export ZSH="$HOME/.oh-my-zsh"
@@ -180,12 +166,6 @@ function py-venv() {
 
 }
 
-#### Bettercap ####
-#alias bc="sudo bettercap -iface en0"
-#alias bce="sudo bettercap -iface en0 -eval\"$1\""
-#alias bcui="sudo bettercap -iface en0 -eval \"ui on\""
-#alias arp-mon="sudo bettercap -iface en0 -caplet ~/git/mon/caplets/arp-mon"
-
 # Helm
 alias h="helm"
 
@@ -243,58 +223,10 @@ function alpine-k8s() {
     --command -- "$@"
 }
 
-function kexec() {
-  pod=$(kgp | grep ${1} | awk '{print $1}')
-  kubectl exec -it ${pod} -c ${2} -- bash
-}
-
-function kgrep() {
-  delete=""
-  resource=""
-  pattern=""
-  namespace=""
-
-  optspec="p:r:n:d"
-  while getopts "$optspec" optchar; do
-    case "${optchar}" in
-    p)
-      pattern=${OPTARG}
-      ;;
-    r)
-      resource=${OPTARG}
-      ;;
-    n)
-      namespace="-n${OPTARG}"
-      ;;
-    d)
-      delete="true"
-      ;;
-    *)
-      echo "Must Provide Proper Values!"
-      ;;
-    esac
-  done
-
-  resources=$(kg ${resource} ${namespace} --no-headers=true | awk '/'${pattern}'/{print $1}')
-  echo ${resources}
-  echo
-
-  if [[ -n ${delete} ]]; then
-    echo ☠️ Deleting Resources
-    echo ${resources} | xargs kubectl delete ${namespace} ${resource}
-  fi
-}
-
 #### Docker ###
 export DOCKER_BUILDKIT=1
 alias d="docker"
 alias dc="docker-compose"
-alias dcd="docker-compose down"
-alias dcu="docker-compose up"
-alias dcs="docker-compose stop"
-alias dps="docker ps"
-alias di="docker images"
-alias dip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
 
 #### Encryption ####
 function enc() {
