@@ -1,12 +1,5 @@
 # ZSH
 
-## Apple Homebrew ##
-export PATH="/opt/homebrew/bin:$PATH"
-export PATH="/opt/homebrew/sbin:$PATH"
-
-# Postgres
-export PATH="/usr/local/opt/libpq/bin:$PATH"
-
 # Source all .zshrc-* files
 for file in ~/.zshrc-*; do
   [ -e "$file" ] && source "$file"
@@ -16,6 +9,16 @@ if [ -f ~/.api-keys ]; then
   source ~/.api-keys
 fi
 
+## Apple Homebrew ##
+export PATH="/opt/homebrew/bin:$PATH"
+export PATH="/opt/homebrew/sbin:$PATH"
+
+# Postgres
+export PATH="/usr/local/opt/libpq/bin:$PATH"
+
+#### iTerm ####
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
 ## Mac Aliases
 alias flush_dns="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
 alias showHidden="defaults write com.apple.finder AppleShowAllFiles YES"
@@ -24,28 +27,116 @@ function copy() {
   cat "$@" | pbcopy
 }
 
-#### AWS ####
-# AWS CDK
-export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=true
+# Delete downloaded Apple moving wallpapers (macOS Sonoma+)
+# Usage:
+#   clean_apple_moving_wallpapers           # delete system-wide cache (requires sudo)
+clean_apple_moving_wallpapers() {
+  local SYSTEM_PATH="/Library/Application Support/com.apple.idleassetsd/Customer"
+  local USER_PATH="$HOME/Library/Application Support/com.apple.idleassetsd/Customer"
+  local TARGETS=()
+  local DRY_RUN=0
+  local USER_ONLY=0
 
-# AWS CLI Completer
-AWS_COMPLETER=$(which aws_completer)
-if [ -n "$AWS_COMPLETER" ]; then
-  complete -C "$AWS_COMPLETER" aws
-fi
+  # Parse flags
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --dry-run) DRY_RUN=1; shift ;;
+      --user) USER_ONLY=1; shift ;;
+      -h|--help)
+        echo "Delete downloaded Apple moving wallpaper video assets (.mov)."
+        echo "Usage:"
+        echo "  clean_apple_moving_wallpapers           # delete system-wide cache (requires sudo)"
+        echo "  clean_apple_moving_wallpapers --dry-run # list what would be deleted"
+        echo "  clean_apple_moving_wallpapers --user    # clean only current user's cache (no sudo)"
+        echo "Options:"
+        echo "  --dry-run   List files and actions without deleting"
+        echo "  --user      Operate only on the current user's cache: \"$USER_PATH\""
+        return 0
+        ;;
+      *)
+        echo "Unknown option: $1" >&2
+        return 2
+        ;;
+    esac
+  done
 
-#### GCP ####
-export PATH="$PATH:/opt/homebrew/share/google-cloud-sdk/bin"
+  # Build target paths
+  if [[ $USER_ONLY -eq 1 ]]; then
+    TARGETS+=("$USER_PATH")
+  else
+    TARGETS+=("$SYSTEM_PATH" "$USER_PATH")
+  fi
 
-#### iTerm ####
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+  # Check macOS version (Sonoma 14+ recommended)
+  local PRODUCT_VERSION
+  PRODUCT_VERSION=$(sw_vers -productVersion 2>/dev/null || echo "")
+  if [[ -n "$PRODUCT_VERSION" ]]; then
+    echo "macOS version: $PRODUCT_VERSION"
+  fi
 
-#### Autojump ####
-[[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
+  # Advise switching to static wallpaper to avoid 'in use' or redownload
+  echo "Tip: Switch to a static wallpaper in System Settings → Wallpaper before cleaning."
 
-#### PNPM ####
-export PNPM_HOME="~/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
+  # Quit wallpaper-related processes (safe even in dry-run)
+  echo "Stopping wallpaper services..."
+  killall Wallpaper 2>/dev/null || true
+  killall "Wallpaper (System Settings)" 2>/dev/null || true
+  killall idleassetsd 2>/dev/null || true
+
+  # For each target path, list and delete .mov files
+  local found_any=0
+  for path in "${TARGETS[@]}"; do
+    if [[ -d "$path" ]]; then
+      echo "Scanning: $path"
+      local list_cmd=("find" "$path" "-type" "f" "-name" "*.mov")
+      local files
+      files=$("${list_cmd[@]}" 2>/dev/null)
+      if [[ -n "$files" ]]; then
+        found_any=1
+        echo "Found the following video assets:"
+        echo "$files"
+        if [[ $DRY_RUN -eq 1 ]]; then
+          echo "[DRY-RUN] Skipping deletion for: $path"
+        else
+          # System path usually needs sudo; user path does not
+          if [[ "$path" == "$SYSTEM_PATH" && $USER_ONLY -ne 1 ]]; then
+            echo "Deleting system-wide assets (sudo may prompt for password)..."
+            sudo find "$path" -type f -name "*.mov" -exec rm -f {} + 2>/dev/null
+          else
+            echo "Deleting user assets..."
+            find "$path" -type f -name "*.mov" -exec rm -f {} + 2>/dev/null
+          fi
+          echo "Removing empty directories in: $path"
+          if [[ "$path" == "$SYSTEM_PATH" && $USER_ONLY -ne 1 ]]; then
+            sudo find "$path" -type d -empty -delete 2>/dev/null
+          else
+            find "$path" -type d -empty -delete 2>/dev/null
+          fi
+        fi
+      else
+        echo "No .mov assets found in: $path"
+      fi
+    else
+      echo "Path not present: $path"
+    fi
+  done
+
+  if [[ $found_any -eq 0 ]]; then
+    echo "No downloaded moving wallpaper videos were found."
+  fi
+
+  # Restart idleassetsd to refresh state
+  echo "Restarting idleassetsd..."
+  if [[ $DRY_RUN -eq 1 ]]; then
+    echo "[DRY-RUN] Would run: launchctl kickstart -k system/com.apple.idleassetsd"
+  else
+    # Use sudo when operating on system path
+    if [[ $USER_ONLY -ne 1 ]]; then
+      sudo launchctl kickstart -k system/com.apple.idleassetsd 2>/dev/null || true
+    else
+      launchctl kickstart -k gui/$(id -u)/com.apple.idleassetsd 2>/dev/null || true
+    fi
+  fi
+
+  echo "Done. If the UI still shows moving sets, that's expected—selecting them will re-download assets."
+}
