@@ -41,20 +41,20 @@
                                 "value": 0
                             },
                             {
-                                "color": "orange",
-                                "value": 50
+                                "color": "yellow",
+                                "value": 0.5
                             },
                             {
-                                "color": "red",
-                                "value": 80
+                                "color": "orange",
+                                "value": 0.8
                             },
                             {
                                 "color": "dark-red",
-                                "value": 90
+                                "value": 0.9
                             }
                         ]
                     },
-                    "unit": "percent"
+                    "unit": "percentunit"
                 },
                 "overrides": []
             },
@@ -84,7 +84,7 @@
             "targets": [
                 {
                     "editorMode": "code",
-                    "expr": "(1 - avg(rate(node_cpu_seconds_total{job=\"node-exporter\", mode=\"idle\", instance=\"$instance\", cluster=\"$cluster\"}[$__rate_interval]))) * 100",
+                    "expr": "1 - avg by (instance) (\n  rate(node_cpu_seconds_total{mode=\"idle\",job=\"node-exporter\",instance=\"$instance\",cluster=\"$cluster\"}[$__rate_interval])\n)",
                     "legendFormat": "__auto",
                     "range": true,
                     "refId": "A"
@@ -392,7 +392,7 @@
                     "refId": "B"
                 }
             ],
-            "title": "Disk Space Usage",
+            "title": "Disk Usage",
             "transformations": [
                 {
                     "id": "groupBy",
@@ -493,12 +493,12 @@
                         "axisCenteredZero": false,
                         "axisColorMode": "text",
                         "axisLabel": "",
-                        "axisPlacement": "left",
+                        "axisPlacement": "auto",
                         "barAlignment": 0,
                         "barWidthFactor": 0.6,
                         "drawStyle": "line",
-                        "fillOpacity": 10,
-                        "gradientMode": "none",
+                        "fillOpacity": 23,
+                        "gradientMode": "opacity",
                         "hideFrom": {
                             "legend": false,
                             "tooltip": false,
@@ -506,17 +506,20 @@
                         },
                         "insertNulls": false,
                         "lineInterpolation": "linear",
-                        "lineWidth": 1,
-                        "pointSize": 5,
+                        "lineStyle": {
+                            "fill": "solid"
+                        },
+                        "lineWidth": 3,
+                        "pointSize": 4,
                         "scaleDistribution": {
                             "type": "linear"
                         },
-                        "showPoints": "never",
+                        "showPoints": "auto",
                         "showValues": false,
-                        "spanNulls": false,
+                        "spanNulls": 3600000,
                         "stacking": {
                             "group": "A",
-                            "mode": "normal"
+                            "mode": "none"
                         },
                         "thresholdsStyle": {
                             "mode": "off"
@@ -558,7 +561,7 @@
                 },
                 "tooltip": {
                     "hideZeros": false,
-                    "mode": "multi",
+                    "mode": "single",
                     "sort": "none"
                 }
             },
@@ -570,11 +573,27 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "builder",
-                    "expr": "sum by(namespace, pod, container) (\n  rate(container_cpu_usage_seconds_total{container!=\"\",container!=\"POD\"}[5m])\n)",
+                    "expr": "1 - avg by (instance, cpu) (\n  rate(node_cpu_seconds_total{mode=\"idle\",job=\"node-exporter\",instance=\"$instance\",cluster=\"$cluster\"}[$__rate_interval])\n)",
+                    "hide": false,
                     "intervalFactor": 5,
-                    "legendFormat": "{{namespace}}: {{container}}",
+                    "legendFormat": "CPU: {{cpu}}",
                     "range": true,
                     "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "1 - avg by (instance) (\n  rate(node_cpu_seconds_total{mode=\"idle\",job=\"node-exporter\",instance=\"$instance\",cluster=\"$cluster\"}[$__rate_interval])\n)",
+                    "format": "time_series",
+                    "hide": false,
+                    "instant": false,
+                    "legendFormat": "Total CPU Usage",
+                    "range": true,
+                    "refId": "B"
                 }
             ],
             "title": "CPU Usage",
@@ -662,7 +681,7 @@
                 },
                 "tooltip": {
                     "hideZeros": false,
-                    "mode": "multi",
+                    "mode": "single",
                     "sort": "none"
                 }
             },
@@ -761,7 +780,7 @@
                 "overrides": []
             },
             "gridPos": {
-                "h": 6,
+                "h": 5,
                 "w": 6,
                 "x": 12,
                 "y": 13
@@ -866,7 +885,7 @@
                 "overrides": []
             },
             "gridPos": {
-                "h": 6,
+                "h": 5,
                 "w": 6,
                 "x": 18,
                 "y": 13
@@ -985,5 +1004,5 @@
     "timezone": "browser",
     "title": "Mini Cloud",
     "uid": "7d57716318ee0dddbac5a7f451fb7754",
-    "version": 74
+    "version": 82
 }
