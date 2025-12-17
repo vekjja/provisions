@@ -46,7 +46,7 @@
           "style": "diamond"
         },
         {
-          "options": {
+          "properties": {
             "context_aliases": {
               "CLUSTER NAME": "\ued97"
             },
@@ -69,7 +69,7 @@
       "alignment": "left",
       "segments": [
         {
-          "options": {
+          "properties": {
             "folder_icon": "\u2026",
             "style": "agnoster_full"
           },
@@ -86,7 +86,7 @@
           ]
         },
         {
-          "options": {
+          "properties": {
             "branch_gone_icon": "\ueab8",
             "branch_icon": "\ue725 ",
             "branch_identical_icon": "\uf444",
@@ -109,7 +109,7 @@
           ]
         },
         {
-          "options": {
+          "properties": {
             "always_enabled": true,
             "folder_icon": "\u2026",
             "folder_separator_icon": " <transparent>\ue0b1</> ",
@@ -159,7 +159,7 @@
           ]
         },
         {
-          "options": {
+          "properties": {
             "kali": "\uf327"
           },
           "template": " {{ .Icon }} ",
