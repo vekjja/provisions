@@ -181,15 +181,15 @@
                             },
                             {
                                 "color": "orange",
-                                "value": 0.1
+                                "value": 0.09
                             },
                             {
                                 "color": "yellow",
-                                "value": 0.4
+                                "value": 0.45
                             },
                             {
                                 "color": "green",
-                                "value": 0.7
+                                "value": 0.72
                             }
                         ]
                     },
@@ -216,7 +216,7 @@
                     "values": false
                 },
                 "showThresholdLabels": false,
-                "showThresholdMarkers": false,
+                "showThresholdMarkers": true,
                 "sizing": "auto"
             },
             "pluginVersion": "12.3.0",
@@ -1004,5 +1004,5 @@
     "timezone": "browser",
     "title": "Mini Cloud",
     "uid": "7d57716318ee0dddbac5a7f451fb7754",
-    "version": 82
+    "version": 83
 }
