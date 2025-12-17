@@ -1,9 +1,4 @@
 # ZSH
-#### PATH ####
-export PATH="$PATH:/bin:/sbin"
-export PATH="$PATH:/usr/bin:/usr/sbin"
-export PATH="$PATH:/usr/local/bin:/usr/local/sbin"
-export PATH="$PATH:$HOME/.local/bin"
 
 ## Apple Homebrew ##
 export PATH="/opt/homebrew/bin:$PATH"
@@ -11,13 +6,6 @@ export PATH="/opt/homebrew/sbin:$PATH"
 
 # Postgres
 export PATH="/usr/local/opt/libpq/bin:$PATH"
-
-## Go
-export GOROOT="$(brew --prefix golang)/libexec"
-export GOPATH="${HOME}/.go"
-export GOBIN=$GOPATH/bin
-export GOPROXY=https://proxy.golang.org,direct
-export PATH="${GOPATH}/bin:${GOROOT}/bin:$PATH"
 
 # Source all .zshrc-* files
 for file in ~/.zshrc-*; do
@@ -36,33 +24,6 @@ function copy() {
   cat "$@" | pbcopy
 }
 
-#### Git ####
-alias g="git"
-alias gp="git push"
-alias gs="git status"
-alias gb="git branch"
-alias gc="git commit"
-alias gpll="git pull"
-alias gco="git checkout"
-alias gpm="git add .;git commit;git push"
-alias gpn="git add .;git commit;git push --no-verify"
-alias gl="git log"
-function gsquash() {
-  git reset $(git merge-base ${1} HEAD)
-  git add -A
-  git commit -m ${2}
-}
-function gprune() {
-  git fetch origin
-  git fetch --prune origin
-  git branch --merged | egrep -v "(^\*|master|main)" | xargs git branch -d
-}
-function gpa() {
-  git add --all
-  git commit -am ${1}
-  git push
-}
-
 #### AWS ####
 # AWS CDK
 export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=true
@@ -76,126 +37,15 @@ fi
 #### GCP ####
 export PATH="$PATH:/opt/homebrew/share/google-cloud-sdk/bin"
 
-#### Pulumi ####
-alias p="pulumi"
-alias pup="pulumi up"
-
-#### Terraform ####
-alias tf="terraform"
-alias tfp="terraform plan"
-alias tfa="terraform apply"
-alias tfd="terraform destroy"
-alias tfi="terraform init"
-alias tfo="terraform output"
-
-### ESP8266 ESP32C3 ###
-function esp-fs-upload() {
-
-  TMP_FILE="/tmp/tmp-$(date +%s)-esp-fs.bin"
-  trap "rm -f $TMP_FILE" EXIT
-
-  PAGE_SIZE="256"
-  BLOCK_SIZE="8192"
-  IMAGE_SIZE=2072576
-  PARTITION_OFFSET="2097152"
-
-  ESPTOOL_ARGS=""
-  ESP_PYTHON="$HOME/Library/Arduino15/packages/esp8266/tools/python3/3.7.2-post1/python3"
-  ESP_UPLOAD_TOOL="$HOME/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/tools/upload.py"
-  ESP_MKFS_TOOL="$HOME/Library/Arduino15/packages/esp8266/tools/mklittlefs/3.1.0-gcc10.3-e5f9fec/mklittlefs"
-
-  # Default values
-  DATA_DIR="data"
-  CHIP_TYPE="auto" # {auto,esp8266,esp32,esp32s2,esp32s3beta2,esp32c3}
-  CHIP_BAUD="921600"
-  SERIAL_PORT=""
-
-  # Parse options
-  while getopts "d:p:e" opt; do
-    case $opt in
-    d) DATA_DIR="$OPTARG" ;;
-    p) SERIAL_PORT="$OPTARG" ;;
-    e)
-      ESP_PYTHON=""
-      ESP_UPLOAD_TOOL="$HOME/Library/Arduino15/packages/esp32/tools/esptool_py/4.5.1/esptool"
-      ESP_MKFS_TOOL="$HOME/Library/Arduino15/packages/esp32/tools/mklittlefs/3.0.0-gnu12-dc7f933/mklittlefs"
-      BLOCK_SIZE="4096"
-      CHIP_BAUD="115200"
-      IMAGE_SIZE="0x160000"
-      ESPTOOL_ARGS="-z"
-      PARTITION_OFFSET="0x290000"
-      ;;
-    \?)
-      report_status "error" "Invalid option: -$OPTARG"
-      echo -e "Usage: $0 -d <data_directory> [-p <serial_port>]"
-      exit 1
-      ;;
-    esac
-  done
-
-  report_status "info" "📦 Packaging Files to Upload"
-  $ESP_MKFS_TOOL \
-    --create "$DATA_DIR" \
-    --page "$PAGE_SIZE" \
-    --size "$IMAGE_SIZE" \
-    --block "$BLOCK_SIZE" \
-    "$TMP_FILE"
-  if [ $? -ne 0 ]; then
-    report_status "error" "Failed to package files."
-    exit 1
-  fi
-
-  # Auto-select the first matching port if none provided
-  if [ -z "$SERIAL_PORT" ]; then
-    SERIAL_PORTS=($(ls /dev/tty.usbserial-* 2>/dev/null))
-    if [ ${#SERIAL_PORTS[@]} -gt 0 ]; then
-      SERIAL_PORT="${SERIAL_PORTS[0]}"
-      report_status "info" "\n${PURP}🛠️  Auto-selected Serial Port:${WHT} $SERIAL_PORT\n"
-    else
-      SERIAL_PORTS=($(ls /dev/tty.* | grep -i usb))
-      if [ ${#SERIAL_PORTS[@]} -eq 0 ]; then
-        report_status "error" "No serial ports found. Please connect a device."
-        exit 1
-      elif [ ${#SERIAL_PORTS[@]} -eq 1 ]; then
-        SERIAL_PORT="${SERIAL_PORTS[0]}"
-        # report_status "success" "Using Serial Port: $SERIAL_PORT"
-      else
-        report_status "info" "🛠️  Select Serial Port:"
-        select port in "${SERIAL_PORTS[@]}"; do
-          SERIAL_PORT="$port"
-          break
-        done
-      fi
-    fi
-  fi
-
-  report_status "info" "${BLU}🛜  Uploading Packaged Files"
-  $ESP_PYTHON "$ESP_UPLOAD_TOOL" \
-    --before default_reset \
-    --after hard_reset \
-    --chip "$CHIP_TYPE" \
-    --port "$SERIAL_PORT" \
-    --baud "$CHIP_BAUD" \
-    write_flash $ESPTOOL_ARGS "$PARTITION_OFFSET" "$TMP_FILE"
-
-  if [ $? -ne 0 ]; then
-    report_status "error" "Upload Failed"
-    exit 1
-  fi
-
-  report_status "success" "🎉 Done!"
-}
-
 #### iTerm ####
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 #### Autojump ####
 [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
 
-# pnpm
+#### PNPM ####
 export PNPM_HOME="~/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
-# pnpm end
