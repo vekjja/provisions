@@ -1,0 +1,77 @@
+- name: Ensure inotify max_user_watches is high enough for Kubernetes log tailing
+  become: true
+  ansible.builtin.sysctl:
+    name: fs.inotify.max_user_watches
+    value: "{{ k3s_tuning.inotify_max_user_watches }}"
+    state: present
+    sysctl_set: true
+    reload: true
+
+- name: Ensure inotify max_user_instances is high enough for Kubernetes log tailing
+  become: true
+  ansible.builtin.sysctl:
+    name: fs.inotify.max_user_instances
+    value: "{{ k3s_tuning.inotify_max_user_instances }}"
+    state: present
+    sysctl_set: true
+    reload: true
+
+- name: Ensure inotify max_queued_events is high enough for Kubernetes log tailing
+  become: true
+  ansible.builtin.sysctl:
+    name: fs.inotify.max_queued_events
+    value: "{{ k3s_tuning.inotify_max_queued_events }}"
+    state: present
+    sysctl_set: true
+    reload: true
+
+- name: Ensure system-wide file-max is reasonably high
+  become: true
+  ansible.builtin.sysctl:
+    name: fs.file-max
+    value: "{{ k3s_tuning.fs_file_max }}"
+    state: present
+    sysctl_set: true
+    reload: true
+
+- name: Ensure systemd drop-in directory exists for k3s (server)
+  become: true
+  ansible.builtin.file:
+    path: /etc/systemd/system/k3s.service.d
+    state: directory
+    mode: "0755"
+  when: ansible_facts['service_mgr'] == 'systemd'
+
+- name: Ensure systemd drop-in directory exists for k3s-agent (workers)
+  become: true
+  ansible.builtin.file:
+    path: /etc/systemd/system/k3s-agent.service.d
+    state: directory
+    mode: "0755"
+  when: ansible_facts['service_mgr'] == 'systemd'
+
+- name: Raise NOFILE limit for k3s service
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/k3s.service.d/20-nofile.conf
+    mode: "0644"
+    content: |-
+      [Service]
+      LimitNOFILE={{ k3s_tuning.nofile_limit }}
+  when: ansible_facts['service_mgr'] == 'systemd'
+  notify:
+    - Restart k3s (if installed)
+
+- name: Raise NOFILE limit for k3s-agent service
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/k3s-agent.service.d/20-nofile.conf
+    mode: "0644"
+    content: |-
+      [Service]
+      LimitNOFILE={{ k3s_tuning.nofile_limit }}
+  when: ansible_facts['service_mgr'] == 'systemd'
+  notify:
+    - Restart k3s-agent (if installed)
+
+

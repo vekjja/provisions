@@ -212,6 +212,24 @@ Notes:
 - `args` is appended to the installer command: `/tmp/k3s.sh {{ k3s.args | join(' ') }}`
 - The `get-kubeconfig` tag fetches `k3s.kubeconfig` to `k3s.local_kubeconfig`
 
+### 🧩 `k3s_tuning` (inotify + NOFILE tuning for Kubernetes log tailing)
+
+Used by: `roles/k3s/tasks/tuning.yml`  
+Applies to: Linux/systemd hosts where `k3s` is defined
+
+This is primarily to prevent log agents (like **Grafana Alloy**) from spamming:
+`failed to create fsnotify watcher: too many open files`
+
+```yaml
+k3s_tuning:
+  enabled: true
+  nofile_limit: 1048576
+  inotify_max_user_watches: 1048576
+  inotify_max_user_instances: 8192
+  inotify_max_queued_events: 32768
+  fs_file_max: 2097152
+```
+
 ### 🔐 `wireguard` (WireGuard server + client configs)
 
 Used by: `roles/wireguard/tasks/debian.yml` + templates  

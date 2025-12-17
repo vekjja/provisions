@@ -1,0 +1,17 @@
+- name: Restart k3s (if installed)
+  become: true
+  ansible.builtin.systemd:
+    name: k3s
+    state: restarted
+    daemon_reload: true
+  failed_when: false
+
+- name: Restart k3s-agent (if installed)
+  become: true
+  ansible.builtin.systemd:
+    name: k3s-agent
+    state: restarted
+    daemon_reload: true
+  failed_when: false
+
+

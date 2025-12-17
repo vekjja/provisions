@@ -1,3 +1,7 @@
+- name: System tuning for Kubernetes log watchers (inotify / nofile)
+  ansible.builtin.include_tasks: tuning.yml
+  when: k3s_tuning.enabled | default(true)
+
 - name: Download K3S installer
   get_url:
     url: https://get.k3s.io

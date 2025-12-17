@@ -85,6 +85,17 @@ All variable schemas + examples live in:
 
 - 📄 **[`playbooks/VARS.md`](./VARS.md)**
 
+## 🛠️ Troubleshooting (Loki/Alloy): `failed to create fsnotify watcher: too many open files`
+
+If you see this in **Grafana Explore (Loki datasource)** but not in `kubectl logs`, the common reasons are:
+
+- **You’re looking at historical data**: Loki stores log entries; `kubectl logs` only shows stdout/stderr since the container last started. Try `kubectl logs --previous ...` or widen/narrow your time range.
+- **Wrong pod/container**: In Grafana, click a log line and inspect its **labels** (`namespace`, `pod`, `container`) to identify the exact source, then run `kubectl logs -n <ns> <pod> -c <container>`.
+
+Fix wise, this is usually a **node limit** (inotify / open files) being too low for log tailing:
+
+- This repo provides **`k3s_tuning`** (see `playbooks/VARS.md`) which sets higher `fs.inotify.*` sysctls and raises `LimitNOFILE` for `k3s`/`k3s-agent` via systemd drop-ins.
+
 ## 📁 How `files:` works (important)
 
 The `files` role expects `files:` entries like:

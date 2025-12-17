@@ -1,0 +1,21 @@
+# vim:ft=ansible
+
+# Node-level tuning for Kubernetes log tailers (e.g., Grafana Alloy / Promtail) and watchers.
+# These errors often show up as:
+#   "failed to create fsnotify watcher: too many open files"
+k3s_tuning:
+  enabled: true
+
+  # Per-process open file descriptor limit for k3s/k3s-agent services (propagates to container runtime processes).
+  # Choose a value that matches your host capabilities; 1048576 is commonly used.
+  nofile_limit: 1048576
+
+  # inotify limits (host kernel). These are frequently the real bottleneck for per-pod log file watching.
+  inotify_max_user_watches: 1048576
+  inotify_max_user_instances: 8192
+  inotify_max_queued_events: 32768
+
+  # System-wide max open files.
+  fs_file_max: 2097152
+
+
