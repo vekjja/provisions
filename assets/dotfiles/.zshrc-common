@@ -42,7 +42,6 @@ alias chrome-socks='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chro
 alias rm-arp-cache=" sudo arp -a | awk '{print $2}' | tr -d '()' | xargs -n1 sudo arp -d"
 
 #### Go ####
-export GOROOT="$(brew --prefix golang)/libexec"
 export GOPATH="${HOME}/.go"
 export GOBIN=$GOPATH/bin
 export GOPROXY=https://proxy.golang.org,direct

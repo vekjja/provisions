@@ -13,6 +13,9 @@ fi
 export PATH="/opt/homebrew/bin:$PATH"
 export PATH="/opt/homebrew/sbin:$PATH"
 
+#### Go ####
+export GOROOT="$(brew --prefix golang)/libexec"
+
 # Postgres
 export PATH="/usr/local/opt/libpq/bin:$PATH"
 
