@@ -505,8 +505,8 @@
                         "barAlignment": 0,
                         "barWidthFactor": 1,
                         "drawStyle": "line",
-                        "fillOpacity": 27,
-                        "gradientMode": "opacity",
+                        "fillOpacity": 9,
+                        "gradientMode": "hue",
                         "hideFrom": {
                             "legend": false,
                             "tooltip": false,
@@ -756,8 +756,8 @@
                         "barAlignment": 0,
                         "barWidthFactor": 0.6,
                         "drawStyle": "line",
-                        "fillOpacity": 27,
-                        "gradientMode": "opacity",
+                        "fillOpacity": 9,
+                        "gradientMode": "hue",
                         "hideFrom": {
                             "legend": false,
                             "tooltip": false,
@@ -865,8 +865,8 @@
                         "barAlignment": 0,
                         "barWidthFactor": 0.6,
                         "drawStyle": "line",
-                        "fillOpacity": 27,
-                        "gradientMode": "opacity",
+                        "fillOpacity": 9,
+                        "gradientMode": "hue",
                         "hideFrom": {
                             "legend": false,
                             "tooltip": false,
@@ -1018,5 +1018,5 @@
     "timezone": "browser",
     "title": "Mini Cloud",
     "uid": "7d57716318ee0dddbac5a7f451fb7754",
-    "version": 112
+    "version": 113
 }
