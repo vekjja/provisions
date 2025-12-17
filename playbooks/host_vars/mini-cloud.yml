@@ -8,7 +8,12 @@ files:
   - { src: 'dotfiles/.zshrc-linux', dest: '~/.zshrc' }
   - { src: 'dotfiles/.zshrc-common', dest: '~/.zshrc-common' }
   - { src: 'themes/oh-my-posh/kev.omp.json', dest: '~/.kev.omp.json' }
-  
+
+firewall_rules:
+  - { port: '22', proto: 'tcp', comment: 'SSH' }
+  - { port: '3389', proto: 'tcp', comment: 'RDP' }
+  - { port: '6443', proto: 'tcp', comment: 'Kubernetes API' }
+
 k3s: # Lightweight Kubernetes: https://github.com/k3s-io/k3s/releases/
   kubeconfig: 
     remote: ~/.kube/k3sconfig
@@ -45,11 +50,6 @@ wireguard:
           allowed_ips: 10.0.10.3/32
         - name: notYouriPhone
           allowed_ips: 10.0.10.4/32
-
-firewall_rules:
-  - { port: '22', proto: 'tcp', comment: 'SSH' }
-  - { port: '3389', proto: 'tcp', comment: 'RDP' }
-  - { port: '6443', proto: 'tcp', comment: 'Kubernetes API' }
 
 fs_mounts:
 - {
@@ -89,8 +89,22 @@ fs_mounts:
   opts: "defaults,nofail"
 }
 
-nfs_shares:
-  - /mnt/ssd/movies *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
-  - /mnt/ssd/series *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
-  - /mnt/hdd/tera *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
-  - /mnt/hdd/barracuda *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+# nfs_shares:
+#   - /mnt/ssd/movies *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+#   - /mnt/ssd/series *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+#   - /mnt/hdd/barracuda *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+#   - /mnt/hdd/tera *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+
+smb_shares:
+  - name: tera
+    path: /mnt/hdd/tera
+    comment: Tera share
+    browseable: yes
+    read_only: no
+    guest_ok: yes
+  # - name: barracuda
+  #   path: /mnt/hdd/barracuda
+  #   comment: Barracuda share
+  #   browseable: yes
+  #   read_only: no
+  #   guest_ok: yes

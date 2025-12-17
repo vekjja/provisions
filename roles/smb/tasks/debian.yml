@@ -1,0 +1,54 @@
+- name: Install Samba Server Packages
+  become: true
+  apt:
+    pkg:
+      - samba
+      - samba-common-bin
+    state: present
+    update_cache: true
+
+- name: Configure SMB firewall rules
+  become: true
+  ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    comment: "{{ item.comment }}"
+  loop:
+    - { port: '139', proto: 'tcp', comment: 'SMB NetBIOS session' }
+    - { port: '445', proto: 'tcp', comment: 'SMB over TCP' }
+    - { port: '137', proto: 'udp', comment: 'SMB NetBIOS name' }
+    - { port: '138', proto: 'udp', comment: 'SMB NetBIOS datagram' }
+
+- name: Ensure share directories exist
+  become: true
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "{{ item.mode | default('0775') }}"
+  loop: "{{ smb_shares | default([]) }}"
+  when: item.path is defined
+  ignore_errors: true
+
+- name: Deploy Samba configuration
+  become: true
+  template:
+    src: smb.conf.j2
+    dest: /etc/samba/smb.conf
+    backup: true
+  notify: restart samba
+
+- name: Ensure smbd service is enabled and started
+  become: true
+  ansible.builtin.systemd:
+    name: smbd
+    enabled: true
+    state: started
+
+- name: Ensure nmbd service is enabled and started
+  become: true
+  ansible.builtin.systemd:
+    name: nmbd
+    enabled: true
+    state: started
+
