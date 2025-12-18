@@ -14,11 +14,10 @@ sudo systemctl disable rpcbind
 echo "Unexporting all NFS shares..."
 sudo exportfs -ua
 
-echo "Backing up /etc/exports to /etc/exports.backup..."
-sudo cp /etc/exports /etc/exports.backup 2>/dev/null || echo "No existing /etc/exports file found"
-
-echo "Clearing /etc/exports..."
-sudo truncate -s 0 /etc/exports
+echo "Removing NFS configuration files..."
+sudo rm -f /etc/exports
+sudo rm -f /etc/exports.backup
+sudo rm -f /etc/exports.*
 
 echo "Removing NFS firewall rules..."
 sudo ufw delete allow 111/tcp comment 'NFS rpcbind' 2>/dev/null || echo "Firewall rule 111/tcp not found or already removed"
@@ -33,5 +32,4 @@ sudo apt-get remove --purge -y nfs-kernel-server rpcbind
 sudo apt-get autoremove -y
 
 echo "NFS has been uninstalled and cleaned up."
-echo "Note: /etc/exports has been backed up to /etc/exports.backup if it existed."
 

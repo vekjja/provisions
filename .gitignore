@@ -1,4 +1,10 @@
+# macOS
 .DS_Store
 .vscode/
+
+# Ansible
 .ansible/.lock
+.ansible/vault_password
+
+# Group vars
 playbooks/group_vars/windows.yml

@@ -101,10 +101,29 @@ smb_shares:
     comment: Tera share
     browseable: yes
     read_only: no
+    guest_ok: no
+    valid_users: cloudmin
+    force_user: cloudmin
+
+  - name: barracuda
+    path: /mnt/hdd/barracuda
+    comment: Barracuda share
+    browseable: yes
+    read_only: no
+    guest_ok: no
+    valid_users: cloudmin
+    force_user: cloudmin
+
+  - name: movies
+    path: /mnt/ssd/movies
+    comment: Movies share
+    browseable: yes
+    read_only: yes
     guest_ok: yes
-  # - name: barracuda
-  #   path: /mnt/hdd/barracuda
-  #   comment: Barracuda share
-  #   browseable: yes
-  #   read_only: no
-  #   guest_ok: yes
+
+  - name: series
+    path: /mnt/ssd/series
+    comment: Series share
+    browseable: yes
+    read_only: yes
+    guest_ok: yes

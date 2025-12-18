@@ -38,6 +38,54 @@
     backup: true
   notify: restart samba
 
+- name: Extract and flatten SMB users from shares
+  set_fact:
+    smb_users_unique: "{{ (smb_shares | default([]) | selectattr('valid_users', 'defined') | map(attribute='valid_users') | list | map('split', ',') | flatten | map('trim') | list | unique) | default([]) }}"
+
+- name: Debug - Check if smb_user_password is defined
+  debug:
+    msg: 
+      - "smb_user_password is {{ 'defined' if smb_user_password is defined else 'NOT defined' }}"
+      - "smb_user_check.results is {{ 'defined' if smb_user_check.results is defined else 'NOT defined' }}"
+      - "Number of results: {{ smb_user_check.results | default([]) | length }}"
+  when: false  # Disable debug by default, set to true when needed
+
+- name: Check if SMB user exists
+  become: true
+  command: pdbedit -L -v "{{ item }}"
+  register: smb_user_check
+  changed_when: false
+  failed_when: false
+  loop: "{{ smb_users_unique | default([]) }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: Add SMB user with password if not exists
+  become: true
+  shell: |
+    (echo "{{ smb_user_password }}"; echo "{{ smb_user_password }}") | smbpasswd -a -s "{{ item.item }}"
+  when:
+    - smb_user_check.results is defined
+    - item.rc != 0
+    - smb_user_password is defined
+  loop: "{{ smb_user_check.results | default([]) }}"
+  loop_control:
+    label: "{{ item.item }}"
+  no_log: true
+
+- name: Set password for existing SMB user
+  become: true
+  shell: |
+    (echo "{{ smb_user_password }}"; echo "{{ smb_user_password }}") | smbpasswd -s "{{ item.item }}"
+  when:
+    - smb_user_check.results is defined
+    - item.rc == 0
+    - smb_user_password is defined
+  loop: "{{ smb_user_check.results | default([]) }}"
+  loop_control:
+    label: "{{ item.item }}"
+  no_log: true
+
 - name: Ensure smbd service is enabled and started
   become: true
   ansible.builtin.systemd:

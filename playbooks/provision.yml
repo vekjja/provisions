@@ -2,6 +2,9 @@
   hosts: remote
   gather_facts: true
 
+  vars_files:
+    - group_vars/vault.yml
+
   roles:
 
     - { role: files, tags: ['files', 'config'] }
