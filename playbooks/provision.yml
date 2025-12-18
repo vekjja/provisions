@@ -16,8 +16,9 @@
     - { role: smb, tags: ['smb', 'filesystem'] }
     - { role: nfs, tags: ['nfs', 'filesystem'] }
 
-    - { role: network, tags: ['network', 'net'] }
-    - { role: wireguard, tags: ['wireguard', 'wg', 'net'] }
+    - { role: ufw, tags: ['ufw', 'network'] }
+    - { role: static-ip, tags: ['static-ip', 'network'] }
+    - { role: wireguard, tags: ['wireguard', 'wg', 'network'] }
 
     - { role: golang, tags: ['go'] }
     - { role: k3s, tags: ['k3s'] }

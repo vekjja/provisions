@@ -1,0 +1,41 @@
+- name: Ensure UFW is installed
+  become: true
+  apt:
+    name: ufw
+    state: present
+    update_cache: true
+
+- name: Disable UFW temporarily
+  become: true
+  ufw:
+    state: disabled
+  failed_when: false
+
+- name: Reset UFW to default state
+  become: true
+  command: ufw --force reset
+  changed_when: true
+
+- name: Disable IPv6 in UFW
+  become: true
+  lineinfile:
+    path: /etc/default/ufw
+    regexp: '^IPV6='
+    line: 'IPV6=no'
+    state: present
+
+- name: Configure UFW firewall rules
+  become: true
+  ufw:
+    rule: "{{ item.rule | default('allow') }}"
+    port: "{{ item.port | default(omit) }}"
+    proto: "{{ item.proto | default('tcp') }}"
+    from: "{{ item.from | default(omit) }}"
+    comment: "{{ item.comment | default(omit) }}"
+  loop: "{{ firewall_rules | default([]) }}"
+
+- name: Enable UFW
+  become: true
+  ufw:
+    state: enabled
+

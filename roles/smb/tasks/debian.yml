@@ -7,19 +7,6 @@
     state: present
     update_cache: true
 
-- name: Configure SMB firewall rules
-  become: true
-  ufw:
-    rule: allow
-    port: "{{ item.port }}"
-    proto: "{{ item.proto }}"
-    comment: "{{ item.comment }}"
-  loop:
-    - { port: '139', proto: 'tcp', comment: 'SMB NetBIOS session' }
-    - { port: '445', proto: 'tcp', comment: 'SMB over TCP' }
-    - { port: '137', proto: 'udp', comment: 'SMB NetBIOS name' }
-    - { port: '138', proto: 'udp', comment: 'SMB NetBIOS datagram' }
-
 - name: Ensure share directories exist
   become: true
   file:

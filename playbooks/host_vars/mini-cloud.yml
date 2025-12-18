@@ -13,6 +13,13 @@ firewall_rules:
   - { port: '22', proto: 'tcp', comment: 'SSH' }
   - { port: '3389', proto: 'tcp', comment: 'RDP' }
   - { port: '6443', proto: 'tcp', comment: 'Kubernetes API' }
+  - { port: '51820', proto: 'udp', comment: 'WireGuard VPN' }
+  - { port: '445', proto: 'tcp', comment: 'SMB over TCP' }
+  - { port: '137', proto: 'udp', comment: 'SMB NetBIOS name' }
+  - { port: '139', proto: 'tcp', comment: 'SMB NetBIOS session' }
+  - { port: '138', proto: 'udp', comment: 'SMB NetBIOS datagram' }
+  # - { port: '111,2049', proto: 'tcp', from: '10.0.0.0/16', comment: 'NFS from local network (TCP)' }
+  # - { port: '111,2049', proto: 'udp', from: '10.0.0.0/16', comment: 'NFS from local network (UDP)' }
 
 k3s: # Lightweight Kubernetes: https://github.com/k3s-io/k3s/releases/
   kubeconfig: 

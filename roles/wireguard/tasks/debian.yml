@@ -26,15 +26,6 @@
     wg_config: "{{ wireguard | default({}) }}"
   when: wireguard is defined
 
-- name: Allow WireGuard port in UFW
-  become: true
-  when: wg_config.interfaces is defined
-  ufw:
-    rule: allow
-    port: '51820'
-    proto: udp
-    comment: 'WireGuard VPN'
-
 - name: Ensure WireGuard directories exist
   become: true
   when: wg_config.interfaces is defined
