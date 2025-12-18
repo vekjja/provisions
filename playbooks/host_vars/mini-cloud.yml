@@ -97,10 +97,10 @@ fs_mounts:
 }
 
 # nfs_shares:
+#   - /mnt/hdd/tera *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
 #   - /mnt/ssd/movies *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
 #   - /mnt/ssd/series *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
 #   - /mnt/hdd/barracuda *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
-#   - /mnt/hdd/tera *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
 
 smb_shares:
   - name: tera
