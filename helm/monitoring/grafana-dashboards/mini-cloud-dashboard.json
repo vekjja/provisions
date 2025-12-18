@@ -29,7 +29,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic-by-name"
+            "mode": "palette-classic"
           },
           "custom": {
             "axisBorderShow": false,
@@ -155,7 +155,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic-by-name"
+            "mode": "palette-classic"
           },
           "custom": {
             "axisBorderShow": false,
@@ -494,7 +494,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Mounted on"
+              "options": "Mountpoint"
             },
             "properties": [
               {
@@ -530,7 +530,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Available"
+              "options": "Free"
             },
             "properties": [
               {
@@ -542,7 +542,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Used, %"
+              "options": "Percent Used"
             },
             "properties": [
               {
@@ -554,7 +554,7 @@
                 "value": {
                   "mode": "gradient",
                   "type": "gauge",
-                  "valueDisplayMode": "text"
+                  "valueDisplayMode": "color"
                 }
               },
               {
@@ -582,7 +582,7 @@
         "sortBy": [
           {
             "desc": true,
-            "displayName": "Used, %"
+            "displayName": "Percent Used"
           }
         ]
       },
@@ -646,10 +646,19 @@
           "options": {
             "alias": "Used",
             "binary": {
-              "left": "Value #A (lastNotNull)",
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #A (lastNotNull)"
+                }
+              },
               "operator": "-",
-              "reducer": "sum",
-              "right": "Value #B (lastNotNull)"
+              "right": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #B (lastNotNull)"
+                }
+              }
             },
             "mode": "binary",
             "reduce": {
@@ -662,10 +671,19 @@
           "options": {
             "alias": "Used, %",
             "binary": {
-              "left": "Used",
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Used"
+                }
+              },
               "operator": "/",
-              "reducer": "sum",
-              "right": "Value #A (lastNotNull)"
+              "right": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #A (lastNotNull)"
+                }
+              }
             },
             "mode": "binary",
             "reduce": {
@@ -677,11 +695,21 @@
           "id": "organize",
           "options": {
             "excludeByName": {},
-            "indexByName": {},
+            "includeByName": {},
+            "indexByName": {
+              "Used": 2,
+              "Used, %": 4,
+              "Value #A (lastNotNull)": 1,
+              "Value #B (lastNotNull)": 3,
+              "mountpoint": 0
+            },
+            "orderByMode": "manual",
             "renameByName": {
+              "Used": "",
+              "Used, %": "Percent Used",
               "Value #A (lastNotNull)": "Size",
-              "Value #B (lastNotNull)": "Available",
-              "mountpoint": "Mounted on"
+              "Value #B (lastNotNull)": "Free",
+              "mountpoint": "Mountpoint"
             }
           }
         },
@@ -764,12 +792,12 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "America/New_York",
   "title": "Mini Cloud Dashboard",
   "uid": "7d57716318ee0dddbac5a7f451fb7754",
-  "version": 39
+  "version": 43
 }
