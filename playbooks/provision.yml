@@ -9,7 +9,6 @@
 
     - { role: files, tags: ['files', 'config'] }
     - { role: shell, tags: ['shell', 'config'] }
-    - { role: nerd-fonts, tags: ['nerd-fonts', 'config'] }
     - { role: packages, tags: ['packages', 'config'] }
 
     - { role: fstab, tags: ['fstab','filesystem'] }
@@ -20,5 +19,6 @@
     - { role: static-ip, tags: ['static-ip', 'network'] }
     - { role: wireguard, tags: ['wireguard', 'wg', 'network'] }
 
+    - { role: nerd-fonts, tags: ['nerd-fonts'] }
     - { role: golang, tags: ['go'] }
     - { role: k3s, tags: ['k3s'] }
