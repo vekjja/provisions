@@ -90,7 +90,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 12,
         "x": 0,
         "y": 0
@@ -209,7 +209,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 12,
         "x": 12,
         "y": 0
@@ -368,7 +368,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 9
       },
       "id": 22,
       "options": {
@@ -453,6 +453,9 @@
       },
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "custom": {
             "align": "auto",
             "cellOptions": {
@@ -468,19 +471,19 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "dark-purple",
                 "value": 0
               },
               {
-                "color": "yellow",
+                "color": "blue",
                 "value": 0.66
               },
               {
-                "color": "orange",
+                "color": "light-blue",
                 "value": 0.81
               },
               {
-                "color": "red",
+                "color": "text",
                 "value": 0.93
               }
             ]
@@ -570,7 +573,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 8
+        "y": 9
       },
       "id": 14,
       "options": {
@@ -695,223 +698,6 @@
         }
       ],
       "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "max": 100,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-green",
-                "value": 0
-              },
-              {
-                "color": "yellow",
-                "value": 54
-              },
-              {
-                "color": "orange",
-                "value": 75
-              },
-              {
-                "color": "dark-red",
-                "value": 96
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 0,
-        "y": 16
-      },
-      "id": 13,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "12.3.0",
-      "targets": [
-        {
-          "editorMode": "code",
-          "expr": "100 * avg by (instance) (\n  1 - sum by (instance, cpu) (\n    rate(node_cpu_seconds_total{job=\"node-exporter\", mode=~\"idle|iowait\"}[$__rate_interval])\n  )\n)",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Current CPU Usage",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-green",
-                "value": 0
-              },
-              {
-                "color": "#EAB839",
-                "value": 81
-              },
-              {
-                "color": "orange",
-                "value": 90
-              },
-              {
-                "color": "rgba(245, 54, 54, 0.9)",
-                "value": 96
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 6,
-        "y": 16
-      },
-      "id": 6,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "12.3.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "100 -\n(\n  avg(node_memory_MemAvailable_bytes{job=\"node-exporter\"}) /\n  avg(node_memory_MemTotal_bytes{job=\"node-exporter\"})\n* 100\n)\n",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Current Memory Usage",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": 0
-              },
-              {
-                "color": "orange",
-                "value": 0.09
-              },
-              {
-                "color": "yellow",
-                "value": 0.45
-              },
-              {
-                "color": "green",
-                "value": 0.72
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 12,
-        "y": 16
-      },
-      "id": 16,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "12.3.0",
-      "targets": [
-        {
-          "editorMode": "builder",
-          "expr": "max by (instance, device, mountpoint, fstype) (\n  node_filesystem_avail_bytes{device=~\"/dev/(sd|nvme).*\",fstype!~\"tmpfs|rootfs\",mountpoint!~\"/(boot|run|sys|proc|dev).*\"}\n)\n/\nmax by (instance, device, mountpoint, fstype) (\n  node_filesystem_size_bytes{device=~\"/dev/(sd|nvme).*\",fstype!~\"tmpfs|rootfs\",mountpoint!~\"/(boot|run|sys|proc|dev).*\"}\n)",
-          "legendFormat": "{{mountpoint}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Disk Space Available",
-      "type": "gauge"
     }
   ],
   "preload": false,
@@ -925,10 +711,10 @@
       {
         "current": {
           "text": [
-            "All"
+            "None"
           ],
           "value": [
-            "$__all"
+            ""
           ]
         },
         "definition": "label_values(kube_pod_container_info{}, namespace)",
@@ -955,19 +741,19 @@
       {
         "allowCustomValue": false,
         "current": {
-          "text": "hide",
-          "value": "hide"
+          "text": "show",
+          "value": "show"
         },
         "description": "Show Overall Metrics in Panels",
         "name": "OverallMetrics",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "show",
             "value": "show"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "hide",
             "value": "hide"
           }
@@ -985,5 +771,5 @@
   "timezone": "America/New_York",
   "title": "Mini Cloud Dashboard",
   "uid": "7d57716318ee0dddbac5a7f451fb7754",
-  "version": 37
+  "version": 39
 }
