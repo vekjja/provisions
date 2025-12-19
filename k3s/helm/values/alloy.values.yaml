@@ -5,9 +5,10 @@
 
 # Alloy configuration for Kubernetes log collection
 # Will Scrape logs from all pods and send to Loki
-# Using River configuration language (Alloy's config format)
+
 alloy:
   configMap:
+    # Using River configuration language (Alloy's config format)
     content: |-
       logging {
         level  = "info"
