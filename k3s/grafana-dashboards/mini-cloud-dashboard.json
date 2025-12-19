@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 0,
+  "id": 114,
   "links": [],
   "panels": [
     {
@@ -105,7 +105,9 @@
           ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
         },
         "tooltip": {
           "hideZeros": false,
@@ -224,7 +226,9 @@
           ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
         },
         "tooltip": {
           "hideZeros": false,
@@ -341,7 +345,7 @@
           {
             "matcher": {
               "id": "byFrameRefID",
-              "options": "A"
+              "options": "B"
             },
             "properties": [
               {
@@ -353,7 +357,7 @@
           {
             "matcher": {
               "id": "byFrameRefID",
-              "options": "C"
+              "options": "D"
             },
             "properties": [
               {
@@ -365,7 +369,7 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 12,
         "x": 0,
         "y": 9
@@ -380,7 +384,9 @@
           ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
         },
         "tooltip": {
           "hideZeros": false,
@@ -570,7 +576,7 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 12,
         "x": 12,
         "y": 9
@@ -697,10 +703,10 @@
             "excludeByName": {},
             "includeByName": {},
             "indexByName": {
-              "Used": 2,
+              "Used": 3,
               "Used, %": 4,
               "Value #A (lastNotNull)": 1,
-              "Value #B (lastNotNull)": 3,
+              "Value #B (lastNotNull)": 2,
               "mountpoint": 0
             },
             "orderByMode": "manual",
@@ -729,7 +735,7 @@
     }
   ],
   "preload": false,
-  "refresh": "5s",
+  "refresh": "10s",
   "schemaVersion": 42,
   "tags": [
     "node-exporter-mixin"
@@ -738,11 +744,9 @@
     "list": [
       {
         "current": {
-          "text": [
-            "None"
-          ],
+          "text": "All",
           "value": [
-            ""
+            "$__all"
           ]
         },
         "definition": "label_values(kube_pod_container_info{}, namespace)",
@@ -769,19 +773,19 @@
       {
         "allowCustomValue": false,
         "current": {
-          "text": "show",
-          "value": "show"
+          "text": "hide",
+          "value": "hide"
         },
         "description": "Show Overall Metrics in Panels",
         "name": "OverallMetrics",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "show",
             "value": "show"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "hide",
             "value": "hide"
           }
@@ -796,8 +800,8 @@
     "to": "now"
   },
   "timepicker": {},
-  "timezone": "America/New_York",
-  "title": "Mini Cloud Dashboard",
+  "timezone": "browser",
+  "title": "Livingroom Cloud Dashboard",
   "uid": "7d57716318ee0dddbac5a7f451fb7754",
-  "version": 43
+  "version": 50
 }
