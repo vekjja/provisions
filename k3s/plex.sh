@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
-
 cat <<EOF | kubectl apply -f -
 ---
 apiVersion: v1
@@ -69,3 +67,8 @@ spec:
   hostPath:
     path: "/mnt/ssd/pny250/Plex"
 EOF
+
+helm upgrade --install plex ./k3s/helm/charts/plex \
+  --namespace "plex" \
+  --create-namespace \
+  --values ./k3s/helm/values/plex.values.yaml

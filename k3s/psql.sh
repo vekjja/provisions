@@ -8,9 +8,10 @@ helm repo update
 
 # Install PostgreSQL using Helm with flags
 helm upgrade --install psql bitnami/postgresql \
-  --namespace "your-namespace" \
+  --namespace "psql" \
   --create-namespace \
+  # The drive used for `local-path` must support linux permissions. (ext4, xfs, etc.)`
   --set primary.persistence.storageClass=local-path \
-  --set primary.persistence.enabled=true \
   --set primary.persistence.size=10Gi \
+  --set primary.persistence.enabled=true \
   --set volumePermissions.enabled=true

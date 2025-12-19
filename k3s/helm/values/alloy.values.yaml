@@ -1,10 +1,10 @@
 # Default values for grafana/alloy
-# https://github.com/grafana/helm-charts/tree/main/charts/alloy
+#   Chart:https://github.com/grafana/helm-charts/tree/main/charts/alloy
 # Alloy replaced Promtail as the recommended log collection agent
 # Documentation: https://grafana.com/docs/loki/latest/send-data/alloy/
 
 # Alloy configuration for Kubernetes log collection
-# This will be configured to scrape logs from all pods and send to Loki
+# Will Scrape logs from all pods and send to Loki
 # Using River configuration language (Alloy's config format)
 alloy:
   configMap:

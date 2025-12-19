@@ -60,13 +60,10 @@ helm install ingress-nginx ingress-nginx/ingress-nginx \
   --create-namespace
 
 # Wait for ingress controller to be ready
-# kubectl wait --namespace ingress-nginx \
-#   --for=condition=ready pod \
-#   --selector=app.kubernetes.io/component=controller \
-#   --timeout=120s
-
-# Restart Ingress Controller
-kubectl rollout restart deployment ingress-nginx-controller -n ingress-nginx
+kubectl wait --namespace ingress-nginx \
+  --selector=app.kubernetes.io/component=controller \
+  --for=condition=ready pod \
+  --timeout=120s
 
 # View LoadBalancer External IP
 kubectl get service ingress-nginx-controller --namespace=ingress-nginx

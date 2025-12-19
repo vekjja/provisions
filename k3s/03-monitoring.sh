@@ -22,21 +22,21 @@ data:
 EOF
 
 # Install kube-prometheus-stack (includes Prometheus, Grafana, Alertmanager, Node Exporter, etc.)
+# See values file for configuration
 helm upgrade --install monitoring-stack prometheus-community/kube-prometheus-stack \
   --namespace "monitoring" \
   --create-namespace \
-  --values ./helm/monitoring/grafana.values.yaml
+  --values ./k3s/helm/values/grafana.values.yaml
 
 # Install Loki for logging
-# Using standalone grafana/loki chart for better configuration control
+# See values file for configuration
 helm upgrade --install loki grafana/loki \
   --namespace "monitoring" \
-  --values ./helm/monitoring/loki.values.yaml
+  --values ./k3s/helm/values/loki.values.yaml
 
-# Install Grafana Alloy for log collection
-# Alloy is the recommended agent for collecting logs (replaced Promtail)
+# Install Grafana Alloy for log collection (replaced Promtail)
 # It automatically discovers and collects logs from all pods in all namespaces
 # It runs as a DaemonSet and uses Kubernetes service discovery to find pods
 helm upgrade --install alloy grafana/alloy \
   --namespace "monitoring" \
-  --values ./helm/monitoring/alloy.values.yaml
+  --values ./k3s/helm/values/alloy.values.yaml

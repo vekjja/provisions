@@ -4,7 +4,7 @@ replicaCount: 1
 
 image:
   repository: linuxserver/plex
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   tag: "latest"
 
 imagePullSecrets: []
@@ -18,15 +18,15 @@ serviceAccount:
 
 podAnnotations: {}
 
-podSecurityContext: {} # fsGroup: 2000
+podSecurityContext: {}
 
 securityContext: {}
 
 # Plex claim token from https://plex.tv/claim
-claimToken: "claim-R8yyapwMJ9ymk5UE91qX"
+claimToken: ""
 
 # Set the timezone of the plex server
-timezone: America/New_York
+timezone: UTC
 
 plexPort: "32400"
 
@@ -37,34 +37,34 @@ service:
   protocol: TCP
 
 ingress:
-  enabled: true
+  enabled: false
   className: "nginx"
-  annotations: { cert-manager.io/cluster-issuer: "cloudflare-letsencrypt-production" }
+  annotations: { cert-manager.io/cluster-issuer: "letsencrypt-prod" }
   hosts:
-  - host: plex.livingroom.cloud
+  - host: plex.example.com
     paths:
     - path: /
       pathType: Prefix
   tls:
-  - secretName: plex.livingroom.cloud-tls
+  - secretName: plex-tls
     hosts:
-    - plex.livingroom.cloud
+    - plex.example.com
 
 persistence:
   movies:
-    storageClass: "ssd-movies"
+    storageClass: "local-storage"
     size: 100Gi
     accessMode: ReadWriteMany
   series:
-    storageClass: "ssd-series"
+    storageClass: "local-storage"
     size: 100Gi
     accessMode: ReadWriteMany
   seriesExt:
-    storageClass: "ssd-series-ext"
+    storageClass: "local-storage"
     size: 100Gi
     accessMode: ReadWriteMany
   config:
-    storageClass: "plex-config"
+    storageClass: "local-storage"
     size: 3Gi
     accessMode: ReadWriteMany
 
