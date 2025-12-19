@@ -6,6 +6,13 @@ deploymentMode: SingleBinary
 # ---- SingleBinary ON
 singleBinary:
   replicas: 1
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
 
 # ---- Force scalable targets OFF
 read:
