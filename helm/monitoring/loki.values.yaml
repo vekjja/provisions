@@ -1,30 +1,33 @@
-# Default values for grafana/loki
-# https://github.com/grafana/helm-charts/tree/main/charts/loki
-
-# Use Loki 3.2.0+ to support volume_enabled
 image:
   tag: "3.3.0"
 
-# Deployment mode - using SingleBinary for simpler deployment with local storage
 deploymentMode: SingleBinary
 
-# Loki configuration - all config must be under loki section
+# ---- SingleBinary ON
+singleBinary:
+  replicas: 1
+
+# ---- Force scalable targets OFF
+read:
+  replicas: 0
+write:
+  replicas: 0
+backend:
+  replicas: 0
+
 loki:
-  # Common configuration - set replication factor to 1 for SingleBinary mode
+  auth_enabled: false
+
   commonConfig:
     replication_factor: 1
 
+  # Chart-level storage selector (filesystem)
   storage:
-    bucketNames:
-      chunks: chunks
-      ruler: ruler
-      admin: admin
+    type: filesystem
+    filesystem:
+      chunks_directory: /var/loki/chunks
+      rules_directory: /var/loki/rules
 
-  # Disable multi-tenancy/auth for simpler setup
-  # This prevents "no org id" 401 errors from Grafana
-  auth_enabled: false
-
-  # Schema configuration - required for Loki
   schemaConfig:
     configs:
     - from: "2024-01-01"
@@ -35,12 +38,9 @@ loki:
         prefix: index_
         period: 24h
 
-  # Limits configuration
   limits_config:
     retention_period: 192h
     volume_enabled: true
-    # Grafana Logs Drilldown uses `service_name`. Loki auto-populates it from a list of candidate labels.
-    # Add `pod` so Kubernetes logs don't collapse into `unknown_service` when no app/service labels exist.
     discover_service_name:
     - service_name
     - service
@@ -55,34 +55,25 @@ loki:
     - workload
     - job
 
-  # Disable ruler component (alerting not needed)
-  # This prevents S3 access attempts
+  # Ruler disabled at both Loki config + chart level below
   ruler:
     enable_api: false
 
-  # Storage configuration for filesystem
-  # Volume is mounted at /var/loki, so use that path
-  storage_config:
-    filesystem:
-      directory: /var/loki/chunks
-
-# Disable cache components for SingleBinary mode
 chunksCache:
   enabled: false
 
 resultsCache:
   enabled: false
 
-# Disable gateway for SingleBinary mode (not needed)
 gateway:
   enabled: false
 
-# Disable ruler component (alerting not needed)
 ruler:
   enabled: false
 
-# Persistence
 persistence:
   enabled: true
   storageClassName: local-path
+  accessModes:
+  - ReadWriteOnce
   size: 20Gi
