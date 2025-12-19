@@ -1,0 +1,113 @@
+# Values for docker-mailserver
+# Chart: https://github.com/docker-mailserver/docker-mailserver-helm
+
+# Mail domain configuration
+maildomain: livingroom.cloud
+
+# Image configuration
+image:
+  repository: docker.io/mailserver/docker-mailserver
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# Service configuration
+service:
+  type: ClusterIP
+  # Standard mail ports (25, 465, 587, 993, 995, 143)
+  ports:
+    smtp:
+      enabled: true
+      port: 25
+      targetPort: 25
+    smtps:
+      enabled: true
+      port: 465
+      targetPort: 465
+    submission:
+      enabled: true
+      port: 587
+      targetPort: 587
+    imap:
+      enabled: true
+      port: 143
+      targetPort: 143
+    imaps:
+      enabled: true
+      port: 993
+      targetPort: 993
+    pop3:
+      enabled: false
+      port: 110
+      targetPort: 110
+    pop3s:
+      enabled: false
+      port: 995
+      targetPort: 995
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare-letsencrypt-production
+  hosts:
+  - host: mail.livingroom.cloud
+    paths:
+    - path: /
+      pathType: Prefix
+  tls:
+  - secretName: mail.livingroom.cloud-tls
+    hosts:
+    - mail.livingroom.cloud
+
+# Persistence for mail data
+persistence:
+  enabled: true
+  storageClassName: "local-path"
+  size: 20Gi
+  accessModes:
+  - ReadWriteOnce
+
+# Resource limits
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 200m
+    memory: 512Mi
+
+# Environment variables for docker-mailserver
+env:
+# Enable relevant modules
+- name: ENABLE_CLAMAV
+  value: "1"
+- name: ENABLE_SPAMASSASSIN
+  value: "1"
+- name: ENABLE_FAIL2BAN
+  value: "1"
+- name: ENABLE_POSTGREY
+  value: "1"
+- name: ONE_DIR
+  value: "1"
+- name: POSTMASTER_ADDRESS
+  value: "postmaster@livingroom.cloud"
+- name: PERMIT_DOCKER
+  value: "connected-networks"
+
+# DNS configuration
+dns:
+  enabled: false
+
+# Optional: ConfigMap for additional configuration
+configMap: {}
+
+# Optional: Secret for sensitive data (should be created separately)
+# existingSecret: mail-secrets
+
+# Node selector, tolerations, affinity
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
