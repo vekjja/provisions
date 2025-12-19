@@ -31,7 +31,38 @@ function copy() {
 }
 
 ## SMB
-alias mount_tera="sudo mount -t smbfs //cloudmin:$SMB_PASSWD@10.0.0.10/tera /Volumes/tera"
+smb_mount() {
+  local share_name="${1:-tera}"
+  local mount_point="/Volumes/${share_name}"
+  local server="10.0.0.10"
+  
+  if [ -z "$SMB_UNPW" ]; then
+    echo "Error: SMB_UNPW environment variable is not set (format: username:password)"
+    return 1
+  fi
+  
+  # Unmount if already mounted
+  if mount | grep -q "$mount_point"; then
+    echo "Unmounting existing mount..."
+    sudo umount "$mount_point" 2>/dev/null || true
+  fi
+  
+  # Create mount point if it doesn't exist
+  if [ ! -d "$mount_point" ]; then
+    sudo mkdir -p "$mount_point" 2>/dev/null
+    sudo chown -R "$(id -un):$(id -gn)" "$mount_point"
+  fi
+  
+  # Mount the share using smb:// format with password in URL
+  mount_smbfs -f 0644 -d 0755 "smb://${SMB_UNPW}@${server}/${share_name}" "$mount_point"
+  
+  if [ $? -eq 0 ]; then
+    echo "Successfully mounted ${share_name} share to ${mount_point}"
+  else
+    echo "Failed to mount ${share_name} share"
+    return 1
+  fi
+}
 
 # Delete downloaded Apple moving wallpapers (macOS Sonoma+)
 # Usage:
