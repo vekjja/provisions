@@ -1,14 +1,5 @@
 # ZSH
 
-# Source all .zshrc-* files
-for file in ~/.zshrc-*; do
-  [ -e "$file" ] && source "$file"
-done
-
-if [ -f ~/.apks ]; then
-  source ~/.apks
-fi
-
 ## Apple Homebrew ##
 export PATH="/opt/homebrew/bin:$PATH"
 export PATH="/opt/homebrew/sbin:$PATH"
@@ -21,6 +12,15 @@ export PATH="/usr/local/opt/libpq/bin:$PATH"
 
 #### iTerm ####
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+# Source all .zshrc-* files
+for file in ~/.zshrc-*; do
+  [ -e "$file" ] && source "$file"
+done
+
+if [ -f ~/.apks ]; then
+  source ~/.apks
+fi
 
 ## Mac Aliases
 alias flush_dns="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
