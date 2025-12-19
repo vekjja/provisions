@@ -366,8 +366,7 @@ if [ $commands[autojump] ]; then                             # check if autojump
     . /usr/local/share/autojump/autojump.zsh
   elif [ -f /opt/local/etc/profile.d/autojump.zsh ]; then # mac os x with ports
     . /opt/local/etc/profile.d/autojump.zsh
-  elif [ $commands[brew] -a -f $(brew --prefix)/etc/autojump.zsh ]; then # mac os x with brew
-    . $(brew --prefix)/etc/autojump.zsh
+  elif [ $commands[brew] -a -f $(brew --prefix)/etc/profile.d/autojump.sh ]; then # mac os x with brew
     . $(brew --prefix)/etc/profile.d/autojump.sh
   elif [ -f /opt/brew/etc/profile.d/autojump.sh ]; then # mac os x with apple internal brew
     . /opt/brew/etc/profile.d/autojump.sh
