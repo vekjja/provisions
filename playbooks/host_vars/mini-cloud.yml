@@ -18,8 +18,17 @@ firewall_rules:
   - { port: '137', proto: 'udp', comment: 'SMB NetBIOS name' }
   - { port: '139', proto: 'tcp', comment: 'SMB NetBIOS session' }
   - { port: '138', proto: 'udp', comment: 'SMB NetBIOS datagram' }
-  # - { port: '111,2049', proto: 'tcp', from: '10.0.0.0/16', comment: 'NFS from local network (TCP)' }
-  # - { port: '111,2049', proto: 'udp', from: '10.0.0.0/16', comment: 'NFS from local network (UDP)' }
+
+static_ip:
+  hostname: mini-cloud  # Hostname to add to /etc/hosts
+  interface: enp4s0  # Network interface name (use 'ip a' to find)
+  gateway: 10.0.0.1 # Gateway IP address
+  address: 10.0.0.10  # Static IP address
+  netmask: 16 # Subnet mask
+  nameservers:
+    - 10.0.0.1
+    - 1.1.1.1
+    - 8.8.8.8
 
 k3s: # Lightweight Kubernetes: https://github.com/k3s-io/k3s/releases/
   kubeconfig: 
@@ -33,17 +42,6 @@ k3s: # Lightweight Kubernetes: https://github.com/k3s-io/k3s/releases/
     - --write-kubeconfig-mode 644
     - --write-kubeconfig ~/.kube/k3sconfig
     - --default-local-storage-path /mnt/ssd/ex2/k3s/storage
-
-static_ip:
-  hostname: mini-cloud  # Hostname to add to /etc/hosts
-  interface: enp4s0  # Network interface name (use 'ip a' to find)
-  gateway: 10.0.0.1 # Gateway IP address
-  address: 10.0.0.10  # Static IP address
-  netmask: 16 # Subnet mask
-  nameservers:
-    - 10.0.0.1
-    - 1.1.1.1
-    - 8.8.8.8
 
 wireguard:
   server_endpoint: livingroom.cloud
@@ -98,9 +96,6 @@ fs_mounts:
 
 # nfs_shares:
 #   - /mnt/hdd/tera *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
-#   - /mnt/ssd/movies *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
-#   - /mnt/ssd/series *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
-#   - /mnt/hdd/barracuda *(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
 
 smb_shares:
   - name: tera

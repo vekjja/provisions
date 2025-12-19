@@ -5,8 +5,8 @@ for file in ~/.zshrc-*; do
   [ -e "$file" ] && source "$file"
 done
 
-if [ -f ~/.api-keys ]; then
-  source ~/.api-keys
+if [ -f ~/.apks ]; then
+  source ~/.apks
 fi
 
 ## Apple Homebrew ##
@@ -29,6 +29,9 @@ alias macInfo="system_profiler SPSoftwareDataType SPHardwareDataType"
 function copy() {
   cat "$@" | pbcopy
 }
+
+## SMB
+alias mount_tera="sudo mount -t smbfs //cloudmin:$SMB_PASSWD@10.0.0.10/tera /Volumes/tera"
 
 # Delete downloaded Apple moving wallpapers (macOS Sonoma+)
 # Usage:
