@@ -15,6 +15,7 @@ unix_packages:
   - git
   - jq
   - python3
+  - ranger
   - tree
   - vim
   - wget

@@ -11,3 +11,8 @@ fi
 
 ## Go
 export GOROOT=/usr/local/go
+
+
+## Linux Aliases
+alias du=gdu
+alias f=ranger
