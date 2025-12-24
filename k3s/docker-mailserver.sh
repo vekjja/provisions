@@ -43,8 +43,7 @@ helm install docker-mailserver docker-mailserver/docker-mailserver \
 # Initial Setup
 # ------------
 #  You have two minutes to setup a first email account after the initial deployment.
-kubectl exec -it --namespace mail deploy/docker-mailserver -- bash
-setup email add user@example.com password
+kubectl exec -n mail deploy/docker-mailserver -- setup email add admin@mail.livingroom.cloud admin
 
 # Generate DKIM key
 kubectl exec -n mail deploy/docker-mailserver -- setup config dkim
@@ -105,4 +104,11 @@ EOF
 dig TXT mail._domainkey.mail.livingroom.cloud +short
 
 # Test the email setup
-kubectl exec -n mail deploy/docker-mailserver -- swaks --to seemywings@gmail.com --from admin@livingroom.cloud --server 127.0.0.1 --auth LOGIN --auth-user admin@livingroom.cloud --auth-password 'admin' --tls --port 587
+kubectl exec -n mail deploy/docker-mailserver -- swaks \
+  --to seemywings@gmail.com \
+  --from admin@mail.livingroom.cloud \
+  --server mail.livingroom.cloud \
+  --auth LOGIN \
+  --auth-user admin@mail.livingroom.cloud \
+  --auth-password 'admin' \
+  --tls --port 587
