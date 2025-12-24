@@ -15,6 +15,9 @@ registry: txt
 txtOwnerId: mini-cloud
 txtPrefix: externaldns
 
+extraArgs:
+- --default-targets=174.44.105.210
+
 sources:
 - service
 - ingress
