@@ -1,0 +1,15 @@
+apiVersion: externaldns.k8s.io/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: mail-records
+  namespace: external-dns
+spec:
+  endpoints:
+  - dnsName: mail.livingroom.cloud
+    recordType: A
+    recordTTL: 300
+    targets: [ "<YOUR_PUBLIC_IP>" ]
+  - dnsName: livingroom.clouds
+    recordType: MX
+    recordTTL: 3600
+    targets: [ "10 mail.livingroom.cloud." ]

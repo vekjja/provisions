@@ -1,0 +1,36 @@
+provider: cloudflare
+
+env:
+- name: CF_API_TOKEN
+  valueFrom:
+    secretKeyRef:
+      name: cloudflare-api-token
+      key: api-token
+
+domainFilters:
+- livingroom.cloud
+
+policy: upsert-only
+registry: txt
+txtOwnerId: mini-cloud
+txtPrefix: externaldns
+
+sources:
+- service
+- ingress
+- crd
+
+crd:
+  create: true
+
+logLevel: info
+interval: 1m
+
+serviceAccount:
+  create: true
+
+rbac:
+  create: true
+
+metrics:
+  enabled: false
