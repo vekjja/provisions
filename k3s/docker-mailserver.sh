@@ -2,6 +2,12 @@
 
 # Install DMS using Helm
 # Note: Ensure your mail domain DNS is configured before running this script
+#
+# Optional: Configure outbound SMTP relay (recommended when TCP/25 egress is blocked)
+#   export SMTP_RELAY_HOST='[smtp.sendgrid.net]:587'
+#   export SMTP_RELAY_USER='apikey'
+#   export SMTP_RELAY_PASSWORD='<SENDGRID_API_KEY>'
+#
 # Update the hostname in ./k3s/helm/values/dms.values.yaml with your mail server domain
 
 helm repo add docker-mailserver https://docker-mailserver.github.io/docker-mailserver-helm
@@ -35,10 +41,34 @@ spec:
 EOF
 
 # Install docker-mailserver
+#
+# Optional relay overlay values file:
+# - Preferred: create `./k3s/helm/values/docker-mailserver.relay.values.yaml` (and reference k8s secrets there)
+# - Fallback: set SMTP_RELAY_HOST/USER/PASSWORD and we'll generate an overlay values file at runtime
+RELAY_VALUES_ARGS=()
+if [[ -f ./k3s/helm/values/docker-mailserver.relay.values.yaml ]]; then
+  RELAY_VALUES_ARGS+=(--values ./k3s/helm/values/docker-mailserver.relay.values.yaml)
+elif [[ -n "${SMTP_RELAY_HOST:-}" || -n "${SMTP_RELAY_USER:-}" || -n "${SMTP_RELAY_PASSWORD:-}" ]]; then
+  if [[ -z "${SMTP_RELAY_HOST:-}" || -z "${SMTP_RELAY_USER:-}" || -z "${SMTP_RELAY_PASSWORD:-}" ]]; then
+    echo "ERROR: To use SMTP relay you must set SMTP_RELAY_HOST, SMTP_RELAY_USER, and SMTP_RELAY_PASSWORD" >&2
+    exit 1
+  fi
+
+  RELAY_VALUES_ARGS+=(--values <(cat <<EOF
+deployment:
+  env:
+    DEFAULT_RELAY_HOST: "${SMTP_RELAY_HOST}"
+    RELAY_USER: "${SMTP_RELAY_USER}"
+    RELAY_PASSWORD: "${SMTP_RELAY_PASSWORD}"
+EOF
+))
+fi
+
 helm install docker-mailserver docker-mailserver/docker-mailserver \
   --namespace mail \
   --create-namespace \
-  --values ./k3s/helm/values/docker-mailserver.values.yaml
+  --values ./k3s/helm/values/docker-mailserver.values.yaml \
+  "${RELAY_VALUES_ARGS[@]}"
 
 # Initial Setup
 # ------------

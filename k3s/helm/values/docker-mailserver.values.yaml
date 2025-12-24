@@ -27,6 +27,12 @@ deployment:
     # Required - override hostname
     OVERRIDE_HOSTNAME: "mail.livingroom.cloud"
 
+    # Outbound SMTP relay (recommended when TCP/25 egress is blocked)
+    # Configure via k3s/docker-mailserver.sh env vars:
+    #   SMTP_RELAY_HOST='[smtp.sendgrid.net]:587'
+    #   SMTP_RELAY_USER='apikey'
+    #   SMTP_RELAY_PASSWORD='<API_KEY>'
+
     # Enable IMAP
     ENABLE_IMAP: 1
 
