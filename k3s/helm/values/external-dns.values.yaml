@@ -18,7 +18,9 @@ managedRecordTypes:
 - MX
 - TXT
 
-policy: upsert-only
+# Allow external-dns to delete records in the provider when they disappear from Kubernetes
+# (e.g. when a DNSEndpoint is deleted). Safe when paired with registry=txt + txtOwnerId.
+policy: sync
 registry: txt
 txtOwnerId: mini-cloud
 txtPrefix: externaldns

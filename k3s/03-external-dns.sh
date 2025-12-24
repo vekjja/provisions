@@ -23,3 +23,19 @@ helm upgrade --install external-dns external-dns/external-dns \
   --values ./k3s/helm/values/external-dns.values.yaml
 
 
+# Example DNSEndpoint
+cat <<EOF | kubectl apply -f -
+---
+apiVersion: externaldns.k8s.io/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: livingroom-cloud-mail-records
+  namespace: external-dns
+spec:
+  endpoints:
+  - dnsName: example.livingroom.cloud
+    recordType: A
+    recordTTL: 300
+    targets: [ "174.44.105.210" ]
+---
+EOF
