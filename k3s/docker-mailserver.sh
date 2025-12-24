@@ -38,7 +38,7 @@ EOF
 helm install docker-mailserver docker-mailserver/docker-mailserver \
   --namespace mail \
   --create-namespace \
-  --values ./k3s/helm/values/dms.values.yaml
+  --values ./k3s/helm/values/docker-mailserver.values.yaml
 
 # Initial Setup
 # ------------
