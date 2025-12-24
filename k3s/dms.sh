@@ -40,31 +40,12 @@ helm install docker-mailserver docker-mailserver/docker-mailserver \
   --create-namespace \
   --values ./k3s/helm/values/dms.values.yaml
 
-Initial Setup
-------------
-
-# If you have not yet configured your mail server you'll need to quickly open a command
-# prompt inside the running container (you have two minutes) and setup a first email account.
-
-#     kubectl exec -it --namespace mail deploy/docker-mailserver -- bash
-
-#     setup email add user@example.com password
-
-# This will create a file:
-
-#     cat /tmp/docker-mailserver/postfix-accounts.cf
-
-# Next, run the setup command to see additional options:
-
-#     setup
-
-# For more information please refer to this Chart's README file.
-
-# Proxy Ports
+# Initial Setup
 # ------------
-# You have enabled PROXY protocol support, likely because you are running on a bare metal Kubernetes cluster. 
-# This means additional ports have been created that are configured for the PROXY protocol. 
-# These ports are in the 10,000 range - thus IMAPs is 10993 (10000 + 993), SUBMISSION is 10587 (10000 + 587), etc.
+#  You have two minutes to setup a first email account after the initial deployment.
 
-# It is now up to you to configure incoming traffic to use these ports. 
-# For more information please refer to this Chart's README file.
+kubectl exec -it --namespace mail deploy/docker-mailserver -- bash
+setup email add user@example.com password
+
+# Test the email setup
+kubectl exec -n mail deploy/docker-mailserver -- swaks --to seemywings@gmail.com --from admin@livingroom.cloud --server 127.0.0.1 --auth LOGIN --auth-user admin@livingroom.cloud --auth-password 'admin' --tls --port 587
