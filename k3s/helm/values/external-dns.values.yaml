@@ -25,7 +25,6 @@ txtPrefix: externaldns
 
 extraArgs:
 - --default-targets=174.44.105.210
-- --force-default-targets
 
 sources:
 - service
