@@ -52,10 +52,24 @@ kubectl exec -n mail deploy/docker-mailserver -- setup config dkim
 # Capture DKIM TXT value (flattened) into env var for reuse
 DKIM_TXT=$(kubectl exec -n mail deploy/docker-mailserver -- sh -c "cat /tmp/docker-mailserver/opendkim/keys/mail.livingroom.cloud/mail.txt" \
   | awk -F'"' 'BEGIN{ORS="";}{for(i=2;i<NF;i+=2)printf "%s",$i}END{print "";}')
-echo "DKIM TXT: ${DKIM_TXT}"
+echo "DKIM TXT (raw): ${DKIM_TXT}"
 
-# Update DNS records with DKIM key (keep all existing endpoints together)
-cat <<EOF | kubectl apply -f -
+# Chunk DKIM into <=255-char segments for DNS (Cloudflare/TXT limit)
+chunk_dkim() {
+  local s="$1" out=""
+  while [ -n "$s" ]; do
+    out="${out}\"${s:0:255}\", "
+    s="${s:255}"
+  done
+  # strip trailing comma+space
+  printf '%s\n' "${out%, }"
+}
+DKIM_CHUNKED=$(chunk_dkim "${DKIM_TXT}")
+echo "DKIM TXT (chunked): ${DKIM_CHUNKED}"
+
+# Update DNS records with DKIM key (replace to avoid duplicates)
+# Note: DKIM_CHUNKED is already a comma-separated, quoted list.
+cat <<EOF | kubectl replace --force -f -
 ---
 apiVersion: externaldns.k8s.io/v1alpha1
 kind: DNSEndpoint
@@ -83,7 +97,7 @@ spec:
   - dnsName: mail._domainkey.mail.livingroom.cloud
     recordType: TXT
     recordTTL: 300
-    targets: [ "${DKIM_TXT}" ]
+    targets: [ ${DKIM_CHUNKED} ]
 ---
 EOF
 
