@@ -55,9 +55,19 @@ EOF
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 
-helm install ingress-nginx ingress-nginx/ingress-nginx \
+# Ingress NGINX defaults to redirecting HTTP->HTTPS (308) when TLS is configured for a host.
+# That behavior can break ACME HTTP-01 challenges, which require a plain HTTP 200 response on:
+#   http://<host>/.well-known/acme-challenge/<token>
+# If you prefer redirect-by-default for apps, remove these and instead disable redirects only on
+# specific ingresses using annotations:
+#   nginx.ingress.kubernetes.io/ssl-redirect: "false"
+#   nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
   --namespace ingress-nginx \
   --create-namespace
+  
+  # --set controller.config.ssl-redirect="false" \
+  # --set controller.config.force-ssl-redirect="false"
 
 # Wait for ingress controller to be ready
 kubectl wait --namespace ingress-nginx \

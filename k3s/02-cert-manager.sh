@@ -11,7 +11,7 @@
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
 
-helm install cert-manager jetstack/cert-manager \
+helm upgrade --install cert-manager jetstack/cert-manager \
   --namespace cert-manager \
   --create-namespace \
   --set installCRDs=true
@@ -26,27 +26,6 @@ metadata:
 type: Opaque
 stringData:
   api-token: ${CLOUDFLARE_API_TOKEN}
----
-EOF
-
-cat <<EOF | kubectl apply -f -
----
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: cloudflare-letsencrypt-staging
-spec:
-  acme:
-    email: seemywings@gmail.com
-    server: https://acme-staging-v02.api.letsencrypt.org/directory
-    privateKeySecretRef:
-      name: cloudflare-issuer-account-key
-    solvers:
-    - dns01:
-        cloudflare:
-          apiTokenSecretRef:
-            name: cloudflare-api-token
-            key: api-token
 ---
 EOF
 
@@ -71,6 +50,26 @@ spec:
 ---
 EOF
 
+# cat <<EOF | kubectl apply -f -
+# ---
+# apiVersion: cert-manager.io/v1
+# kind: ClusterIssuer
+# metadata:
+#   name: cloudflare-letsencrypt-staging
+# spec:
+#   acme:
+#     email: seemywings@gmail.com
+#     server: https://acme-staging-v02.api.letsencrypt.org/directory
+#     privateKeySecretRef:
+#       name: cloudflare-issuer-account-key
+#     solvers:
+#     - dns01:
+#         cloudflare:
+#           apiTokenSecretRef:
+#             name: cloudflare-api-token
+#             key: api-token
+# ---
+# EOF
 
 # Certificate Issuer LetsEncrypt Staging
 #
@@ -90,6 +89,13 @@ EOF
 #       - http01:
 #           ingress:
 #             class: nginx
+#             # ingress-nginx commonly enforces HTTP->HTTPS redirects (308). HTTP-01 requires plain HTTP 200
+#             # on `/.well-known/acme-challenge/*`, so disable redirects on the solver ingress.
+#             ingressTemplate:
+#               metadata:
+#                 annotations:
+#                   nginx.ingress.kubernetes.io/ssl-redirect: "false"
+#                   nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
 # ---
 # EOF
 
@@ -112,6 +118,33 @@ EOF
 #       - http01:
 #           ingress:
 #             class: nginx
+#             ingressTemplate:
+#               metadata:
+#                 annotations:
+#                   nginx.ingress.kubernetes.io/ssl-redirect: "false"
+#                   nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+# ---
+# EOF
+
+# Example Certificate resource for cert-manager
+# cat <<EOF | kubectl apply -f -
+# ---
+# apiVersion: cert-manager.io/v1
+# kind: Certificate
+# metadata:
+#   name: example-livingroom-cloud-certificate
+#   namespace: default
+# spec:
+#   secretName: example-livingroom-cloud-tls
+#   issuerRef:
+#     name: cloudflare-letsencrypt-production
+#     kind: ClusterIssuer
+#   privateKey:
+#     rotationPolicy: Always
+#     algorithm: RSA
+#     size: 2048
+#   dnsNames:
+#   - example.livingroom.cloud
 # ---
 # EOF
 
@@ -123,17 +156,19 @@ EOF
 # apiVersion: extensions/v1
 # kind: Ingress
 # metadata:
-#   name: my-ingress
+#   name: example-livingroom-cloud-ingress
 #   annotations:
 #     kubernetes.io/ingress.class: "nginx"
 #     cert-manager.io/cluster-issuer: "cloudflare-letsencrypt-staging"
+#     external-dns.alpha.kubernetes.io/hostname: example.livingroom.cloud
+#     external-dns.alpha.kubernetes.io/target: "174.44.105.210"
 # spec:
 #   tls:
 #   - hosts:
-#     - demo.livingroom.cloud
-#     secretName: "demo.livingroom.cloud-staging-tls"
+#     - example.livingroom.cloud
+#     secretName: "example.livingroom.cloud-staging-tls"
 #   rules:
-#   - host: demo.livingroom.cloud
+#   - host: example.livingroom.cloud
 #     http:
 #       paths:
 #         - path: /

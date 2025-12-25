@@ -105,12 +105,13 @@ if command -v pyenv &>/dev/null; then
 fi
 
 function py-venv() {
-  #!/bin/bash
-
+  emulate -L zsh
   set -e # Exit on any error
 
   PYTHON_VERSION_FILE="python_version.txt"
   REQUIREMENTS_FILE="requirements.txt"
+  REQUIREMENTS_ALT=".venv/requirements.txt"
+  REQUIREMENTS_ARG="${1:-}"
   VENV_DIR=".venv"
 
   # Ensure pyenv is installed
@@ -152,16 +153,26 @@ function py-venv() {
   python -m pip install --upgrade pip
 
   # Install or update dependencies if requirements.txt exists
-  if [ -f "$REQUIREMENTS_FILE" ]; then
-    echo "Installing/updating dependencies from $REQUIREMENTS_FILE..."
-    python -m pip install --upgrade -r "$REQUIREMENTS_FILE"
+  if [ -n "$REQUIREMENTS_ARG" ] && [ -f "$REQUIREMENTS_ARG" ]; then
+    REQ_PATH="$REQUIREMENTS_ARG"
+  elif [ -f "$REQUIREMENTS_FILE" ]; then
+    REQ_PATH="$REQUIREMENTS_FILE"
+  elif [ -f "$REQUIREMENTS_ALT" ]; then
+    REQ_PATH="$REQUIREMENTS_ALT"
   else
-    echo "Warning: $REQUIREMENTS_FILE not found. Skipping package installation."
+    REQ_PATH=""
+  fi
+
+  if [ -n "$REQ_PATH" ]; then
+    echo "Installing/updating dependencies from $REQ_PATH..."
+    python -m pip install --upgrade -r "$REQ_PATH"
+  else
+    echo "Warning: requirements file not found (checked $REQUIREMENTS_ARG, $REQUIREMENTS_FILE, and $REQUIREMENTS_ALT). Skipping package installation."
   fi
 
   echo "✅ Virtual environment setup complete. You are now inside the virtual environment."
   echo "   To deactivate, type: deactivate"
-  exec "$SHELL"
+  return 0
 
 }
 
