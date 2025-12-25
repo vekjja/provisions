@@ -29,7 +29,7 @@ cat <<EOF | kubectl apply -f -
 apiVersion: externaldns.k8s.io/v1alpha1
 kind: DNSEndpoint
 metadata:
-  name: livingroom-cloud-mail-records
+  name: example-livingroom-cloud-dns
   namespace: external-dns
 spec:
   endpoints:

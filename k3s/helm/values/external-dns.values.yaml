@@ -10,6 +10,8 @@ env:
 
 domainFilters:
 - livingroom.cloud
+- torch.cloud
+- espwifi.io
 
 managedRecordTypes:
 - A
